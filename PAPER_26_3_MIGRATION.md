@@ -216,3 +216,18 @@ implemented by merely listing a candidate plugin.
 5. Complete joint AgarthaLib + MyItems build, player data round-trip and gameplay smoke tests.
 
 Related work: https://github.com/KhanhLyNek/AgarthaLib/pulls
+
+## 2026-10-30: paired master-only AgarthaLib Paper 26.3 cutover
+
+AgarthaLib `master` now compiles on Paper 26.3/Java25 using the modern-only
+source set, with all 82 versioned packet implementations excluded. Its
+legacy typed plugin adapters for Jobs/Heroes/HolographicDisplays and eleven
+other providers are also no longer shipped. Its former Heroes/SkillAPI/
+BattleLevels bonus-health events are disabled rather than imitating MMOCore
+formulas. The four new provider APIs remain separate explicit opt-ins.
+
+**MyItems gameplay YAML, item IDs, skills, damage formulas and command aliases
+remain unchanged**, but historical integration behavior cannot be assumed
+equivalent. This MyItems branch is `master`; CI uses AgarthaLib `master`.
+Do not publish a MyItems release until both JAR builds and live Paper player
+data, old custom NBT, item hover, combat and provider interactions are tested.

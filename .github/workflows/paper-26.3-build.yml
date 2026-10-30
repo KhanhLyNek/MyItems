@@ -42,11 +42,11 @@ jobs:
         run: |
           java -version
           gradle --version
-      - name: Verify AgarthaLib bridges, optional hooks and Towny API
+      - name: Verify AgarthaLib bridges, Towny API and MVdW callback
         shell: bash
         run: |
           set -o pipefail
-          gradle -p agarthalib compilePaper26TownyBridge --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
+          gradle -p agarthalib testPaper26MVdWRegistration --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
       - name: Build and install AgarthaLib locally
         if: always()
         shell: bash

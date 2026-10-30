@@ -98,7 +98,7 @@ public class AbilityWeaponConfuse extends AbilityWeapon implements AbilityWeapon
             final Collection<Player> players = (Collection<Player>)PlayerUtil.getNearbyPlayers(location, mainConfig.getEffectRange());
             Bridge.getBridgeParticle().playParticle((Collection)players, ParticleEnum.SMOKE_LARGE, location, 25, 0.5, 0.5, 0.5, 0.5);
             Bridge.getBridgeSound().playSound((Collection)players, location, SoundEnum.ENTITY_CAT_HISS, 0.7f, 1.0f);
-            CombatUtil.applyPotion(victims, PotionEffectType.CONFUSION, duration, 4);
+            CombatUtil.applyPotion(victims, com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("CONFUSION"), duration, 4);
         }
     }
     

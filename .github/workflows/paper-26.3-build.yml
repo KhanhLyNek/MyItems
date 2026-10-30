@@ -65,6 +65,11 @@ jobs:
         run: |
           set -o pipefail
           gradle compilePaper26MyItemsMythicLib --no-daemon --console=plain 2>&1 | tee myitems-mythiclib-bridge.log
+      - name: Verify modern MythicMobs 5.x event ABI (isolated, no runtime activation)
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle compilePaper26MythicMobsReader --no-daemon --console=plain 2>&1 | tee myitems-mythicmobs-reader.log
       - name: Verify four modern optional provider bridges in MyItems
         shell: bash
         run: |
@@ -109,6 +114,7 @@ jobs:
             myitems-placeholder-bridge.log
             myitems-mythiclib-bridge.log
             myitems-modern-providers.log
+            myitems-mythicmobs-reader.log
           if-no-files-found: ignore
           retention-days: 14
       - name: Upload test jars (not a verified release)

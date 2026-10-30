@@ -7,6 +7,7 @@ version = "6.4.6-paper26.3-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://mvn.lumine.io/repository/maven-public/")
     mavenLocal()
     maven("https://repo.papermc.io/repository/maven-public/")
     // Match the optional public APIs selected by AgarthaLib.
@@ -177,4 +178,27 @@ tasks.register<JavaExec>("testPaper26LegacyPlaceholderIds") {
 // The existing GitHub Actions bridge compile now runs the regression test too.
 tasks.named("compilePaper26MyItemsPlaceholderBridges") {
     dependsOn("testPaper26LegacyPlaceholderIds")
+}
+
+
+// Verify real MythicMobs 5.x public event/config API without bundling the
+// third-party plugin or bringing its whole distribution into our runtime JAR.
+// 5.12.1 is the official wiki's documented ABI example; 5.13.x must be
+// runtime-tested on the actual Paper target before the old listeners are enabled.
+val paper26MythicMobsApi = configurations.create("paper26MythicMobsApi")
+dependencies {
+    add(paper26MythicMobsApi.name, "io.lumine:Mythic-Dist:5.12.1")
+}
+
+tasks.register<JavaCompile>("compilePaper26MythicMobsReader") {
+    description = "Compile isolated MythicMobs 5.x event/config reader against published API"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/modern/Paper26MythicMobsReader.java")
+    }
+    classpath = paper26PlaceholderApi + paper26MythicMobsApi
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-mythicmobs-api-check"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
 }

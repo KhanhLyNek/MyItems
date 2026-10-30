@@ -9,6 +9,11 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven("https://repo.papermc.io/repository/maven-public/")
+    // Match the optional public APIs selected by AgarthaLib.
+    maven("https://repo.extendedclip.com/releases/")
+    maven("https://repo.helpch.at/releases/")
+    maven("https://repo.essentialsx.net/releases/")
+    maven("https://jitpack.io")
 }
 
 java {
@@ -22,7 +27,14 @@ dependencies {
     // cd ../AgarthaLib && gradle publishToMavenLocal
     compileOnly("com.praya:AgarthaLib:2.17.2-paper26.3-SNAPSHOT")
 
-    // TODO: add supported versions of optional external plugin APIs.
+    // Optional APIs are provided by installed plugins, NEVER bundled in MyItems.
+    // Keep these coordinates identical to the corresponding AgarthaLib APIs.
+    compileOnly("me.clip:placeholderapi:2.12.3")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("net.essentialsx:EssentialsX:2.22.0") {
+        isTransitive = false
+    }
+    // Still required: complete safe migration of historic NMS and other hooks.
 }
 
 sourceSets {

@@ -13,7 +13,9 @@ repositories {
     maven("https://repo.extendedclip.com/releases/")
     maven("https://repo.helpch.at/releases/")
     maven("https://repo.essentialsx.net/releases/")
-    maven("https://jitpack.io")
+    maven("https://jitpack.io") {
+        content { includeGroup("com.github.MilkBowl") }
+    }
 }
 
 java {
@@ -30,10 +32,11 @@ dependencies {
     // Optional APIs are provided by installed plugins, NEVER bundled in MyItems.
     // Keep these coordinates identical to the corresponding AgarthaLib APIs.
     compileOnly("me.clip:placeholderapi:2.12.3")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("net.essentialsx:EssentialsX:2.22.0") {
+    // API-only: reject VaultAPI's stale Bukkit 1.13 transitive dependency.
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         isTransitive = false
     }
+    // EssentialsX 2.22.0 is an optional runtime integration: its real warp\n    // API is resolved by SupportEssentials without linking its unstable JAR.
     // Still required: complete safe migration of historic NMS and other hooks.
 }
 

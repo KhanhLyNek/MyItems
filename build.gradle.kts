@@ -101,3 +101,20 @@ tasks.register<JavaCompile>("compilePaper26MyItemsMythicLib") {
     options.encoding = "UTF-8"
     options.release.set(25)
 }
+
+
+// Compile MyItems' actual new optional provider bridge independently from
+// AgarthaLib's still-blocked full NMS build. CI ABI stubs are never shipped.
+tasks.register<JavaCompile>("compilePaper26MyItemsModernProviders") {
+    description = "Compile AuraSkills/MMOCore/Lands/DecentHolograms optional MyItems seam"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/modern/Paper26MyItemsModernProviders.java")
+        include("ci/paper26-modern-provider-stubs/**/*.java")
+    }
+    classpath = paper26PlaceholderApi
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-myitems-modern-providers-api-check"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}

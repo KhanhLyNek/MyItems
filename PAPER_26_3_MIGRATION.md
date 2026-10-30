@@ -57,3 +57,13 @@ This check currently covers **20 commands, 25 ability configurations, 63 subcomm
 - The new source-wide scanner covers every Java class in MyItems and the checked-out AgarthaLib dependency, surfacing NMS/CraftBukkit/reflection/integration migration risks in the GitHub Actions summary.
 - The AgarthaLib modern item adapter has executable Java tests for long UTF-8 lists, preview PDC format compatibility and malformed data. Historical raw NBT migration is still NOT implemented.
 - No damage, target selection, cooldown, tick timing, original ability sources or shipped YAML have been changed in this pass. However no Paper 26.3 gameplay runtime verification has passed, so production deployment is unsafe.
+
+## Paper 26.3 bridge progress and outstanding behavior checks
+
+AgarthaLib now contains a Paper player adapter (locale, absorption, hide entity and hand swing) and an Adventure adapter for action bar, title and subtitle. Java 25 isolated compilation checks are included in the dependency build invoked by this repository's Actions.
+
+The **25 original MyItems weapon ability files and 18 YAML resources remain protected by hash-based CI checks**. The underlying NMS implementation changed, not the source-level gameplay formulas. This is not equivalent to verified runtime behavior.
+
+Before enabling these paths for players, smoke-test absorption hearts and maximum absorption, correct visibility/reappearance of entities, animation visibility/range, action-bar priority/cooldowns, title and subtitle timing, and formatting from historical configs. New Paper entity hiding persists differently from the previous one-off packet approach and could affect visibility if not reviewed.
+
+**Known gaps:** The old custom JSON message DSL/click/hover-item API remains unfinished, as does safe inventory title replacement. Paper marks `InventoryView.setTitle` unsupported/broken, so it must not be used just to make an old call compile. The full AgarthaLib build is blocked by NMS and external plugins, so MyItems cannot yet build or run on the test server.

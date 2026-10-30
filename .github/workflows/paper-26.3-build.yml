@@ -48,7 +48,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          gradle -p agarthalib testPaper26OriginalPlaceholderManager --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
+          gradle -p agarthalib testPaper26PapiOptional --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
       - name: Verify MyItems modern placeholder adapters against matching AgarthaLib
         shell: bash
         run: |

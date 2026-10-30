@@ -81,3 +81,9 @@ AgarthaLib now checks the real `PotionUtil` and `PotionTypeEnum` against Paper 2
 The optional MVdW placeholder hook no longer needs the legacy external API JAR to compile. It retains `setPlaceholders(OfflinePlayer, String)` and original MVdW placeholder syntax; it loads the actual plugin method only when available. The modern PlaceholderAPI hook remains separately supported.
 
 Passing the isolated checks is not a full server-play test. Validate effect duration, amplifiers, zombie/undead poison behavior, PvP targeting and placeholders with actual game fixtures before release; full AgarthaLib/MyItems compilation still fails due to other NMS and external dependencies.
+
+## FeatherBoard scoreboard integration (Paper 26.3 migration)
+
+The optional FeatherBoard hook in AgarthaLib now resolves the external FeatherBoard API lazily and keeps its historic public scoreboard operations. It does not toggle a scoreboard when the existing state cannot be determined. Isolated CI compiles the actual adapter and tests the public methods with a CI-only fake API, including a missing-API scenario; it does not include the fake class in any production JAR.
+
+MyItems' original 25 skill implementations, 18 YAML resources, existing command and permission identifiers remain unchanged. Full dependency build and runtime compatibility with the installed FeatherBoard version still need verification.

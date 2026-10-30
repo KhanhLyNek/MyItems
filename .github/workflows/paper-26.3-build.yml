@@ -31,6 +31,8 @@ jobs:
           repository: KhanhLyNek/AgarthaLib
           ref: master
           path: agarthalib
+      - name: Guard matching Paper, PAPI, Vault and AgarthaLib coordinates
+        run: python3 .github/scripts/check_dependency_alignment.py
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -42,11 +44,11 @@ jobs:
         run: |
           java -version
           gradle --version
-      - name: Verify AgarthaLib PAPI, Vault and legacy bridge compatibility
+      - name: Verify AgarthaLib PAPI expansion, live YAML callback and Vault API
         shell: bash
         run: |
           set -o pipefail
-          gradle -p agarthalib compilePaper26VaultBridge --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
+          gradle -p agarthalib testPaper26OriginalPlaceholderManager --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
       - name: Build and install AgarthaLib locally
         if: always()
         shell: bash

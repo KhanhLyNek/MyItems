@@ -116,7 +116,7 @@ public class AbilityWeaponSlow extends AbilityWeapon implements AbilityWeaponAtt
             final Collection<Player> players = (Collection<Player>)PlayerUtil.getNearbyPlayers(location, mainConfig.getEffectRange());
             Bridge.getBridgeParticle().playParticle((Collection)players, ParticleEnum.CLOUD, location, 25, 0.5, 0.5, 0.5, 0.5);
             Bridge.getBridgeSound().playSound((Collection)players, location, SoundEnum.ENTITY_CREEPER_PRIMED, 0.7f, 1.0f);
-            CombatUtil.applyPotion(victims, PotionEffectType.SLOW, duration, amplifier);
+            CombatUtil.applyPotion(victims, com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("SLOW"), duration, amplifier);
         }
     }
     

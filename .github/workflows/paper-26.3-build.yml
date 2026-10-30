@@ -29,8 +29,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: KhanhLyNek/AgarthaLib
-          ref: master
+          # This PR validates the matching AgarthaLib feature branch;
+          # all other PRs and master builds continue using the stable default.
+          ref: ${{ github.head_ref == 'feat/paper26-3-mythiclib-alignment' && 'feat/paper26-3-mythiclib-no-factions-bridges' || 'master' }}
           path: agarthalib
+      - name: Validate cross-repo MythicLib ABI and removed Factions adapters
+        if: github.head_ref == 'feat/paper26-3-mythiclib-alignment'
+        run: python3 .github/scripts/check_paper26_mythiclib_contract.py
       - name: Guard matching Paper, PAPI, Vault and AgarthaLib coordinates
         run: python3 .github/scripts/check_dependency_alignment.py
       - uses: actions/setup-java@v6

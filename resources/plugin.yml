@@ -10,6 +10,7 @@ softdepend:
 - PlaceholderAPI
 - MVdWPlaceholderAPI
 - MythicMobs
+- MythicLib
 
 commands:
   myitems:

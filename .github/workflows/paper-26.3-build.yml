@@ -90,6 +90,11 @@ jobs:
         run: |
           set -o pipefail
           gradle clean build --continue --no-daemon --console=plain --stacktrace 2>&1 | tee myitems-build-26.3.log
+      - name: Compile real Paper 26.3 NBT integration probe
+        shell: bash
+        run: |
+          gradle jarPaper26LiveProbe --no-daemon --console=plain
+
       - name: Boot real Paper 26.3 server with both production JARs
         shell: bash
         timeout-minutes: 8

@@ -237,3 +237,34 @@ tasks.register<JavaExec>("testPaper26MythicEventAccess") {
 tasks.named("compilePaper26MythicMobsReader") {
     dependsOn("testPaper26MythicEventAccess")
 }
+
+
+// A real-server integration fixture, not part of MyItems' production JAR.
+// Uses Paper to deserialize real NBT bytes, then calls the original NBT bridge.
+val paper26LiveNbtApi = configurations.create("paper26LiveNbtApi")
+dependencies {
+    add(paper26LiveNbtApi.name, "net.kyori:adventure-nbt:5.2.0")
+}
+
+tasks.register<JavaCompile>("compilePaper26LiveProbe") {
+    description = "Compile isolated Paper26 live NBT compatibility probe"
+    group = "verification"
+    dependsOn("classes")
+    source = fileTree("ci/paper26-live-probe/src") { include("**/*.java") }
+    classpath = configurations["compileClasspath"] + paper26LiveNbtApi +
+            sourceSets.main.get().output
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-live-probe/classes"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+
+tasks.register<Jar>("jarPaper26LiveProbe") {
+    description = "Assemble a probe plugin loaded by a real Paper 26.3 server"
+    group = "verification"
+    dependsOn("compilePaper26LiveProbe")
+    archiveFileName.set("Paper26LiveProbe.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-live-probe"))
+    from(layout.buildDirectory.dir("paper26-live-probe/classes"))
+    from("ci/paper26-live-probe/resources")
+}

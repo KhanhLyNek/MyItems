@@ -82,6 +82,10 @@ def run_server(folder):
     for built in (ROOT / "build/libs", ROOT / "agarthalib/build/libs"):
         jar = plugin_jar(built)
         shutil.copy2(jar, folder / "plugins" / jar.name)
+    fixture = ROOT / "build/paper26-live-probe/Paper26LiveProbe.jar"
+    if not fixture.is_file():
+        raise RuntimeError("Required Paper26LiveProbe.jar not built")
+    shutil.copy2(fixture, folder / "plugins" / fixture.name)
     download_paper(folder / "paper.jar")
     process = subprocess.Popen(
         ["java", "-Xms512M", "-Xmx2G", "-jar", "paper.jar", "--nogui"],
@@ -133,6 +137,8 @@ def run_server(folder):
     for plugin in ("MyItems", "AgarthaLib"):
         if f"{plugin} version " not in all_logs:
             raise AssertionError(f"Paper did not complete the version command for {plugin}")
+    if "PASS: live legacy NBT read-only fallback and PDC precedence" not in all_logs:
+        raise AssertionError("Real Paper legacy NBT bridge probe did not pass")
     if process.returncode != 0:
         raise AssertionError(f"Paper exited with {process.returncode}")
     for line in lines:

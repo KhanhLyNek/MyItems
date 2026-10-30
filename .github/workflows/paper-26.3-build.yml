@@ -42,11 +42,11 @@ jobs:
         run: |
           java -version
           gradle --version
-      - name: Verify AgarthaLib item, player, message and block bridges
+      - name: Verify AgarthaLib bridges, potion API and legacy IDs
         shell: bash
         run: |
           set -o pipefail
-          gradle -p agarthalib compilePaper26BlockBridge --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
+          gradle -p agarthalib compilePaper26PotionUtility --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
       - name: Build and install AgarthaLib locally
         if: always()
         shell: bash

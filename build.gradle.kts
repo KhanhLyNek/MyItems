@@ -32,6 +32,7 @@ dependencies {
     // Optional APIs are provided by installed plugins, NEVER bundled in MyItems.
     // Keep these coordinates identical to the corresponding AgarthaLib APIs.
     compileOnly("me.clip:placeholderapi:2.12.3")
+    compileOnly("org.jetbrains:annotations:26.0.2")
     // API-only: reject VaultAPI's stale Bukkit 1.13 transitive dependency.
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         isTransitive = false
@@ -59,6 +60,7 @@ val paper26PlaceholderApi = configurations.create("paper26PlaceholderApi")
 dependencies {
     add(paper26PlaceholderApi.name, "io.papermc.paper:paper-api:26.3.build.230-stable")
     add(paper26PlaceholderApi.name, "me.clip:placeholderapi:2.12.3")
+    add(paper26PlaceholderApi.name, "org.jetbrains:annotations:26.0.2")
 }
 
 tasks.register<JavaCompile>("compilePaper26MyItemsPlaceholderBridges") {

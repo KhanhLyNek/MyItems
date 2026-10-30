@@ -81,7 +81,7 @@ public class AbilityWeaponManager extends HandlerManager
                     if (keyLore != null) {
                         final AbilityWeapon abilityWeapon = registerAbilityWeaponManager.getAbilityWeaponByKeyLore(keyLore);
                         final int grade = RomanNumber.romanConvert(textGrade);
-                        if (grade > 0) {
+                        if (grade > 0 && abilityWeapon != null) {
                             final String[] partsChance = lore.split(keyChance);
                             final int partsChanceLength = partsChance.length;
                             if (partsChanceLength > 1) {

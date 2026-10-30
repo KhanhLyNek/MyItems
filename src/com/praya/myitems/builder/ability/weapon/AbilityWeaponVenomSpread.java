@@ -169,7 +169,7 @@ public class AbilityWeaponVenomSpread extends AbilityWeapon implements AbilityWe
                         if (!unit.equals(attacker) && !unit.equals(victims)) {
                             final PotionEffectType potionType = PotionUtil.getPoisonType(victims);
                             final int grade = potionType.equals((Object)PotionEffectType.WITHER) ? 3 : 2;
-                            final PotionEffect potion = PotionUtil.createPotion(potionType, grade, duration);
+                            final PotionEffect potion = PotionUtil.createPotion(potionType, duration, grade);
                             unit.addPotionEffect(potion);
                             CombatUtil.areaDamage(attacker, unit, spreadDamage);
                         }

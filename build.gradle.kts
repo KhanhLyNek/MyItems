@@ -95,6 +95,7 @@ tasks.register<JavaCompile>("compilePaper26LegacyPlaceholderIdSelfTest") {
         include("src/com/praya/myitems/builder/placeholder/Paper26LegacyPlaceholderId.java")
         include("ci/paper26-placeholder-prefix-test/**/*.java")
     }
+    classpath = files()
     destinationDirectory.set(layout.buildDirectory.dir("paper26-placeholder-prefix-tests"))
     javaCompiler.set(javaToolchains.compilerFor {
         languageVersion.set(JavaLanguageVersion.of(25))

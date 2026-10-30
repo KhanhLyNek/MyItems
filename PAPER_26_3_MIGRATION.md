@@ -87,3 +87,13 @@ Passing the isolated checks is not a full server-play test. Validate effect dura
 The optional FeatherBoard hook in AgarthaLib now resolves the external FeatherBoard API lazily and keeps its historic public scoreboard operations. It does not toggle a scoreboard when the existing state cannot be determined. Isolated CI compiles the actual adapter and tests the public methods with a CI-only fake API, including a missing-API scenario; it does not include the fake class in any production JAR.
 
 MyItems' original 25 skill implementations, 18 YAML resources, existing command and permission identifiers remain unchanged. Full dependency build and runtime compatibility with the installed FeatherBoard version still need verification.
+
+## AgarthaLib dependency migration: EssentialsX, LangUtils, Towny, MVdW (2026-10-30)
+
+The linked AgarthaLib `master` now independently compiles the original Essentials warp, LangUtils language, Towny group and custom MVdW placeholder registration adapters against Java 25/Paper 26.3 (with published Towny API as `compileOnly`). Tests using CI-only fake external plugins verify Essentials world filtering and missing warps, LangUtils typed overload forwarding, and MVdW wildcard registration and callback propagation. Test fakes are not added to production JARs.
+
+The source of all 25 weapon skill implementations, 18 shipped YAML files, main command aliases, permission identifiers, skill logic, tick schedules and historic items is unchanged. Existing hash-based source integrity and semantic contract checks remain mandatory.
+
+Towny 0.103.2.0 is a compile dependency, **not** verified runtime support for Paper 26.3: Towny's own guidance directs Paper 26.3 servers to a compatible pre-release. Verify town/group IDs, online-player filtering, item placeholders, locale text and warp world filtering on real matching plugin versions before deployment.
+
+**No release/deployment:** Full AgarthaLib compilation still fails on remaining NMS code and numerous optional plugin API dependencies. Because MyItems depends on it, full MyItems compilation and Paper runtime gameplay compatibility remain unverified.

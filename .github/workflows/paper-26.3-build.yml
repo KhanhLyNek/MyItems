@@ -46,6 +46,10 @@ jobs:
         run: |
           java -version
           gradle --version
+      - name: Enforce modern-only NMS and plugin provider cutover in matching AgarthaLib
+        run: |
+          python3 agarthalib/.github/scripts/check_paper26_nms_cutover.py
+          python3 agarthalib/.github/scripts/audit_paper26_legacy_bindings.py
       - name: Verify AgarthaLib PAPI expansion, live YAML callback and Vault API
         shell: bash
         run: |

@@ -74,7 +74,7 @@ public class HookConfig extends HandlerConfig
                     if (dependencyManager.getTypeDependency(dependency).equals((Object)Dependency.HARD_DEPENDENCY)) {
                         final MessageBuild message = lang.getMessage("Plugin_Lack_Dependency");
                         message.sendMessage("dependency", dependency);
-                        this.plugin.getPluginLoader().disablePlugin((Plugin)this.plugin);
+                        Bukkit.getPluginManager().disablePlugin(this.plugin);
                         return;
                     }
                     continue;

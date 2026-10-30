@@ -5,7 +5,7 @@
 package com.praya.myitems.manager.plugin;
 
 import core.praya.agarthalib.utility.ServerUtil;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.Bukkit;
 import core.praya.agarthalib.utility.SystemUtil;
 import core.praya.agarthalib.builder.plugin.PluginBannedPropertiesBuild;
 import java.util.ArrayList;
@@ -164,7 +164,7 @@ public class PluginPropertiesManager extends HandlerManager
         if (message != null) {
             SystemUtil.sendMessage(message);
         }
-        this.plugin.getPluginLoader().disablePlugin((Plugin)this.plugin);
+        Bukkit.getPluginManager().disablePlugin(this.plugin);
     }
     
     @Deprecated

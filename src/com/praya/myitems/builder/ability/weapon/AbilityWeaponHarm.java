@@ -114,7 +114,7 @@ public class AbilityWeaponHarm extends AbilityWeapon implements AbilityWeaponAtt
             final Collection<Player> players = (Collection<Player>)PlayerUtil.getNearbyPlayers(location, mainConfig.getEffectRange());
             Bridge.getBridgeParticle().playParticle((Collection)players, ParticleEnum.SMOKE_LARGE, location, 25, 0.5, 0.5, 0.5, 0.5);
             Bridge.getBridgeSound().playSound((Collection)players, location, SoundEnum.BLOCK_ANVIL_BREAK, 0.7f, 1.0f);
-            CombatUtil.applyPotion(victims, PotionEffectType.HARM, duration, amplifier);
+            CombatUtil.applyPotion(victims, com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("HARM"), duration, amplifier);
         }
     }
     

@@ -97,3 +97,15 @@ The source of all 25 weapon skill implementations, 18 shipped YAML files, main c
 Towny 0.103.2.0 is a compile dependency, **not** verified runtime support for Paper 26.3: Towny's own guidance directs Paper 26.3 servers to a compatible pre-release. Verify town/group IDs, online-player filtering, item placeholders, locale text and warp world filtering on real matching plugin versions before deployment.
 
 **No release/deployment:** Full AgarthaLib compilation still fails on remaining NMS code and numerous optional plugin API dependencies. Because MyItems depends on it, full MyItems compilation and Paper runtime gameplay compatibility remain unverified.
+
+## Shared PAPI 2.12.3, EssentialsX and Vault APIs (2026-10-30)
+
+- Both repos now pin Paper API `26.3.build.230-stable`, PlaceholderAPI `2.12.3`, VaultAPI `1.7` and the same AgarthaLib `2.17.2-paper26.3-SNAPSHOT` artifact. CI rejects drift in these coordinates and rejects VaultAPI's obsolete Bukkit 1.13 transitive dependency.
+- `ReplacerPlaceholderAPIBuild` has migrated from removed `PlaceholderHook` registration to supported, persistent `PlaceholderExpansion`. The original `myitems` prefix, `hook()` entrypoint and dynamic `PlaceholderManager.getReplacement(player, identifier)` are preserved. That manager still computes the *original* lore, item attributes, abilities, power, cooldown, etc.; no formula or YAML value is replaced.
+- `ReplacerMVDWPlaceholderAPIBuild` now delegates optional registration to AgarthaLib's `Paper26MVdWRegistration` and retains the exact original `myitems_*` wildcard and callback suffix. No hard dependency on obsolete `be.maximvdw.placeholderapi` classes is required.
+- Separate CI task `compilePaper26MyItemsPlaceholderBridges` compiles the **actual** two MyItems adapter sources with Java 25/Paper 26.3/PAPI 2.12.3 plus AgarthaLib's isolated modern bridge output; CI-only MyItems class signatures never enter production. This task runs even while full AgarthaLib NMS migration is not complete.
+- The EssentialsX 2.22.0 release API's warp methods have been checked against published source, but EssentialsX 2.22.0 does not claim official 26.3 runtime support; its existing AgarthaLib integration remains optional and is not silently replaced with a different warp database.
+- The original Vault plugin is 1.7.3 and has no declared 26.3 compatibility on its original resource; VaultUnlocked 2.20.3 declares Paper 26.3 support and retains plugin name `Vault` and the standard economy service contract. Never install both simultaneously.
+- PlaceholderAPI's eCloud Player expansion is separate. For testing `%player_name%`, install it with `/papi ecloud download Player`, then `/papi reload`. Test custom `%myitems_...%` values for the exact existing identifiers from your configs; **do not invent renamed abilities**.
+
+**Do not publish/deploy:** Existing 25 original ability classes and all 18 YAML resources remain protected and unchanged, but full AgarthaLib/MyItems compilation, historic NBT item compatibility and real Paper 26.3 combat/skill smoke tests still need to pass. User-stored items and economy accounts must never be rewritten just to make CI green.

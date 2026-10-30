@@ -24,11 +24,17 @@ public class ReplacerMVDWPlaceholderAPIBuild {
     }
 
     public final void register() {
+        final String prefix = getPlaceholder();
+        if (prefix == null || prefix.isEmpty()) {
+            return;
+        }
         final PlaceholderManager manager = plugin.getPluginManager().getPlaceholderManager();
-        final String wildcard = String.valueOf(getPlaceholder()) + "_*";
+        final String wildcard = prefix + "_*";
         final Plugin provider = Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI");
         Paper26MVdWRegistration.register(plugin, provider, wildcard,
-                (player, originalPlaceholder) -> manager.getReplacement(player,
-                        originalPlaceholder.split(String.valueOf(getPlaceholder()) + "_")[1]));
+                (player, originalPlaceholder) -> {
+                    final String identifier = Paper26LegacyPlaceholderId.extract(prefix, originalPlaceholder);
+                    return identifier == null ? null : manager.getReplacement(player, identifier);
+                });
     }
 }

@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: Checkout MyItems
         uses: actions/checkout@v4
+      - name: Check backward-compatible commands, abilities and YAML values
+        run: python3 .github/scripts/check_legacy_contract.py
+
       - name: Checkout AgarthaLib
         uses: actions/checkout@v4
         with:

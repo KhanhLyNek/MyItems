@@ -1,0 +1,312 @@
+{
+  "schemaVersion": 1,
+  "description": "Frozen original MyItems 6.4.6 public command/ability behavior; additive extensions are allowed.",
+  "pluginCommands": {
+    "myitems": [
+      "myitem",
+      "itemeditor",
+      "items",
+      "item",
+      "mi"
+    ],
+    "itematt": [
+      "att",
+      "attr",
+      "attributes",
+      "attribute"
+    ],
+    "enchant": [
+      "enchantment"
+    ],
+    "enchantadd": [
+      "addenchant"
+    ],
+    "enchantremove": [
+      "removeenchant",
+      "remenchant"
+    ],
+    "enchantclear": [
+      "clearenchant"
+    ],
+    "itemname": [
+      "setdisplayname",
+      "setname"
+    ],
+    "lore": [
+      "lores"
+    ],
+    "loreadd": [
+      "addlore"
+    ],
+    "loreset": [
+      "setlore"
+    ],
+    "loreinsert": [
+      "insertlore"
+    ],
+    "loreremove": [
+      "removelore",
+      "remlore"
+    ],
+    "loreclear": [
+      "clearlore"
+    ],
+    "flag": [
+      "flags"
+    ],
+    "flagadd": [
+      "addflag"
+    ],
+    "flagremove": [
+      "removeflag",
+      "remflag"
+    ],
+    "flagclear": [
+      "clearflag"
+    ],
+    "nbtclear": [
+      "clearnbt"
+    ],
+    "socket": [
+      "sockets"
+    ],
+    "unbreakable": [
+      "unbreak",
+      "unbreaking"
+    ]
+  },
+  "permissionChildren": [
+    "myitems.command.reload",
+    "myitems.command.save",
+    "myitems.command.remove",
+    "myitems.command.list",
+    "myitems.command.load",
+    "myitems.command.drop",
+    "myitems.command.amount",
+    "myitems.command.data",
+    "myitems.command.material",
+    "myitems.command.repair",
+    "myitems.command.name",
+    "myitems.command.lore",
+    "myitems.command.flag",
+    "myitems.command.enchant",
+    "myitems.command.unbreakable",
+    "myitems.command.attribute.stats",
+    "myitems.command.attribute.element",
+    "myitems.command.attribute.buff",
+    "myitems.command.attribute.debuff",
+    "myitems.command.attribute.nbt",
+    "myitems.command.attribute.power",
+    "myitems.command.attribute.ability",
+    "myitems.command.attribute.requirement",
+    "myitems.command.socket"
+  ],
+  "abilityDefaults": {
+    "Air_Shock": {
+      "Max_Grade": "10",
+      "Scale_Base_Additional_Damage": "0.5",
+      "Scale_Base_Percent_Damage": "5.0"
+    },
+    "Bad_Luck": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "60",
+      "Scale_Duration_Effect": "30"
+    },
+    "Blind": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "20"
+    },
+    "Bubble_Deflector": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "20",
+      "Scale_Duration_Effect": "18",
+      "Scale_Base_Bonus_Damage": "1.0",
+      "Scale_Base_Percent_Damage": "3.5",
+      "Scale_Cast_Bonus_Damage": "0.5",
+      "Scale_Cast_Percent_Damage": "5.0"
+    },
+    "Cannibalism": {
+      "Max_Grade": "10"
+    },
+    "Confuse": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "20"
+    },
+    "Curse": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "20",
+      "Scale_Duration_Effect": "10",
+      "Scale_Base_Bonus_Damage": "0.5",
+      "Scale_Base_Percent_Damage": "2.5"
+    },
+    "Dark_Flame": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "50",
+      "Scale_Duration_Effect": "10",
+      "Scale_Cast_Percent_Damage": "5"
+    },
+    "Dark_Impact": {
+      "Max_Grade": "10",
+      "Scale_Base_Bonus_Damage": "0.5",
+      "Scale_Base_Percent_Damage": "10"
+    },
+    "Flame": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "60",
+      "Scale_Duration_Effect": "24"
+    },
+    "Flame_Wheel": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "60",
+      "Scale_Duration_Effect": "15",
+      "Scale_Base_Bonus_Damage": "0.4",
+      "Scale_Base_Percent_Damage": "8"
+    },
+    "Freeze": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "30",
+      "Scale_Duration_Effect": "10",
+      "Scale_Base_Bonus_Damage": "0.2",
+      "Scale_Base_Percent_Damage": "4"
+    },
+    "Harm": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "10",
+      "Scale_Duration_Effect": "2"
+    },
+    "Hungry": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "20"
+    },
+    "Levitation": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "30",
+      "Scale_Duration_Effect": "12"
+    },
+    "Lightning": {
+      "Max_Grade": "10",
+      "Scale_Base_Bonus_Damage": "2",
+      "Scale_Base_Percent_Damage": "15"
+    },
+    "Poison": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "20"
+    },
+    "Roots": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "20",
+      "Scale_Duration_Effect": "10"
+    },
+    "Slow": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "20"
+    },
+    "Tired": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "20"
+    },
+    "Vampirism": {
+      "Max_Grade": "10"
+    },
+    "Venom_Blast": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "20",
+      "Scale_Duration_Effect": "5",
+      "Scale_Base_Bonus_Damage": "0",
+      "Scale_Base_Percent_Damage": "10",
+      "Scale_Cast_Bonus_Damage": "0.5",
+      "Scale_Cast_Percent_Damage": "10"
+    },
+    "Venom_Spread": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "10",
+      "Scale_Base_Bonus_Damage": "0",
+      "Scale_Base_Percent_Damage": "5",
+      "Scale_Cast_Bonus_Damage": "0",
+      "Scale_Cast_Percent_Damage": "5"
+    },
+    "Weak": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "40",
+      "Scale_Duration_Effect": "20"
+    },
+    "Wither": {
+      "Max_Grade": "10",
+      "Base_Duration_Effect": "30",
+      "Scale_Duration_Effect": "15"
+    }
+  },
+  "subcommandIds": [
+    "MyItems_Help",
+    "MyItems_About",
+    "MyItems_Reload",
+    "MyItems_Save",
+    "MyItems_Remove",
+    "MyItems_List",
+    "MyItems_Load",
+    "MyItems_Load_Custom",
+    "MyItems_Load_Generator",
+    "MyItems_Load_Set",
+    "MyItems_Drop",
+    "MyItems_Drop_Custom",
+    "MyItems_Drop_Generator",
+    "MyItems_Drop_Set",
+    "MyItems_Amount",
+    "MyItems_Data",
+    "MyItems_Material",
+    "MyItems_Detail",
+    "MyItems_Stats",
+    "MyItems_Simulation",
+    "MyItems_Repair",
+    "MyItems_Name",
+    "MyItems_Lore_Set",
+    "MyItems_Lore_Insert",
+    "MyItems_Lore_Add",
+    "MyItems_Lore_Remove",
+    "MyItems_Lore_Clear",
+    "MyItems_Flag_Add",
+    "MyItems_Flag_Remove",
+    "MyItems_Flag_Clear",
+    "MyItems_Enchant_Add",
+    "MyItems_Enchant_Remove",
+    "MyItems_Enchant_Clear",
+    "MyItems_Unbreakable",
+    "Lore_Set",
+    "Lore_Insert",
+    "Lore_Add",
+    "Lore_Remove",
+    "Lore_Clear",
+    "Flag_Add",
+    "Flag_Remove",
+    "Flag_Clear",
+    "Enchant_Add",
+    "Enchant_Remove",
+    "Enchant_Clear",
+    "Attribute_Stats",
+    "Attribute_Element",
+    "Attribute_Buff",
+    "Attribute_Debuff",
+    "Attribute_NBT",
+    "Attribute_Power",
+    "Attribute_Ability",
+    "Attribute_Requirement",
+    "Socket_Add",
+    "Socket_Add_Empty",
+    "Socket_Add_Locked",
+    "Socket_Load",
+    "Socket_Load_Gems",
+    "Socket_Load_Rod",
+    "Socket_Drop",
+    "Socket_Drop_Rod",
+    "Socket_Drop_Gems",
+    "Socket_List"
+  ],
+  "requiredSkillSourceId": "Venom_Blast"
+}

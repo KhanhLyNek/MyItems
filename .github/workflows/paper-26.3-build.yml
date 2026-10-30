@@ -88,6 +88,8 @@ jobs:
         run: |
           set -o pipefail
           gradle clean build --continue --no-daemon --console=plain --stacktrace 2>&1 | tee myitems-build-26.3.log
+      - name: Assert production plugin JAR contents and archived API exclusions
+        run: python3 .github/scripts/check_paper26_jar_contents.py
       - name: Summarize grouped compiler errors
         if: always()
         shell: bash

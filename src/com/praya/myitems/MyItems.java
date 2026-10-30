@@ -323,7 +323,13 @@ public class MyItems extends JavaPlugin implements Agartha
         // classes do not exist on Paper 26.3. They are not registered here.
         // The core MyItems combat, item, ability and health-max listeners above
         // remain registered with unchanged YAML/item formula semantics.
-        for (final String obsolete : new String[] {"SkillAPI", "MythicMobs",
+        if (PluginUtil.isPluginInstalled("MythicMobs")) {
+            if (!com.praya.myitems.modern.Paper26MythicMobsEventBridge.register(this)) {
+                getLogger().warning("MythicMobs 5 optional event integration unavailable;"
+                        + " legacy drop tables and item equip callbacks remain inactive.");
+            }
+        }
+        for (final String obsolete : new String[] {"SkillAPI",
                                                      "LifeEssence", "CombatStamina"}) {
             if (PluginUtil.isPluginInstalled(obsolete)) {
                 getLogger().warning("Legacy " + obsolete + " event bridge is retired"

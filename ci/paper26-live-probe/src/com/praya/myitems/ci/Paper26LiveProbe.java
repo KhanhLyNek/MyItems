@@ -4,6 +4,9 @@ import com.praya.agarthalib.modern.Paper26LegacyItemTags;
 import core.praya.agarthalib.bridge.unity.Bridge;
 import net.kyori.adventure.nbt.*;
 import org.bukkit.Material;
+import com.praya.agarthalib.AgarthaLib;
+import api.praya.agarthalib.builder.support.SupportEssentials;
+import api.praya.agarthalib.manager.plugin.SupportManagerAPI;
 import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Zombie;
@@ -136,6 +139,33 @@ public final class Paper26LiveProbe extends JavaPlugin {
         getLogger().info("PASS: 3/3 real mob-target skill casts (Freeze, Roots, Curse)");
     }
 
+    /** Real Paper plugin classloader smoke, with an API-shaped test provider.
+     * This does NOT claim the real EssentialsX 2.22.0 runs on Paper 26.3.
+     */
+    private void verifyEssentialsWarpProvider() {
+        final AgarthaLib agartha = (AgarthaLib) Bukkit.getPluginManager().getPlugin("AgarthaLib");
+        check(agartha != null && agartha.isEnabled(), "AgarthaLib ready for Essentials warp API");
+        final SupportManagerAPI supportManager = new SupportManagerAPI(agartha);
+        final SupportEssentials adapter = supportManager.getSupportEssentials();
+        check(adapter != null, "EssentialsX named provider detected");
+        check(adapter.getSource() == Bukkit.getPluginManager().getPlugin("Essentials"),
+                "Live provider plugin instance resolved");
+        check(adapter == supportManager.getSupportEssentials(), "Adapter cache retained while provider active");
+
+        final World world = Bukkit.getWorlds().get(0);
+        check(List.of("spawn", "market", "missing").equals(
+                List.copyOf(adapter.getWarpNames())), "Modern IWarps collection preserved");
+        check(List.of("spawn", "market").equals(
+                List.copyOf(adapter.getWarpNames(world))), "Current world filtering preserved");
+        check(adapter.getWarp("spawn") != null
+                        && adapter.getWarp("spawn").getBlockX() == 13,
+                "Correct position through the provider-owned IWarps interface");
+        check(adapter.getWarp("missing") == null, "Missing warp still fails closed");
+        check(adapter.getWarps().size() == 2, "Invalid warp not included in locations");
+        check(adapter.getWarps(world).size() == 2, "World-filtered locations preserved");
+        getLogger().info("PASS: EssentialsX 2.22 IWarps contract on real Paper plugin classloaders");
+    }
+
     @Override
     public void onEnable() {
         try {
@@ -201,6 +231,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
             getLogger().info("PASS: live legacy NBT read-only fallback and PDC precedence");
             verifyWeaponAbilities();
             verifyMobSkillCasts();
+            verifyEssentialsWarpProvider();
         } catch (Throwable error) {
             getLogger().severe("FAIL: live NBT/ability compatibility test: " + error);
             throw new IllegalStateException("Paper26 live NBT probe failed", error);

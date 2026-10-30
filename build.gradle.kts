@@ -259,6 +259,30 @@ tasks.register<JavaCompile>("compilePaper26LiveProbe") {
     options.release.set(25)
 }
 
+// Fake Essentials is used solely in our disposable Paper server to exercise
+// Bukkit plugin classloader boundaries and the public 2.22.0 IWarps ABI.
+// No fake class and no real Essentials JAR enters either production artifact.
+tasks.register<JavaCompile>("compilePaper26EssentialsFixture") {
+    description = "Compile CI-only EssentialsX public warp API provider"
+    group = "verification"
+    source = fileTree("ci/paper26-essentials-fixture/src") { include("**/*.java") }
+    classpath = configurations["compileClasspath"]
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-essentials-fixture/classes"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+
+tasks.register<Jar>("jarPaper26EssentialsFixture") {
+    description = "Package CI-only Essentials API-shaped plugin (never a release)"
+    group = "verification"
+    dependsOn("compilePaper26EssentialsFixture")
+    archiveFileName.set("Paper26EssentialsFixture.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-essentials-fixture"))
+    from(layout.buildDirectory.dir("paper26-essentials-fixture/classes"))
+    from("ci/paper26-essentials-fixture/resources")
+}
+
 tasks.register<Jar>("jarPaper26LiveProbe") {
     description = "Assemble a probe plugin loaded by a real Paper 26.3 server"
     group = "verification"

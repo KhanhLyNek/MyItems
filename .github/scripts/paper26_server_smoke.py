@@ -86,6 +86,10 @@ def run_server(folder):
     if not fixture.is_file():
         raise RuntimeError("Required Paper26LiveProbe.jar not built")
     shutil.copy2(fixture, folder / "plugins" / fixture.name)
+    essential_fixture = ROOT / "build/paper26-essentials-fixture/Paper26EssentialsFixture.jar"
+    if not essential_fixture.is_file():
+        raise RuntimeError("Required test-only Essentials IWarps provider not built")
+    shutil.copy2(essential_fixture, folder / "plugins" / essential_fixture.name)
     download_paper(folder / "paper.jar")
     process = subprocess.Popen(
         ["java", "-Xms512M", "-Xmx2G", "-jar", "paper.jar", "--nogui"],
@@ -143,6 +147,8 @@ def run_server(folder):
         raise AssertionError("Real Paper 25-ability registration/configuration/lore probe did not pass")
     if "PASS: 3/3 real mob-target skill casts (Freeze, Roots, Curse)" not in all_logs:
         raise AssertionError("Real Paper mob-target ability casts failed")
+    if "PASS: EssentialsX 2.22 IWarps contract on real Paper plugin classloaders" not in all_logs:
+        raise AssertionError("Modern EssentialsX public warp ABI provider smoke failed")
     if process.returncode != 0:
         raise AssertionError(f"Paper exited with {process.returncode}")
     for line in lines:

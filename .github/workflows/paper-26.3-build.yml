@@ -97,6 +97,10 @@ jobs:
         run: |
           gradle jarPaper26LiveProbe --no-daemon --console=plain
 
+      - name: Compile EssentialsX 2.22.0 interface fixture for real Paper integration
+        shell: bash
+        run: gradle jarPaper26EssentialsFixture --no-daemon --console=plain
+
       - name: Boot real Paper 26.3 server with both production JARs
         shell: bash
         timeout-minutes: 8

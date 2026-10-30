@@ -1,0 +1,4 @@
+name: Essentials
+version: 2.22.0-ci-interface-fixture
+main: fixture.essentials.FakeEssentials
+api-version: '1.13'

@@ -98,7 +98,7 @@ public class AbilityWeaponTired extends AbilityWeapon implements AbilityWeaponAt
             final Collection<Player> players = (Collection<Player>)PlayerUtil.getNearbyPlayers(location, mainConfig.getEffectRange());
             Bridge.getBridgeParticle().playParticle((Collection)players, ParticleEnum.CRIT, location, 25, 0.5, 0.5, 0.5, 0.5);
             Bridge.getBridgeSound().playSound((Collection)players, location, SoundEnum.BLOCK_COMPARATOR_CLICK, 0.7f, 1.0f);
-            CombatUtil.applyPotion(victims, PotionEffectType.SLOW_DIGGING, duration, 3);
+            CombatUtil.applyPotion(victims, com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("SLOW_DIGGING"), duration, 3);
         }
     }
     

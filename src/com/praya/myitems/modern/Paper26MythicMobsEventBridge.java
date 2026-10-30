@@ -59,17 +59,29 @@ public final class Paper26MythicMobsEventBridge {
             final AtomicBoolean warnedDeath = new AtomicBoolean();
 
             final EventExecutor onSpawn = (ignored, event) -> {
+                // Item/equipment operations must never run off the primary
+                // Bukkit thread; some providers dispatch events asynchronously.
+                if (!Bukkit.isPrimaryThread()) {
+                    warnOnce(plugin, "asynchronous spawn", new IllegalStateException(
+                            "MythicMobSpawnEvent is not on the server thread"), warnedSpawn);
+                    return;
+                }
                 try {
                     final Entity entity = (Entity) spawnAccess.entity(event);
                     if (entity != null) {
                         final List<String> lines = spawnAccess.configLines(event, "Equipment");
                         equipment.equipFromConfig(entity, lines);
                     }
-                } catch (ReflectiveOperationException | LinkageError | ClassCastException ex) {
+                } catch (ReflectiveOperationException | LinkageError | RuntimeException ex) {
                     warnOnce(plugin, "spawn equipment", ex, warnedSpawn);
                 }
             };
             final EventExecutor onDeath = (ignored, event) -> {
+                if (!Bukkit.isPrimaryThread()) {
+                    warnOnce(plugin, "asynchronous death", new IllegalStateException(
+                            "MythicMobDeathEvent is not on the server thread"), warnedDeath);
+                    return;
+                }
                 try {
                     final Entity entity = (Entity) deathAccess.entity(event);
                     if (entity != null) {
@@ -77,7 +89,7 @@ public final class Paper26MythicMobsEventBridge {
                         final List<String> lines = deathAccess.configLines(event, "Drops");
                         drops.dropFromConfig(lines, location);
                     }
-                } catch (ReflectiveOperationException | LinkageError | ClassCastException ex) {
+                } catch (ReflectiveOperationException | LinkageError | RuntimeException ex) {
                     warnOnce(plugin, "mob custom drops", ex, warnedDeath);
                 }
             };

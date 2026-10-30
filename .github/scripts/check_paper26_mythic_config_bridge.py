@@ -42,6 +42,8 @@ assert "io.lumine.mythic.bukkit.events.MythicMobSpawnEvent" in bridge
 assert "io.lumine.mythic.bukkit.events.MythicMobDeathEvent" in bridge
 assert 'deathAccess.configLines(event, "Drops")' in bridge
 assert 'spawnAccess.configLines(event, "Equipment")' in bridge
+assert 'Bukkit.isPrimaryThread()' in bridge
+assert bridge.count('catch (ReflectiveOperationException | LinkageError | RuntimeException ex)') >= 3
 assert "registerEvent" in bridge
 assert "new Paper26MythicEventAccess(spawn)" in bridge
 assert "new Paper26MythicEventAccess(death)" in bridge

@@ -112,8 +112,10 @@ Towny 0.103.2.0 is a compile dependency, **not** verified runtime support for Pa
 
 ## 2026-10-30 shared integrations with AgarthaLib
 
-Both repositories now pin the same optional compile-time APIs: PlaceholderAPI 2.12.3, EssentialsX 2.22.0 and MilkBowl VaultAPI 1.7. The real providers remain separate server plugins; no external JAR or eCloud expansion is bundled. AgarthaLib handles optional provider availability and bridge lookup while MyItems retains the original skill/YAML interfaces and uses the same modern Paper 26.3 Java 25 target.
+Both repositories pin the same optional compile-time APIs for PlaceholderAPI 2.12.3 and MilkBowl VaultAPI 1.7. EssentialsX 2.22.0 was evaluated, but its Maven artifact could not be resolved in GitHub CI, so the optional warp integration continues to be loaded reflectively. The real providers remain separate server plugins; no external JAR or eCloud expansion is bundled. AgarthaLib handles optional provider availability and bridge lookup while MyItems retains the original skill/YAML interfaces and uses the same modern Paper 26.3 Java 25 target.
 
 See https://modrinth.com/plugin/placeholderapi , https://wiki.placeholderapi.com/users/placeholder-list/minecraft/ , https://essentialsx.net/ and https://www.spigotmc.org/resources/vault.34315/ for the source/plugin ecosystems. PlaceholderAPI's Minecraft placeholder list is a catalog, not a guarantee the corresponding expansion is automatically installed.
 
 Runtime prerequisites must be validated individually. EssentialsX 2.22.0 is the latest published *compile API* used here but its release page does not itself prove Paper 26.3 runtime support; do not deploy incompatible plugin binaries. VaultAPI 1.7 requires a service implementation and an economy plugin. Java checks for optional provider fallbacks and original PAPI registration are isolated and do not imply the historic raw item NBT or skill gameplay has been verified.
+
+**CI correction:** Do not add `net.essentialsx:EssentialsX:2.22.0` to the mandatory compile classpath until the artifact actually resolves in GitHub Actions. EssentialsX continues as an optional installed server plugin, and existing warp-forwarding tests remain in CI.

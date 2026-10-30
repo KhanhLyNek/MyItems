@@ -119,3 +119,17 @@ See https://modrinth.com/plugin/placeholderapi , https://wiki.placeholderapi.com
 Runtime prerequisites must be validated individually. EssentialsX 2.22.0 is the latest published *compile API* used here but its release page does not itself prove Paper 26.3 runtime support; do not deploy incompatible plugin binaries. VaultAPI 1.7 requires a service implementation and an economy plugin. Java checks for optional provider fallbacks and original PAPI registration are isolated and do not imply the historic raw item NBT or skill gameplay has been verified.
 
 **CI correction:** Do not add `net.essentialsx:EssentialsX:2.22.0` to the mandatory compile classpath until the artifact actually resolves in GitHub Actions. EssentialsX continues as an optional installed server plugin, and existing warp-forwarding tests remain in CI.
+
+## 2026-10-30: MVdW wildcard callback safety (proposed)
+
+The `myitems_*` MVdW integration uses a literal, case-insensitive prefix
+match and returns the exact identifier suffix, preserving underscores, colons,
+Unicode text and repeated prefix occurrences. Invalid callbacks return null
+rather than throwing `ArrayIndexOutOfBoundsException` or evaluating a
+different item or ability placeholder. The original `PlaceholderManager`
+logic and original commands, YAMLs and skill formulas are unchanged.
+
+A dependency-free Java regression test runs before the existing isolated
+MyItems bridge compilation in GitHub Actions. This does not certify the
+full MyItems or AgarthaLib JAR: the original legacy NMS and optional-plugin
+classpath errors remain unresolved.

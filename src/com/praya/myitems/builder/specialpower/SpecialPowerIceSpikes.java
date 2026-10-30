@@ -79,7 +79,7 @@ public class SpecialPowerIceSpikes extends SpecialPower
                         for (final LivingEntity unit : CombatUtil.getNearbyUnits(this.loc, 2.0)) {
                             if (!unit.equals(caster) && !listEntity.contains(unit)) {
                                 listEntity.add(unit);
-                                CombatUtil.applyPotion(unit, PotionEffectType.SLOW, duration, 4);
+                                CombatUtil.applyPotion(unit, com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("SLOW"), duration, 4);
                                 CombatUtil.skillDamage(caster, unit, skillDamage);
                                 Bridge.getBridgeParticle().playParticle(players, ParticleEnum.SNOW_SHOVEL, this.loc, 10, 0.2, 0.2, 0.2, 0.10000000149011612);
                             }

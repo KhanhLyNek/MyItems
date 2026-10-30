@@ -66,6 +66,10 @@ if not re.search(
     message_packet, re.S,
 ):
     errors.append("AgarthaLib: legacy item hover entry point is not connected to modern payload")
+if 'return TextUtil.colorful(jsonObject.toString())' in json_builder:
+    errors.append("AgarthaLib: global color conversion mutates item hover data components")
+if 'colorizeLegacy(' not in json_builder:
+    errors.append("AgarthaLib: historic message colors are not translated separately")
 if 'mapHover.put("contents", contents)' not in json_builder:
     errors.append("AgarthaLib: legacy JSON builder does not emit show_item.contents")
 if 'Paper26HoverItemPayload.contents(value)' not in json_builder:

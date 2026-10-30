@@ -1,0 +1,37 @@
+# One-time cleanup requested by repository owner, 2026-10-30.
+# Delete this workflow once all four old migration branches are gone.
+name: One-time cleanup of merged Paper 26.3 branches
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  delete-merged-branches:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Delete only the four explicitly approved merged feature branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GH_REPO" = "KhanhLyNek/MyItems"
+          for entry in fix/paper26-3-mvdw-identifier-safety:1 docs/paper26-3-provider-migration:2 feat/paper26-3-mythiclib-alignment:3 feat/paper26-3-deep-audit-alignment:4; do
+            branch="${entry%:*}"
+            number="${entry##*:}"
+            merged="$(gh api "repos/$GH_REPO/pulls/$number" --jq '.merged')"
+            if [ "$merged" != "true" ]; then
+              echo "Refusing to delete $branch: PR #$number is not marked merged" >&2
+              exit 1
+            fi
+            if gh api "repos/$GH_REPO/git/ref/heads/$branch" >/dev/null 2>&1; then
+              gh api -X DELETE "repos/$GH_REPO/git/refs/heads/$branch"
+              echo "Deleted $branch (PR #$number merged)"
+            else
+              echo "Already absent: $branch"
+            fi
+          done

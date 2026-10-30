@@ -142,7 +142,7 @@ public class AbilityWeaponFreeze extends AbilityWeapon implements AbilityWeaponA
                 CustomEffectUtil.setCustomEffect((Entity)victims, milis, PassiveEffectTypeEnum.FREEZE);
             }
             else {
-                CombatUtil.applyPotion(victims, PotionEffectType.SLOW, duration, 100, true, mainConfig.isMiscEnableParticlePotion());
+                CombatUtil.applyPotion(victims, com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("SLOW"), duration, 100, true, mainConfig.isMiscEnableParticlePotion());
             }
             new BukkitRunnable() {
                 public void run() {

@@ -370,17 +370,17 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                 final boolean enableVanillaModifier = mainConfig.isModifierEnableVanillaDamage();
                 damage *= scaleDamageOverall;
                 if (enableVanillaModifier) {
-                    if (attacker.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
+                    if (attacker.hasPotionEffect(com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("INCREASE_DAMAGE"))) {
                         for (final PotionEffect potion : attacker.getActivePotionEffects()) {
-                            if (potion.getType().equals((Object)PotionEffectType.INCREASE_DAMAGE)) {
+                            if (potion.getType().equals((Object)com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("INCREASE_DAMAGE"))) {
                                 damage += damage * potion.getAmplifier() / 10.0;
                                 break;
                             }
                         }
                     }
-                    if (victims.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
+                    if (victims.hasPotionEffect(com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("DAMAGE_RESISTANCE"))) {
                         for (final PotionEffect potion : victims.getActivePotionEffects()) {
-                            if (potion.getType().equals((Object)PotionEffectType.DAMAGE_RESISTANCE)) {
+                            if (potion.getType().equals((Object)com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("DAMAGE_RESISTANCE"))) {
                                 damage -= damage * potion.getAmplifier() / 20.0;
                                 break;
                             }

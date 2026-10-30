@@ -1,0 +1,83 @@
+name: Paper 26.3 MyItems + AgarthaLib CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: paper-26.3-myitems-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout MyItems
+        uses: actions/checkout@v4
+      - name: Checkout AgarthaLib
+        uses: actions/checkout@v4
+        with:
+          repository: KhanhLyNek/AgarthaLib
+          ref: master
+          path: agarthalib
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+      - name: Java and Gradle versions
+        run: |
+          java -version
+          gradle --version
+      - name: Build and install AgarthaLib locally
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle -p agarthalib clean build publishToMavenLocal --continue --no-daemon --console=plain --stacktrace 2>&1 | tee agarthalib-build-26.3.log
+      - name: Build MyItems using matching AgarthaLib
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle clean build --continue --no-daemon --console=plain --stacktrace 2>&1 | tee myitems-build-26.3.log
+      - name: Summarize build errors
+        if: always()
+        shell: bash
+        run: |
+          echo '## Paper 26.3 build diagnostics' >> "$GITHUB_STEP_SUMMARY"
+          for log in agarthalib-build-26.3.log myitems-build-26.3.log; do
+            echo "### $log" >> "$GITHUB_STEP_SUMMARY"
+            if [ -f "$log" ]; then
+              echo '~~~text' >> "$GITHUB_STEP_SUMMARY"
+              grep -E '(\.java:[0-9]+: error:|^Execution failed for task|^BUILD (FAILED|SUCCESSFUL))' "$log" | head -n 120 >> "$GITHUB_STEP_SUMMARY" || true
+              echo '~~~' >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo 'Not run (an earlier step failed).' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+      - name: Upload diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: myitems-and-agarthalib-build-26.3-logs
+          path: |
+            agarthalib-build-26.3.log
+            myitems-build-26.3.log
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload test jars (not a verified release)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: myitems-paper-26.3-test
+          path: |
+            build/libs/*.jar
+            agarthalib/build/libs/*.jar
+          if-no-files-found: error

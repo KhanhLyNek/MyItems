@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout MyItems
         uses: actions/checkout@v4
+      - name: Guard original YAML and gameplay logic
+        run: python3 .github/scripts/check_legacy_logic.py
       - name: Check backward-compatible commands, abilities and YAML values
         run: python3 .github/scripts/check_legacy_contract.py
 

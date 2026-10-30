@@ -49,3 +49,11 @@ The committed `.github/compatibility-baseline.json` freezes all existing entries
 This check currently covers **20 commands, 25 ability configurations, 63 subcommand IDs**, and their original permission children. The existing `Venom_Blast` source ID is checked. It is not a gameplay simulation; a successful check does not prove runtime compatibility.
 
 **Do not deploy to production yet.** The full multi-plugin build still fails due to old NMS references and missing/incompatible integration APIs. Existing custom item raw NBT still needs safe migration using real representative item backups. Never rewrite historical item data just to pass a build.
+
+## Stronger regression gates (2026-10-30)
+
+- Source-integrity baseline protects all **25 original weapon skill Java files** and all **18 YAML resources**, including commands, templates, item generator, socket configuration, messages and default abilities. The CI check fails on any unreviewed modification or deletion; additive changes need an explicit baseline review.
+- The existing semantic compatibility test separately checks 20 top-level commands, their aliases, 63 subcommands, ability settings and permissions. Both checks must pass.
+- The new source-wide scanner covers every Java class in MyItems and the checked-out AgarthaLib dependency, surfacing NMS/CraftBukkit/reflection/integration migration risks in the GitHub Actions summary.
+- The AgarthaLib modern item adapter has executable Java tests for long UTF-8 lists, preview PDC format compatibility and malformed data. Historical raw NBT migration is still NOT implemented.
+- No damage, target selection, cooldown, tick timing, original ability sources or shipped YAML have been changed in this pass. However no Paper 26.3 gameplay runtime verification has passed, so production deployment is unsafe.

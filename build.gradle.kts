@@ -51,3 +51,31 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.release.set(25)
 }
+
+// This verifies the REAL MyItems PAPI and MVdW bridge sources before the full
+// AgarthaLib NMS build succeeds. Its isolated classpath never resolves the
+// unpublished complete AgarthaLib JAR.
+val paper26PlaceholderApi = configurations.create("paper26PlaceholderApi")
+dependencies {
+    add(paper26PlaceholderApi.name, "io.papermc.paper:paper-api:26.3.build.230-stable")
+    add(paper26PlaceholderApi.name, "me.clip:placeholderapi:2.12.3")
+}
+
+tasks.register<JavaCompile>("compilePaper26MyItemsPlaceholderBridges") {
+    description = "Compile real MyItems PAPI 2.12 expansion and shared AgarthaLib MVdW registration"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/builder/placeholder/ReplacerPlaceholderAPIBuild.java")
+        include("src/com/praya/myitems/builder/placeholder/ReplacerMVDWPlaceholderAPIBuild.java")
+        include("ci/paper26-placeholder-bridge-stubs/**/*.java")
+    }
+    classpath = paper26PlaceholderApi + files(
+        "agarthalib/build/paper26-api-check"
+    )
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-myitems-placeholder-api-check"))
+    javaCompiler.set(javaToolchains.compilerFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}

@@ -54,6 +54,11 @@ jobs:
         run: |
           set -o pipefail
           gradle compilePaper26MyItemsPlaceholderBridges --no-daemon --console=plain 2>&1 | tee myitems-placeholder-bridge.log
+      - name: Verify MyItems read-only optional MythicLib bridge
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle compilePaper26MyItemsMythicLib --no-daemon --console=plain 2>&1 | tee myitems-mythiclib-bridge.log
       - name: Build and install AgarthaLib locally
         if: always()
         shell: bash
@@ -89,6 +94,7 @@ jobs:
             source-audit.md
             paper26-item-api-check.log
             myitems-placeholder-bridge.log
+            myitems-mythiclib-bridge.log
           if-no-files-found: ignore
           retention-days: 14
       - name: Upload test jars (not a verified release)

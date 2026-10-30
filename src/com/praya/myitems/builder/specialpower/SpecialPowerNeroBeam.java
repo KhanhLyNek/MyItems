@@ -109,7 +109,7 @@ public class SpecialPowerNeroBeam extends SpecialPower
                 for (final LivingEntity unit : CombatUtil.getNearbyUnits(loc, this.range)) {
                     if (!unit.equals(caster) && !listEntity.contains(unit)) {
                         listEntity.add(unit);
-                        CombatUtil.applyPotion(unit, PotionEffectType.SLOW, duration, 10);
+                        CombatUtil.applyPotion(unit, com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("SLOW"), duration, 10);
                         CombatUtil.skillDamage(caster, unit, skillDamage);
                     }
                 }

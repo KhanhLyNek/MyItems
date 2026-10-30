@@ -55,6 +55,10 @@ dependencies {
 sourceSets {
     main {
         java.setSrcDirs(listOf("src"))
+        // Typed MythicMobs 5 API reader is compiled in an isolated CI task
+        // against the real 5.x API, never linked into the Paper runtime jar.
+        // Production event callbacks use Paper26MythicMobsEventBridge reflection.
+        java.exclude("**/modern/Paper26MythicMobsReader.java")
         // Retire only old typed plugin event listeners, never MyItems abilities.
         // All old source remains in Git for migration analysis.
         java.exclude("**/listener/support/ListenerPlayerLevelUp.java")

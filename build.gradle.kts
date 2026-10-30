@@ -33,6 +33,11 @@ dependencies {
     // Keep these coordinates identical to the corresponding AgarthaLib APIs.
     compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("org.jetbrains:annotations:26.0.2")
+    // Legacy bStats serializes telemetry with org.json.simple. Include this
+    // small runtime dependency inside MyItems, not only on the compile path.
+    implementation("com.googlecode.json-simple:json-simple:1.1.1") {
+        isTransitive = false
+    }
     // API-only: reject VaultAPI's stale Bukkit 1.13 transitive dependency.
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         isTransitive = false
@@ -50,6 +55,17 @@ sourceSets {
         java.setSrcDirs(listOf("src"))
         resources.setSrcDirs(listOf("resources"))
     }
+}
+
+// MyItems is deployed as a Bukkit plugin JAR. Implementation dependencies
+// are not automatically available in the server's plugin classloader.
+tasks.named<Jar>("jar") {
+    from({
+        configurations.runtimeClasspath.get()
+            .filter { it.name.startsWith("json-simple-") }
+            .map { zipTree(it) }
+    })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.withType<JavaCompile>().configureEach {

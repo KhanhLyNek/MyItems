@@ -49,6 +49,11 @@ jobs:
         run: |
           set -o pipefail
           gradle -p agarthalib testPaper26OriginalPlaceholderManager --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
+      - name: Verify MyItems modern placeholder adapters against matching AgarthaLib
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle compilePaper26MyItemsPlaceholderBridges --no-daemon --console=plain 2>&1 | tee myitems-placeholder-bridge.log
       - name: Build and install AgarthaLib locally
         if: always()
         shell: bash
@@ -83,6 +88,7 @@ jobs:
             compiler-report.md
             source-audit.md
             paper26-item-api-check.log
+            myitems-placeholder-bridge.log
           if-no-files-found: ignore
           retention-days: 14
       - name: Upload test jars (not a verified release)

@@ -29,7 +29,8 @@
 ## Remaining hard blockers
 
 - [ ] Complete AgarthaLib's modern NBT/packet bridge and publish a testable dependency jar first.
-- [ ] Add a Java 25 build with Paper 26.3 API plus required and optional third-party plugin APIs.
+- [x] Add Java 25 Gradle scaffold, Paper 26.3 dependency, and AgarthaLib Maven Local dependency (not yet compile-verified).
+- [ ] Finish required/optional dependencies, then obtain a successful full Paper 26.3 compilation.
 - [ ] Audit all remaining direct references to removed/renamed potion, enchantment, attribute, material, inventory and entity APIs.
 - [ ] Preserve legacy item custom NBT through any new PersistentDataContainer/data-component migration.
 - [ ] Verify weapon abilities, projectile damage, armor and elements, sockets, generated items, commands, custom events, buffs/debuffs, inventory menus and optional integrations on Paper 26.3.

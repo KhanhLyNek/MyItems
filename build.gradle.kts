@@ -37,7 +37,12 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         isTransitive = false
     }
-    // EssentialsX 2.22.0 is an optional runtime integration: its real warp\n    // API is resolved by SupportEssentials without linking its unstable JAR.
+    // Official EssentialsX API; plugin is optional at runtime and never shaded.
+    compileOnly("net.essentialsx:EssentialsX:2.22.0") {
+        isTransitive = false
+    }
+    // EssentialsX 2.22.0 is an optional runtime integration: its real warp
+    // API is resolved by SupportEssentials without linking its unstable JAR.
     // Still required: complete safe migration of historic NMS and other hooks.
 }
 

@@ -107,7 +107,7 @@ public class HookConfig extends HandlerConfig
                     for (final String hook : dependencyManager.getDependency(type)) {
                         final String statusYes = lang.getText("Hook_Status_Hooked");
                         final String statusNo = lang.getText("Hook_Status_Not_Hook");
-                        final MessageBuild messageList = lang.getMessage(type.equals((Object)Dependency.HARD_DEPENDENCY) ? "Hook_Hard_Dependency_Header" : "Hook_Soft_Dependency_List");
+                        final MessageBuild messageList = lang.getMessage(type.equals((Object)Dependency.HARD_DEPENDENCY) ? "Hook_Hard_Dependency_List" : "Hook_Soft_Dependency_List");
                         final HashMap<String, String> subMap = new HashMap<String, String>();
                         subMap.put("hook", hook);
                         subMap.put("status", this.isHook(hook) ? statusYes : statusNo);

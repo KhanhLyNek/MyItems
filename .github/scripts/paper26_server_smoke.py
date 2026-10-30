@@ -48,7 +48,8 @@ def download_paper(destination):
             shutil.copyfileobj(response, output)
     expected = entry.get("checksums", {}).get("sha256")
     if expected:
-        actual = hashlib.file_digest(destination.open("rb"), "sha256").hexdigest()
+        with destination.open("rb") as source:
+            actual = hashlib.file_digest(source, "sha256").hexdigest()
         if actual.lower() != expected.lower():
             raise RuntimeError("Paper server download SHA256 mismatch")
     print(f"Verified Paper 26.3 STABLE build {chosen['id']} ({destination.stat().st_size} bytes)", flush=True)
@@ -67,6 +68,8 @@ def run_server(folder):
     (folder / "plugins").mkdir()
     (folder / "eula.txt").write_text("eula=true\n", encoding="utf-8")
     (folder / "server.properties").write_text(
+        # The disposable offline-mode server must NEVER listen publicly.
+        "server-ip=127.0.0.1\n"
         "online-mode=false\n"
         "max-players=1\n"
         "spawn-protection=0\n"
@@ -125,6 +128,11 @@ def run_server(folder):
     for plugin in ("AgarthaLib", "MyItems"):
         if f"[{plugin}] Enabling {plugin}" not in all_logs:
             raise AssertionError(f"Plugin {plugin} did not reach onEnable")
+    if "Starting Minecraft server on 127.0.0.1:" not in all_logs:
+        raise AssertionError("Offline test server did not bind to loopback only")
+    for plugin in ("MyItems", "AgarthaLib"):
+        if f"{plugin} version " not in all_logs:
+            raise AssertionError(f"Paper did not complete the version command for {plugin}")
     if process.returncode != 0:
         raise AssertionError(f"Paper exited with {process.returncode}")
     for line in lines:

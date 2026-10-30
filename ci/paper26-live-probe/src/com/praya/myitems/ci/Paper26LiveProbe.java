@@ -4,6 +4,9 @@ import com.praya.agarthalib.modern.Paper26LegacyItemTags;
 import core.praya.agarthalib.bridge.unity.Bridge;
 import net.kyori.adventure.nbt.*;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.Location;
+import org.bukkit.entity.Zombie;
 import org.bukkit.Bukkit;
 import com.praya.myitems.MyItems;
 import com.praya.myitems.manager.game.AbilityWeaponManager;
@@ -98,6 +101,41 @@ public final class Paper26LiveProbe extends JavaPlugin {
         getLogger().info("PASS: 25/25 weapon ability classes registered, configured and lore-roundtripped");
     }
 
+    /** Execute real cast() implementations on disposable mobs on Paper's
+     * main thread. This proves that mob-vs-mob skill effects cannot fail
+     * solely because the attacker/target is not a CommandSender.
+     */
+    private void verifyMobSkillCasts() {
+        final World world = Bukkit.getWorlds().get(0);
+        final Location origin = world.getSpawnLocation().clone().add(0.5, 2.0, 0.5);
+        final Zombie attacker = world.spawn(origin, Zombie.class);
+        final Zombie victim = world.spawn(origin.clone().add(2.5, 0.0, 0.0), Zombie.class);
+        attacker.setAI(false);
+        victim.setAI(false);
+        attacker.setSilent(true);
+        victim.setSilent(true);
+        attacker.setInvulnerable(true);
+        victim.setInvulnerable(true);
+
+        final RegisterAbilityWeaponManager registered =
+                ((MyItems) Bukkit.getPluginManager().getPlugin("MyItems"))
+                        .getRegisterManager().getRegisterAbilityWeaponManager();
+        for (String id : new String[] {"Freeze", "Roots", "Curse"}) {
+            final AbilityWeapon ability = registered.getAbilityWeapon(id);
+            check(ability != null, "mob cast ability exists: " + id);
+            try {
+                ability.cast(attacker, victim, 1, 3.0);
+            } catch (RuntimeException | LinkageError ex) {
+                throw new AssertionError("Mob cast failed for " + id, ex);
+            }
+        }
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            if (attacker.isValid()) attacker.remove();
+            if (victim.isValid()) victim.remove();
+        }, 100L);
+        getLogger().info("PASS: 3/3 real mob-target skill casts (Freeze, Roots, Curse)");
+    }
+
     @Override
     public void onEnable() {
         try {
@@ -162,6 +200,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
 
             getLogger().info("PASS: live legacy NBT read-only fallback and PDC precedence");
             verifyWeaponAbilities();
+            verifyMobSkillCasts();
         } catch (Throwable error) {
             getLogger().severe("FAIL: live NBT/ability compatibility test: " + error);
             throw new IllegalStateException("Paper26 live NBT probe failed", error);

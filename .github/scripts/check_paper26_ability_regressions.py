@@ -29,4 +29,12 @@ wrong = "PotionUtil.createPotion(potionType, grade, duration)"
 assert correct in venom, "Secondary Venom Spread target has wrong potion argument order"
 assert wrong not in venom, "Wrong duration/grade potion order reintroduced"
 assert "this.getEffectDuration(grade)" in venom, "Effect duration no longer from grade config"
-print("PASS: 25 skill class signatures/registrations, safe unknown lore and Venom Spread duration")
+# These 3 effects also apply to mobs; only send chat to actual players.
+# The original unguarded CommandSender casts threw ClassCastException for mobs.
+for name in ("Freeze", "Roots", "Curse"):
+    body = (skills / ("AbilityWeapon" + name + ".java")).read_text("utf-8")
+    assert "if (attacker instanceof Player playerAttacker)" in body, name
+    assert "if (victims instanceof Player playerVictims)" in body, name
+    assert "messageAttacker.sendMessage((CommandSender)attacker" not in body, name
+    assert "messageVictims.sendMessage((CommandSender)victims" not in body, name
+print("PASS: 25 skill classes, Venom Spread duration and 3 safe mob cast chat paths")

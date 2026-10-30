@@ -37,6 +37,12 @@ def main() -> int:
             reviewed_fixes = {
                 "src/com/praya/myitems/builder/ability/weapon/AbilityWeaponVenomSpread.java":
                     "bd4932b02dc53374879527ace2bdfc4aae5e2541",
+                "src/com/praya/myitems/builder/ability/weapon/AbilityWeaponFreeze.java":
+                    "98b3d1dfe854c7a26b12e54429487a00708d14b2",
+                "src/com/praya/myitems/builder/ability/weapon/AbilityWeaponRoots.java":
+                    "f83eae052cb8fef3a3891b29ff34bd1d13bda0f2",
+                "src/com/praya/myitems/builder/ability/weapon/AbilityWeaponCurse.java":
+                    "736f7e3fdaa9a6ad71ed5068f6b4152843d4043a",
             }
             if reviewed_fixes.get(relative) == actual:
                 continue

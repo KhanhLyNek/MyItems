@@ -129,8 +129,12 @@ public class AbilityWeaponRoots extends AbilityWeapon implements AbilityWeaponAt
             final Collection<Player> players = (Collection<Player>)PlayerUtil.getNearbyPlayers(location, mainConfig.getEffectRange());
             final HashMap<String, String> mapPlaceholder = new HashMap<String, String>();
             mapPlaceholder.put("seconds", String.valueOf(MathUtil.roundNumber(seconds)));
-            messageAttacker.sendMessage((CommandSender)attacker, (HashMap)mapPlaceholder);
-            messageVictims.sendMessage((CommandSender)victims, (HashMap)mapPlaceholder);
+            if (attacker instanceof Player playerAttacker) {
+                messageAttacker.sendMessage((CommandSender)playerAttacker, (HashMap)mapPlaceholder);
+            }
+            if (victims instanceof Player playerVictims) {
+                messageVictims.sendMessage((CommandSender)playerVictims, (HashMap)mapPlaceholder);
+            }
             Bridge.getBridgeParticle().playParticle((Collection)players, ParticleEnum.SPELL, location, 10, 0.25, 0.25, 0.25, 0.10000000149011612);
             Bridge.getBridgeSound().playSound((Collection)players, location, SoundEnum.BLOCK_GLASS_BREAK, 1.0f, 1.0f);
             if (victims instanceof Player) {

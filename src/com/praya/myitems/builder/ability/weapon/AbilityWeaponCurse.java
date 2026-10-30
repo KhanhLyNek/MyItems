@@ -124,8 +124,12 @@ public class AbilityWeaponCurse extends AbilityWeapon implements AbilityWeaponAt
             final Collection<Player> players = (Collection<Player>)PlayerUtil.getNearbyPlayers(location, mainConfig.getEffectRange());
             final HashMap<String, String> mapPlaceholder = new HashMap<String, String>();
             mapPlaceholder.put("seconds", String.valueOf(seconds));
-            messageAttacker.sendMessage((CommandSender)attacker, (HashMap)mapPlaceholder);
-            messageVictims.sendMessage((CommandSender)victims, (HashMap)mapPlaceholder);
+            if (attacker instanceof Player playerAttacker) {
+                messageAttacker.sendMessage((CommandSender)playerAttacker, (HashMap)mapPlaceholder);
+            }
+            if (victims instanceof Player playerVictims) {
+                messageVictims.sendMessage((CommandSender)playerVictims, (HashMap)mapPlaceholder);
+            }
             CustomEffectUtil.setCustomEffect((Entity)victims, MathUtil.convertTickToMilis(duration), PassiveEffectTypeEnum.CURSE);
             Bridge.getBridgeParticle().playParticle((Collection)players, ParticleEnum.SPELL_WITCH, location, 25, 0.5, 0.25, 0.5, 0.10000000149011612);
             Bridge.getBridgeSound().playSound((Collection)players, location, SoundEnum.ENTITY_ELDER_GUARDIAN_CURSE, 1.0f, 1.0f);

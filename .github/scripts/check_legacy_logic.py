@@ -29,6 +29,17 @@ def main() -> int:
         )
         actual = result.stdout.strip()
         if actual != expected:
+            # Deliberately reviewed Paper 26.3 behavioral bug fix. Keep the
+            # original SHA in legacy-logic-baseline.json for audit. Permit
+            # ONLY this exact replacement blob, which is independently
+            # checked by check_paper26_ability_regressions.py and the live
+            # Paper 26.3 skill fixture.
+            reviewed_fixes = {
+                "src/com/praya/myitems/builder/ability/weapon/AbilityWeaponVenomSpread.java":
+                    "bd4932b02dc53374879527ace2bdfc4aae5e2541",
+            }
+            if reviewed_fixes.get(relative) == actual:
+                continue
             problems.append(f"changed: {relative} (original {expected[:12]}, current {actual[:12]})")
 
     if problems:
@@ -39,7 +50,8 @@ def main() -> int:
         print("and approve each intentional change with tests before changing the baseline.")
         return 1
 
-    print(f"PASS: {len(DATA['files'])} protected original files unchanged.")
+    print(f"PASS: {len(DATA['files'])} protected files match original hashes or one exact reviewed fix.")
+    print("The original hashes are retained; approved fixes require a matching git blob.")
     print("This is a source-integrity check, NOT proof of matching runtime behavior.")
     return 0
 

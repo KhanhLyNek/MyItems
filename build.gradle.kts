@@ -206,3 +206,34 @@ tasks.register<JavaCompile>("compilePaper26MythicMobsReader") {
     options.encoding = "UTF-8"
     options.release.set(25)
 }
+
+
+// Test the production reflection implementation on non-public MythicMobs-like
+// implementation classes. Neither those fakes nor MythicMobs are bundled.
+tasks.register<JavaCompile>("compilePaper26MythicEventAccessSelfTest") {
+    description = "Compile cached public Mythic event ABI accessor and regression cases"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/modern/Paper26MythicEventAccess.java")
+        include("ci/paper26-mythic-event-test/**/*.java")
+    }
+    classpath = files()
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-mythic-event-tests"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+
+tasks.register<JavaExec>("testPaper26MythicEventAccess") {
+    description = "Test event API cache, inaccessible implementation classes, and YAML list snapshots"
+    group = "verification"
+    dependsOn("compilePaper26MythicEventAccessSelfTest")
+    classpath = files(layout.buildDirectory.dir("paper26-mythic-event-tests"))
+    mainClass.set("com.praya.myitems.modern.Paper26MythicEventAccessSelfTest")
+    javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+}
+
+// The existing MythicMobs check in the GitHub workflow runs this automatically.
+tasks.named("compilePaper26MythicMobsReader") {
+    dependsOn("testPaper26MythicEventAccess")
+}

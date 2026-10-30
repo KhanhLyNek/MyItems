@@ -10,9 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.event.HandlerList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -33,6 +32,7 @@ public final class Paper26MythicMobsEventBridge {
         if (plugin == null || !plugin.isEnabled() || provider == null || !provider.isEnabled())
             return false;
 
+        final Listener listener = new Listener() {};
         try {
             final ClassLoader loader = provider.getClass().getClassLoader();
             final Class<? extends Event> spawn = (Class<? extends Event>) Class
@@ -42,21 +42,27 @@ public final class Paper26MythicMobsEventBridge {
                     .forName("io.lumine.mythic.bukkit.events.MythicMobDeathEvent", false, loader)
                     .asSubclass(Event.class);
 
-            verifyPublicContract(spawn);
-            verifyPublicContract(death);
+            final Paper26MythicEventAccess spawnAccess =
+                    new Paper26MythicEventAccess(spawn);
+            final Paper26MythicEventAccess deathAccess =
+                    new Paper26MythicEventAccess(death);
+            if (!Entity.class.isAssignableFrom(spawnAccess.entityType())
+                    || !Entity.class.isAssignableFrom(deathAccess.entityType())) {
+                plugin.getLogger().warning("MythicMobs event getEntity() is not a Bukkit Entity");
+                return false;
+            }
             final Paper26MythicEquipmentHandler equipment =
                     new Paper26MythicEquipmentHandler(plugin);
             final Paper26MythicDropHandler drops =
                     new Paper26MythicDropHandler(plugin);
-            final Listener listener = new Listener() {};
             final AtomicBoolean warnedSpawn = new AtomicBoolean();
             final AtomicBoolean warnedDeath = new AtomicBoolean();
 
             final EventExecutor onSpawn = (ignored, event) -> {
                 try {
-                    final Entity entity = (Entity) event.getClass().getMethod("getEntity").invoke(event);
+                    final Entity entity = (Entity) spawnAccess.entity(event);
                     if (entity != null) {
-                        final List<String> lines = configLines(event, "Equipment");
+                        final List<String> lines = spawnAccess.configLines(event, "Equipment");
                         equipment.equipFromConfig(entity, lines);
                     }
                 } catch (ReflectiveOperationException | LinkageError | ClassCastException ex) {
@@ -65,10 +71,10 @@ public final class Paper26MythicMobsEventBridge {
             };
             final EventExecutor onDeath = (ignored, event) -> {
                 try {
-                    final Entity entity = (Entity) event.getClass().getMethod("getEntity").invoke(event);
+                    final Entity entity = (Entity) deathAccess.entity(event);
                     if (entity != null) {
                         final Location location = entity.getLocation();
-                        final List<String> lines = configLines(event, "Drops");
+                        final List<String> lines = deathAccess.configLines(event, "Drops");
                         drops.dropFromConfig(lines, location);
                     }
                 } catch (ReflectiveOperationException | LinkageError | ClassCastException ex) {
@@ -81,37 +87,13 @@ public final class Paper26MythicMobsEventBridge {
                     onDeath, plugin, true);
             plugin.getLogger().info("MythicMobs 5 config-backed MyItems custom equipment/drops enabled");
             return true;
-        } catch (ReflectiveOperationException | LinkageError | IllegalArgumentException ex) {
+        } catch (ReflectiveOperationException | LinkageError | RuntimeException ex) {
+            // A failure registering the second event must not leave the first
+            // event active with only half of the custom-item integration.
+            HandlerList.unregisterAll(listener);
             plugin.getLogger().warning("Cannot activate modern MythicMobs events: " + ex);
             return false;
         }
-    }
-
-    /** Read the public API return types rather than inaccessible implementation classes. */
-    private static List<String> configLines(final Event event, final String key)
-            throws ReflectiveOperationException {
-        if (event == null || key == null || key.isBlank()) return List.of();
-        final var getMob = event.getClass().getMethod("getMobType");
-        final Object mob = getMob.invoke(event);
-        if (mob == null) return List.of();
-        final var getConfig = getMob.getReturnType().getMethod("getConfig");
-        final Object cfg = getConfig.invoke(mob);
-        if (cfg == null) return List.of();
-        final var getLines = getConfig.getReturnType().getMethod("getStringList", String.class);
-        final Object result = getLines.invoke(cfg, key);
-        if (!(result instanceof List<?> list)) return List.of();
-        final List<String> lines = new ArrayList<>();
-        for (final Object line : list) if (line instanceof String text) lines.add(text);
-        return lines;
-    }
-
-    /** Fail before registering either event if this MythicMobs build has a different ABI. */
-    private static void verifyPublicContract(final Class<? extends Event> event)
-            throws ReflectiveOperationException {
-        event.getMethod("getEntity");
-        final var getMob = event.getMethod("getMobType");
-        final var getConfig = getMob.getReturnType().getMethod("getConfig");
-        getConfig.getReturnType().getMethod("getStringList", String.class);
     }
 
     private static void warnOnce(final MyItems plugin, final String action,

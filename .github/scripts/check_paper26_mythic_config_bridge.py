@@ -40,12 +40,16 @@ assert original.strip() == new_fn.strip(), "Original equipment chance/generator 
 bridge = (modern / "Paper26MythicMobsEventBridge.java").read_text("utf-8")
 assert "io.lumine.mythic.bukkit.events.MythicMobSpawnEvent" in bridge
 assert "io.lumine.mythic.bukkit.events.MythicMobDeathEvent" in bridge
-assert 'configLines(event, "Drops")' in bridge
-assert 'configLines(event, "Equipment")' in bridge
+assert 'deathAccess.configLines(event, "Drops")' in bridge
+assert 'spawnAccess.configLines(event, "Equipment")' in bridge
 assert "registerEvent" in bridge
-assert "verifyPublicContract(spawn)" in bridge and "verifyPublicContract(death)" in bridge
-assert 'getMob.getReturnType().getMethod("getConfig")' in bridge
-assert 'getConfig.getReturnType().getMethod("getStringList", String.class)' in bridge
+assert "new Paper26MythicEventAccess(spawn)" in bridge
+assert "new Paper26MythicEventAccess(death)" in bridge
+assert "HandlerList.unregisterAll(listener)" in bridge
+assert 'getMob.getReturnType().getMethod("getConfig")' in (
+    modern / "Paper26MythicEventAccess.java").read_text("utf-8")
+assert 'getConfig.getReturnType().getMethod("getStringList", String.class)' in (
+    modern / "Paper26MythicEventAccess.java").read_text("utf-8")
 assert "getDropTable()" not in bridge, "Named tables require a separate audited API"
 
 boot = (root / "src/com/praya/myitems/MyItems.java").read_text("utf-8")
@@ -53,3 +57,10 @@ assert "Paper26MythicMobsEventBridge.register(this)" in boot
 assert "new ListenerMythicMobDeath" not in boot
 assert "new ListenerMythicMobSpawn" not in boot
 print("PASS: exact old custom drop/equipment grammar retained; new MythicMobs 5 optional events registered")
+
+# Dependency-disabled MyItems must not continue registering gameplay callbacks.
+boot_body = boot.split("public void onEnable()", 1)[1].split(
+    "private final void setPluginManager()", 1)[0]
+assert boot_body.count("if (!isEnabled()) return;") >= 2
+assert boot_body.index("getHookConfig().setup()") < boot_body.rindex(
+    "if (!isEnabled()) return;") < boot_body.index("this.setup()")

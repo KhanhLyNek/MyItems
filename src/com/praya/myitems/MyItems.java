@@ -142,12 +142,16 @@ public class MyItems extends JavaPlugin implements Agartha
     
     public void onEnable() {
         this.setPluginManager();
+        if (!isEnabled()) return; // An initialization callback may disable the plugin.
         this.setPlayerManager();
         this.setGameManager();
         this.setTaskManager();
         this.setRegisterManager();
         this.getPluginManager().getDependencyManager().getDependencyConfig().setup();
         this.getPluginManager().getHookManager().getHookConfig().setup();
+        // A missing hard dependency disables the plugin in HookConfig.
+        // Do not create gameplay state, commands or event listeners afterward.
+        if (!isEnabled()) return;
         this.setup();
         this.registerCommand();
         this.registerTabComplete();

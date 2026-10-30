@@ -20,6 +20,7 @@ with ZipFile(candidates[0]) as z:
         "com/praya/myitems/modern/Paper26MyItemsModernProviders.class",
         "com/praya/myitems/modern/Paper26MyItemsMythicLibAdapter.class",
         "com/praya/myitems/modern/Paper26MythicMobsEventBridge.class",
+        "com/praya/myitems/modern/Paper26MythicEventAccess.class",
         "org/json/simple/JSONObject.class",
     )
     for name in required:

@@ -120,6 +120,53 @@ Runtime prerequisites must be validated individually. EssentialsX 2.22.0 is the 
 
 **CI correction:** Do not add `net.essentialsx:EssentialsX:2.22.0` to the mandatory compile classpath until the artifact actually resolves in GitHub Actions. EssentialsX continues as an optional installed server plugin, and existing warp-forwarding tests remain in CI.
 
+## 2026-10-30: MyItems optional MythicLib integration with AgarthaLib
+
+Added an optional `MythicLib` soft-dependency and
+`Paper26MyItemsMythicLibAdapter`, a read-only stat accessor delegating to the
+matching AgarthaLib `Paper26MythicLibStats` contract. No gameplay formulas,
+item metadata, stat modifier writes, enchantments, damage events, permissions,
+commands or original ability YAML were changed. Missing MythicLib returns
+null and does not fabricate a zero stat value.
+
+The PR CI checks out the related AgarthaLib feature branch for **this PR only**,
+verifies the actual cross-repo ABI, and separately compiles the MyItems adapter
+with Java 25/Paper API 26.3 using CI-only signatures. Other branches continue
+checking out AgarthaLib master. The original plugin.yml integrity baseline was
+updated only for this reviewed additive soft-dependency.
+
+No live-server run or full MyItems JAR success is claimed. Full builds still
+require removal/migration of the remaining AgarthaLib NMS and optional API
+compile errors. The new adapter is not silently substituted into skill
+damage calculations.
+
+Related AgarthaLib stacked PR: see its `feat/paper26-3-mythiclib-no-factions-bridges` branch.
+
+## 2026-10-30: scoped source-debt audit, safe optional provider APIs
+
+This branch stacks on the read-only MythicLib integration and pairs in CI
+with AgarthaLib `feat/paper26-3-deep-audit-providers-item-safety`.
+`Paper26MyItemsModernProviders` forwards *explicitly invoked* modern
+provider requests to `Paper26OptionalProviders`: AuraSkills skill levels,
+MMOCore level/class ID, Lands claimed-area presence, and DecentHolograms
+temporary holograms. They must not be silently used as equivalents of Jobs
+salary, Heroes health scaling, Factions permissions, or persistent holograms.
+Missing provider values are null rather than false or numeric zero.
+
+MyItems original 25 gameplay ability classes, 18 YAML files, 20 commands,
+item ID and damage formulas remain untouched. No data migration is automatically
+run against any live inventory. Original legacy NBT custom item tags and
+hover-item SNBT rendering remain unverified, even though AgarthaLib exposes
+native ItemStack backup and modern show_item helpers.
+
+AgarthaLib's reproducible audit covers exactly 96 narrowly defined *file/feature*
+work items: 82 versioned packet source files (62 still reference NMS
+directly), 8 Jobs/Heroes/HolographicDisplays API import files, 2 legacy
+item formats, and 4 new optional provider adapters. Four new adapters
+have been coded with isolated tests, NOT proven on a real Paper server; the
+remaining legacy packet inventory and old-data gaps must be addressed before
+release. This inventory does not claim to count every bug outside that scope.
+
 ## 2026-10-30: MVdW wildcard callback safety (proposed)
 
 The `myitems_*` MVdW integration uses a literal, case-insensitive prefix
@@ -133,3 +180,39 @@ A dependency-free Java regression test runs before the existing isolated
 MyItems bridge compilation in GitHub Actions. This does not certify the
 full MyItems or AgarthaLib JAR: the original legacy NMS and optional-plugin
 classpath errors remain unresolved.
+
+
+
+## 2026-10-30: modern optional providers and combat target migration (proposed)
+
+**Paper 26.3 build remains blocked by the uncompiled full AgarthaLib dependency.**
+The new AgarthaLib LivingEntityTools adapter implements the existing method
+signatures using Paper's entity class metadata, preserving the old exception
+for ARMOR_STAND targets. On Paper 26.3, text/item holograms and projectile
+entities remain ineligible for living-entity skill targeting. Its isolated
+test covers modern entity types and their legacy exclusions. Verify actual
+targeting, friendly fire, and combat damage on a test server before release.
+
+### Optional provider policy (no automatic migration)
+
+| Existing optional integration | Candidate modern providers | Compatibility boundary |
+| --- | --- | --- |
+| Jobs Reborn | EcoJobs / AuraSkills | Salary, skill experience and levels are different; do not rewrite player XP/economy balances |
+| Heroes | MMOCore + MythicLib | Hero class, class-level stats and max-health scaling need an explicit mapping |
+| FactionsUUID / Massive | Lands / KingdomsX | Membership, ownership and claim protections are not interchangeable |
+| HolographicDisplays | DecentHolograms (preferred) / FancyHolograms | Legacy Hologram objects, line indexes and timestamps need separate adapters |
+
+Do not rename existing MyItems command aliases, permissions, skill IDs, classes,
+YAML config keys or original item custom tags in order to switch providers.
+The existing MyItems soft dependencies and AgarthaLib public class signatures
+remain unchanged in this PR. None of these new third-party integrations is
+implemented by merely listing a candidate plugin.
+
+**Order for future implementation:**
+1. Finish and verify the dependency's Paper 26.3 entity/inventory/particle NMS bridges.
+2. Add optional provider-specific integration classes and guards, without bundling third-party plugins.
+3. Add read-only migration reports for old professions/classes/factions/holograms using backups.
+4. Enable conversions only after explicit validation on a cloned server.
+5. Complete joint AgarthaLib + MyItems build, player data round-trip and gameplay smoke tests.
+
+Related work: https://github.com/KhanhLyNek/AgarthaLib/pulls

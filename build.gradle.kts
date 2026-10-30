@@ -87,6 +87,39 @@ tasks.register<JavaCompile>("compilePaper26MyItemsPlaceholderBridges") {
     options.release.set(25)
 }
 
+// Compile the actual read-only MyItems-to-AgarthaLib MythicLib boundary,
+// using only the CI-scope ABI signature until the whole library JAR builds.
+tasks.register<JavaCompile>("compilePaper26MyItemsMythicLib") {
+    description = "Verify optional MythicLib provider boundary without bundling MythicLib"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/modern/Paper26MyItemsMythicLibAdapter.java")
+        include("ci/paper26-mythiclib-stubs/**/*.java")
+    }
+    classpath = paper26PlaceholderApi
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-myitems-mythiclib-api-check"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+
+
+// Compile MyItems' actual new optional provider bridge independently from
+// AgarthaLib's still-blocked full NMS build. CI ABI stubs are never shipped.
+tasks.register<JavaCompile>("compilePaper26MyItemsModernProviders") {
+    description = "Compile AuraSkills/MMOCore/Lands/DecentHolograms optional MyItems seam"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/modern/Paper26MyItemsModernProviders.java")
+        include("ci/paper26-modern-provider-stubs/**/*.java")
+    }
+    classpath = paper26PlaceholderApi
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-myitems-modern-providers-api-check"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+
 // Dependency-free regression checks for the actual MVdW suffix parser.
 tasks.register<JavaCompile>("compilePaper26LegacyPlaceholderIdSelfTest") {
     description = "Compile pure Java MyItems legacy placeholder ID regression tests"

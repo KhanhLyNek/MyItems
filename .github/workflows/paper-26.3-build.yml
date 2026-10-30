@@ -64,6 +64,12 @@ jobs:
         run: |
           python3 agarthalib/.github/scripts/compile_report.py agarthalib-build-26.3.log myitems-build-26.3.log > compiler-report.md
           cat compiler-report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Scan all Java source files in both repositories
+        if: always()
+        run: |
+          python3 .github/scripts/audit_source_api.py > source-audit.md
+          python3 agarthalib/.github/scripts/audit_source_api.py >> source-audit.md
+          cat source-audit.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload diagnostic logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -73,6 +79,7 @@ jobs:
             agarthalib-build-26.3.log
             myitems-build-26.3.log
             compiler-report.md
+            source-audit.md
             paper26-item-api-check.log
           if-no-files-found: ignore
           retention-days: 14

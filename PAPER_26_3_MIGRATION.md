@@ -119,3 +119,38 @@ See https://modrinth.com/plugin/placeholderapi , https://wiki.placeholderapi.com
 Runtime prerequisites must be validated individually. EssentialsX 2.22.0 is the latest published *compile API* used here but its release page does not itself prove Paper 26.3 runtime support; do not deploy incompatible plugin binaries. VaultAPI 1.7 requires a service implementation and an economy plugin. Java checks for optional provider fallbacks and original PAPI registration are isolated and do not imply the historic raw item NBT or skill gameplay has been verified.
 
 **CI correction:** Do not add `net.essentialsx:EssentialsX:2.22.0` to the mandatory compile classpath until the artifact actually resolves in GitHub Actions. EssentialsX continues as an optional installed server plugin, and existing warp-forwarding tests remain in CI.
+
+
+## 2026-10-30: modern optional providers and combat target migration (proposed)
+
+**Paper 26.3 build remains blocked by the uncompiled full AgarthaLib dependency.**
+The new AgarthaLib LivingEntityTools adapter implements the existing method
+signatures using Paper's entity class metadata, preserving the old exception
+for ARMOR_STAND targets. On Paper 26.3, text/item holograms and projectile
+entities remain ineligible for living-entity skill targeting. Its isolated
+test covers modern entity types and their legacy exclusions. Verify actual
+targeting, friendly fire, and combat damage on a test server before release.
+
+### Optional provider policy (no automatic migration)
+
+| Existing optional integration | Candidate modern providers | Compatibility boundary |
+| --- | --- | --- |
+| Jobs Reborn | EcoJobs / AuraSkills | Salary, skill experience and levels are different; do not rewrite player XP/economy balances |
+| Heroes | MMOCore + MythicLib | Hero class, class-level stats and max-health scaling need an explicit mapping |
+| FactionsUUID / Massive | Lands / KingdomsX | Membership, ownership and claim protections are not interchangeable |
+| HolographicDisplays | DecentHolograms (preferred) / FancyHolograms | Legacy Hologram objects, line indexes and timestamps need separate adapters |
+
+Do not rename existing MyItems command aliases, permissions, skill IDs, classes,
+YAML config keys or original item custom tags in order to switch providers.
+The existing MyItems soft dependencies and AgarthaLib public class signatures
+remain unchanged in this PR. None of these new third-party integrations is
+implemented by merely listing a candidate plugin.
+
+**Order for future implementation:**
+1. Finish and verify the dependency's Paper 26.3 entity/inventory/particle NMS bridges.
+2. Add optional provider-specific integration classes and guards, without bundling third-party plugins.
+3. Add read-only migration reports for old professions/classes/factions/holograms using backups.
+4. Enable conversions only after explicit validation on a cloned server.
+5. Complete joint AgarthaLib + MyItems build, player data round-trip and gameplay smoke tests.
+
+Related work: https://github.com/KhanhLyNek/AgarthaLib/pulls

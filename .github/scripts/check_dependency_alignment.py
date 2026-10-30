@@ -54,6 +54,34 @@ if lib_version is None or linked_version != lib_version.group(1):
         f"{lib_version.group(1) if lib_version else '<missing>'}"
     )
 
+# AgarthaLib's original JsonUtil.generateJsonItem() is used by MyItems
+# messages. Check the complete modern hover-data handoff, not merely that
+# the server-side source compiles while packetGetJsonItem returns null.
+lib_root = root / "agarthalib"
+message_packet = (lib_root / "src/com/praya/agarthalib/packet/message/PacketMessage_Paper26_3.java").read_text("utf-8")
+json_builder = (lib_root / "src/core/praya/agarthalib/builder/message/JsonBuild.java").read_text("utf-8")
+hover_payload = (lib_root / "src/com/praya/agarthalib/modern/Paper26HoverItemPayload.java").read_text("utf-8")
+if not re.search(
+    r'packetGetJsonItem\s*\([^)]*\)\s*\{[^}]*return\s+Paper26HoverItemPayload\.encode\(',
+    message_packet, re.S,
+):
+    errors.append("AgarthaLib: legacy item hover entry point is not connected to modern payload")
+if 'mapHover.put("contents", contents)' not in json_builder:
+    errors.append("AgarthaLib: legacy JSON builder does not emit show_item.contents")
+if 'Paper26HoverItemPayload.contents(value)' not in json_builder:
+    errors.append("AgarthaLib: show_item marker is not validated before attaching to message")
+if "getStringList" in hover_payload:
+    errors.append("AgarthaLib: item hover must not depend on legacy item NBT lists")
+if not re.search(
+    r'implementation\("com\.googlecode\.json-simple:json-simple:1\.1\.1"\)',
+    agartha,
+):
+    errors.append("AgarthaLib: JSON-simple missing from runtime dependency graph")
+if 'it.name.startsWith("json-simple-")' not in agartha:
+    errors.append("AgarthaLib: standalone plugin jar does not package the JSON parser")
+if '"testPaper26HoverPipeline"' not in agartha:
+    errors.append("AgarthaLib: missing actual legacy JSON DSL regression task")
+
 if errors:
     print("FAIL: Paper 26.3 integration dependency drift:")
     for error in errors:
@@ -64,3 +92,4 @@ for name, value in required.items():
     print(f"PASS: both repos compile against {name}:{value}")
 print(f"PASS: MyItems consumes AgarthaLib {linked_version}")
 print("PASS: VaultAPI's obsolete Bukkit 1.13 transitives are blocked")
+print("PASS: MyItems legacy item hover reaches validated Paper show_item.contents with packaged JSON runtime")

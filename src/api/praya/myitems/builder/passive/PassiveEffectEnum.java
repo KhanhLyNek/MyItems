@@ -153,19 +153,19 @@ public enum PassiveEffectEnum
                 return PotionEffectType.FIRE_RESISTANCE;
             }
             case HASTE: {
-                return PotionEffectType.FAST_DIGGING;
+                return PotionEffectType.HASTE;
             }
             case INVISIBILITY: {
                 return PotionEffectType.INVISIBILITY;
             }
             case JUMP: {
-                return PotionEffectType.JUMP;
+                return PotionEffectType.JUMP_BOOST;
             }
             case LUCK: {
                 return PotionEffectType.LUCK;
             }
             case PROTECTION: {
-                return PotionEffectType.DAMAGE_RESISTANCE;
+                return PotionEffectType.RESISTANCE;
             }
             case HEALTH_BOOST: {
                 return PotionEffectType.HEALTH_BOOST;
@@ -180,7 +180,7 @@ public enum PassiveEffectEnum
                 return PotionEffectType.SPEED;
             }
             case STRENGTH: {
-                return PotionEffectType.INCREASE_DAMAGE;
+                return PotionEffectType.STRENGTH;
             }
             case VISION: {
                 return PotionEffectType.NIGHT_VISION;
@@ -192,13 +192,13 @@ public enum PassiveEffectEnum
                 return PotionEffectType.BLINDNESS;
             }
             case CONFUSE: {
-                return PotionEffectType.CONFUSION;
+                return PotionEffectType.NAUSEA;
             }
             case FATIGUE: {
-                return PotionEffectType.SLOW_DIGGING;
+                return PotionEffectType.MINING_FATIGUE;
             }
             case SLOW: {
-                return PotionEffectType.SLOW;
+                return PotionEffectType.SLOWNESS;
             }
             case STARVE: {
                 return PotionEffectType.HUNGER;

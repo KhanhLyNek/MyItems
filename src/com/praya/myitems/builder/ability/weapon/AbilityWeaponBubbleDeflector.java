@@ -143,7 +143,7 @@ public class AbilityWeaponBubbleDeflector extends AbilityWeapon implements Abili
             final int duration = this.getEffectDuration(grade);
             final double range = 1.5;
             final double bubbleDamage = this.getCastBonusDamage(grade) + damage * (this.getCastPercentDamage(grade) / 100.0);
-            final PotionEffect potionEffect = PotionUtil.createPotion(PotionEffectType.SLOW, duration, 4);
+            final PotionEffect potionEffect = PotionUtil.createPotion(com.praya.agarthalib.utility.PotionUtil.getPotionEffectType("SLOW"), duration, 4);
             final Set<LivingEntity> units = new HashSet<LivingEntity>();
             final Collection<Player> players = (Collection<Player>)PlayerUtil.getNearbyPlayers(location, mainConfig.getEffectRange());
             victims.addPotionEffect(potionEffect);

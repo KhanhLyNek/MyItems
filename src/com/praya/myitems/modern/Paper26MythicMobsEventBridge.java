@@ -42,6 +42,8 @@ public final class Paper26MythicMobsEventBridge {
                     .forName("io.lumine.mythic.bukkit.events.MythicMobDeathEvent", false, loader)
                     .asSubclass(Event.class);
 
+            verifyPublicContract(spawn);
+            verifyPublicContract(death);
             final Paper26MythicEquipmentHandler equipment =
                     new Paper26MythicEquipmentHandler(plugin);
             final Paper26MythicDropHandler drops =
@@ -85,20 +87,31 @@ public final class Paper26MythicMobsEventBridge {
         }
     }
 
-    /** Read only the raw user-configured strings; no reflection-based mutation. */
+    /** Read the public API return types rather than inaccessible implementation classes. */
     private static List<String> configLines(final Event event, final String key)
             throws ReflectiveOperationException {
-        final Object mob = event.getClass().getMethod("getMobType").invoke(event);
+        if (event == null || key == null || key.isBlank()) return List.of();
+        final var getMob = event.getClass().getMethod("getMobType");
+        final Object mob = getMob.invoke(event);
         if (mob == null) return List.of();
-        final Object cfg = mob.getClass().getMethod("getConfig").invoke(mob);
+        final var getConfig = getMob.getReturnType().getMethod("getConfig");
+        final Object cfg = getConfig.invoke(mob);
         if (cfg == null) return List.of();
-        final Object result = cfg.getClass().getMethod("getStringList", String.class).invoke(cfg, key);
+        final var getLines = getConfig.getReturnType().getMethod("getStringList", String.class);
+        final Object result = getLines.invoke(cfg, key);
         if (!(result instanceof List<?> list)) return List.of();
         final List<String> lines = new ArrayList<>();
-        for (final Object line : list) {
-            if (line instanceof String text) lines.add(text);
-        }
+        for (final Object line : list) if (line instanceof String text) lines.add(text);
         return lines;
+    }
+
+    /** Fail before registering either event if this MythicMobs build has a different ABI. */
+    private static void verifyPublicContract(final Class<? extends Event> event)
+            throws ReflectiveOperationException {
+        event.getMethod("getEntity");
+        final var getMob = event.getMethod("getMobType");
+        final var getConfig = getMob.getReturnType().getMethod("getConfig");
+        getConfig.getReturnType().getMethod("getStringList", String.class);
     }
 
     private static void warnOnce(final MyItems plugin, final String action,

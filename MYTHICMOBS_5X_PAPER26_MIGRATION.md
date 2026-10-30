@@ -1,6 +1,6 @@
 # MythicMobs 5.x ↔ MyItems Paper 26.3 compatibility
 
-Status: **read-only API seam in isolated compilation; not enabled for gameplay**.
+Status: **MythicMobs 5 spawn/death reflection listeners are enabled when MythicMobs is installed, but are not yet verified in a live Paper 26.3 gameplay test.** The typed API reader is isolated to CI.
 
 ## Verified public contracts
 
@@ -17,7 +17,7 @@ Status: **read-only API seam in isolated compilation; not enabled for gameplay**
 3. Run server tests with the precise MythicMobs artifact **supporting** the target Paper release, including spawn cancellation, death location, inventory slots and chunk unload/respawn.
 4. Remove the old listener exclusions and register only the verified modern listener, preserving legacy YAML/ability logic and versioned optional-plugin detection.
 
-The original listeners are retained in Git for behavior comparison; none are re-enabled in this change.
+The original MythicMobs 4 listener sources remain archived and excluded from the runtime JAR. The modern optional reflection listener invokes separate handlers with the original custom item/generator/equipment formulas. The provider's API is checked before either listener is registered; nested/named Mythic drop tables remain MythicMobs-owned and must be tested in an actual server before production.
 
 References:
 - https://wiki.mythiccraft.io/mythicmobs/API

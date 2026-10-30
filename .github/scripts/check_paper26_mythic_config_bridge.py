@@ -43,6 +43,9 @@ assert "io.lumine.mythic.bukkit.events.MythicMobDeathEvent" in bridge
 assert 'configLines(event, "Drops")' in bridge
 assert 'configLines(event, "Equipment")' in bridge
 assert "registerEvent" in bridge
+assert "verifyPublicContract(spawn)" in bridge and "verifyPublicContract(death)" in bridge
+assert 'getMob.getReturnType().getMethod("getConfig")' in bridge
+assert 'getConfig.getReturnType().getMethod("getStringList", String.class)' in bridge
 assert "getDropTable()" not in bridge, "Named tables require a separate audited API"
 
 boot = (root / "src/com/praya/myitems/MyItems.java").read_text("utf-8")

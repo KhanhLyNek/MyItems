@@ -73,3 +73,11 @@ Before enabling these paths for players, smoke-test absorption hearts and maximu
 The AgarthaLib block-animation bridge is now backed by `Player.sendBlockDamage` rather than a versioned NMS packet. The original `BridgeBlock.blockBreakAnimation` overloads, source ID and coordinates remain in place. Java 25 CI covers the existing interface and numeric stage mapping.
 
 There are no edits to any MyItems ability Java source or existing YAML. Runtime crack overlay progression, clearing, viewer visibility and skill timing still require server tests. Do not treat these isolated checks as full gameplay validation.
+
+## Paper 26.3 potion name/ID regression tests and optional placeholder integration
+
+AgarthaLib now checks the real `PotionUtil` and `PotionTypeEnum` against Paper 26.3 and executes Java-based tests for the historical 1–32 potion effect IDs plus old effect aliases. The underlying ability class implementations and shipped YAML are unchanged. The existing formula `PotionEffect(potion, duration, grade - 1, ambient, particles)` has not been modified.
+
+The optional MVdW placeholder hook no longer needs the legacy external API JAR to compile. It retains `setPlaceholders(OfflinePlayer, String)` and original MVdW placeholder syntax; it loads the actual plugin method only when available. The modern PlaceholderAPI hook remains separately supported.
+
+Passing the isolated checks is not a full server-play test. Validate effect duration, amplifiers, zombie/undead poison behavior, PvP targeting and placeholders with actual game fixtures before release; full AgarthaLib/MyItems compilation still fails due to other NMS and external dependencies.

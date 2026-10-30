@@ -42,11 +42,11 @@ jobs:
         run: |
           java -version
           gradle --version
-      - name: Verify AgarthaLib modern PDC and item adapter
+      - name: Verify AgarthaLib modern item and player bridges
         shell: bash
         run: |
           set -o pipefail
-          gradle -p agarthalib compilePaper26ItemBridge --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
+          gradle -p agarthalib compilePaper26PlayerBridge --no-daemon --console=plain 2>&1 | tee paper26-item-api-check.log
       - name: Build and install AgarthaLib locally
         if: always()
         shell: bash

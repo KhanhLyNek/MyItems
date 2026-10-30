@@ -11,6 +11,10 @@ softdepend:
 - MVdWPlaceholderAPI
 - MythicMobs
 - MythicLib
+- AuraSkills
+- MMOCore
+- Lands
+- DecentHolograms
 
 commands:
   myitems:

@@ -109,3 +109,11 @@ Towny 0.103.2.0 is a compile dependency, **not** verified runtime support for Pa
 - PlaceholderAPI's eCloud Player expansion is separate. For testing `%player_name%`, install it with `/papi ecloud download Player`, then `/papi reload`. Test custom `%myitems_...%` values for the exact existing identifiers from your configs; **do not invent renamed abilities**.
 
 **Do not publish/deploy:** Existing 25 original ability classes and all 18 YAML resources remain protected and unchanged, but full AgarthaLib/MyItems compilation, historic NBT item compatibility and real Paper 26.3 combat/skill smoke tests still need to pass. User-stored items and economy accounts must never be rewritten just to make CI green.
+
+## 2026-10-30 shared integrations with AgarthaLib
+
+Both repositories now pin the same optional compile-time APIs: PlaceholderAPI 2.12.3, EssentialsX 2.22.0 and MilkBowl VaultAPI 1.7. The real providers remain separate server plugins; no external JAR or eCloud expansion is bundled. AgarthaLib handles optional provider availability and bridge lookup while MyItems retains the original skill/YAML interfaces and uses the same modern Paper 26.3 Java 25 target.
+
+See https://modrinth.com/plugin/placeholderapi , https://wiki.placeholderapi.com/users/placeholder-list/minecraft/ , https://essentialsx.net/ and https://www.spigotmc.org/resources/vault.34315/ for the source/plugin ecosystems. PlaceholderAPI's Minecraft placeholder list is a catalog, not a guarantee the corresponding expansion is automatically installed.
+
+Runtime prerequisites must be validated individually. EssentialsX 2.22.0 is the latest published *compile API* used here but its release page does not itself prove Paper 26.3 runtime support; do not deploy incompatible plugin binaries. VaultAPI 1.7 requires a service implementation and an economy plugin. Java checks for optional provider fallbacks and original PAPI registration are isolated and do not imply the historic raw item NBT or skill gameplay has been verified.

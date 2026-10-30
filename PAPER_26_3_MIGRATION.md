@@ -159,9 +159,10 @@ run against any live inventory. Original legacy NBT custom item tags and
 hover-item SNBT rendering remain unverified, even though AgarthaLib exposes
 native ItemStack backup and modern show_item helpers.
 
-AgarthaLib's reproducible audit covers exactly 91 narrowly defined *source*
-work items: 82 versioned packet source files, 3 old optional API providers,
-2 legacy item formats, and 4 new optional provider adapters. Four new adapters
+AgarthaLib's reproducible audit covers exactly 96 narrowly defined *file/feature*
+work items: 82 versioned packet source files (62 still reference NMS
+directly), 8 Jobs/Heroes/HolographicDisplays API import files, 2 legacy
+item formats, and 4 new optional provider adapters. Four new adapters
 have been coded with isolated tests, NOT proven on a real Paper server; the
 remaining legacy packet inventory and old-data gaps must be addressed before
 release. This inventory does not claim to count every bug outside that scope.

@@ -1,37 +1,34 @@
-// 
-// Decompiled by Procyon v0.5.36
-// 
-
 package com.praya.myitems.builder.placeholder;
 
-import org.bukkit.plugin.Plugin;
-import be.maximvdw.placeholderapi.PlaceholderAPI;
-import be.maximvdw.placeholderapi.PlaceholderReplaceEvent;
-import com.praya.myitems.manager.plugin.PlaceholderManager;
-import be.maximvdw.placeholderapi.PlaceholderReplacer;
+import com.praya.agarthalib.modern.Paper26MVdWRegistration;
 import com.praya.myitems.MyItems;
+import com.praya.myitems.manager.plugin.PlaceholderManager;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
-public class ReplacerMVDWPlaceholderAPIBuild
-{
+/**
+ * The historical MyItems MVdW wildcard is kept; actual optional API classes
+ * are resolved by AgarthaLib rather than linked in the plugin class loader.
+ */
+public class ReplacerMVDWPlaceholderAPIBuild {
     private final MyItems plugin;
     private final String placeholder;
-    
+
     public ReplacerMVDWPlaceholderAPIBuild(final MyItems plugin, final String placeholder) {
         this.plugin = plugin;
         this.placeholder = placeholder;
     }
-    
+
     public final String getPlaceholder() {
         return this.placeholder;
     }
-    
+
     public final void register() {
-        final PlaceholderManager placeholderManager = this.plugin.getPluginManager().getPlaceholderManager();
-        final String identifier = String.valueOf(this.getPlaceholder()) + "_*";
-        PlaceholderAPI.registerPlaceholder((Plugin)this.plugin, identifier, (PlaceholderReplacer)new PlaceholderReplacer() {
-            public String onPlaceholderReplace(final PlaceholderReplaceEvent event) {
-                return placeholderManager.getReplacement(event.getPlayer(), event.getPlaceholder().split(String.valueOf(ReplacerMVDWPlaceholderAPIBuild.this.getPlaceholder()) + "_")[1]);
-            }
-        });
+        final PlaceholderManager manager = plugin.getPluginManager().getPlaceholderManager();
+        final String wildcard = String.valueOf(getPlaceholder()) + "_*";
+        final Plugin provider = Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI");
+        Paper26MVdWRegistration.register(plugin, provider, wildcard,
+                (player, originalPlaceholder) -> manager.getReplacement(player,
+                        originalPlaceholder.split(String.valueOf(getPlaceholder()) + "_")[1]));
     }
 }

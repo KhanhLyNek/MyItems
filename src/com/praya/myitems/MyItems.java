@@ -6,12 +6,6 @@ package com.praya.myitems;
 
 import com.praya.myitems.utility.main.AntiBugUtil;
 import org.bukkit.event.Listener;
-import com.praya.myitems.listener.support.ListenerPlayerStaminaRegenChange;
-import com.praya.myitems.listener.support.ListenerPlayerStaminaMaxChange;
-import com.praya.myitems.listener.support.ListenerPlayerHealthRegenChange;
-import com.praya.myitems.listener.support.ListenerMythicMobDeath;
-import com.praya.myitems.listener.support.ListenerMythicMobSpawn;
-import com.praya.myitems.listener.support.ListenerPlayerLevelUp;
 import com.praya.agarthalib.utility.PluginUtil;
 import com.praya.myitems.listener.main.ListenerPlayerSwapHandItems;
 import com.praya.myitems.listener.main.ListenerBlockExplode;
@@ -325,25 +319,17 @@ public class MyItems extends JavaPlugin implements Agartha
             ServerEventUtil.registerEvent((Plugin)this, listenerBlockExplode);
             ServerEventUtil.registerEvent((Plugin)this, listenerPlayerSwapHandItems);
         }
-        if (PluginUtil.isPluginInstalled("SkillAPI")) {
-            final Listener listenerPlayerLevelUp = (Listener)new ListenerPlayerLevelUp(this);
-            ServerEventUtil.registerEvent((Plugin)this, listenerPlayerLevelUp);
-        }
-        if (PluginUtil.isPluginInstalled("MythicMobs")) {
-            final Listener listenerMythicMobSpawn = (Listener)new ListenerMythicMobSpawn(this);
-            final Listener listenerMythicMobDeath = (Listener)new ListenerMythicMobDeath(this);
-            ServerEventUtil.registerEvent((Plugin)this, listenerMythicMobSpawn);
-            ServerEventUtil.registerEvent((Plugin)this, listenerMythicMobDeath);
-        }
-        if (PluginUtil.isPluginInstalled("LifeEssence")) {
-            final Listener listenerPlayerHealthRegenChange = (Listener)new ListenerPlayerHealthRegenChange(this);
-            ServerEventUtil.registerEvent((Plugin)this, listenerPlayerHealthRegenChange);
-        }
-        if (PluginUtil.isPluginInstalled("CombatStamina")) {
-            final Listener listenerPlayerStaminaMaxChange = (Listener)new ListenerPlayerStaminaMaxChange(this);
-            final Listener listenerPlayerStaminaRegenChange = (Listener)new ListenerPlayerStaminaRegenChange(this);
-            ServerEventUtil.registerEvent((Plugin)this, listenerPlayerStaminaMaxChange);
-            ServerEventUtil.registerEvent((Plugin)this, listenerPlayerStaminaRegenChange);
+        // Legacy SkillAPI, MythicMobs v4, CombatStamina, LifeEssence event
+        // classes do not exist on Paper 26.3. They are not registered here.
+        // The core MyItems combat, item, ability and health-max listeners above
+        // remain registered with unchanged YAML/item formula semantics.
+        for (final String obsolete : new String[] {"SkillAPI", "MythicMobs",
+                                                     "LifeEssence", "CombatStamina"}) {
+            if (PluginUtil.isPluginInstalled(obsolete)) {
+                getLogger().warning("Legacy " + obsolete + " event bridge is retired"
+                        + " on Paper 26.3; use provider-specific current APIs."
+                        + " Old custom drops/stamina callbacks are NOT migrated.");
+            }
         }
     }
     

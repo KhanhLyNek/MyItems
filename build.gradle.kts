@@ -35,6 +35,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2")
     // Legacy bStats serializes telemetry with org.json.simple. Include this
     // small runtime dependency inside MyItems, not only on the compile path.
+    compileOnly("com.googlecode.json-simple:json-simple:1.1.1") { isTransitive = false }
     implementation("com.googlecode.json-simple:json-simple:1.1.1") {
         isTransitive = false
     }
@@ -53,6 +54,14 @@ dependencies {
 sourceSets {
     main {
         java.setSrcDirs(listOf("src"))
+        // Retire only old typed plugin event listeners, never MyItems abilities.
+        // All old source remains in Git for migration analysis.
+        java.exclude("**/listener/support/ListenerPlayerLevelUp.java")
+        java.exclude("**/listener/support/ListenerMythicMobDeath.java")
+        java.exclude("**/listener/support/ListenerMythicMobSpawn.java")
+        java.exclude("**/listener/support/ListenerPlayerStaminaRegenChange.java")
+        java.exclude("**/listener/support/ListenerPlayerStaminaMaxChange.java")
+        java.exclude("**/listener/support/ListenerPlayerHealthRegenChange.java")
         resources.setSrcDirs(listOf("resources"))
     }
 }
@@ -71,6 +80,7 @@ tasks.named<Jar>("jar") {
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.release.set(25)
+    options.compilerArgs.addAll(listOf("-Xmaxerrs", "1000", "-Xmaxwarns", "200"))
 }
 
 // This verifies the REAL MyItems PAPI and MVdW bridge sources before the full

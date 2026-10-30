@@ -141,3 +141,27 @@ compile errors. The new adapter is not silently substituted into skill
 damage calculations.
 
 Related AgarthaLib stacked PR: see its `feat/paper26-3-mythiclib-no-factions-bridges` branch.
+
+## 2026-10-30: scoped source-debt audit, safe optional provider APIs
+
+This branch stacks on the read-only MythicLib integration and pairs in CI
+with AgarthaLib `feat/paper26-3-deep-audit-providers-item-safety`.
+`Paper26MyItemsModernProviders` forwards *explicitly invoked* modern
+provider requests to `Paper26OptionalProviders`: AuraSkills skill levels,
+MMOCore level/class ID, Lands claimed-area presence, and DecentHolograms
+temporary holograms. They must not be silently used as equivalents of Jobs
+salary, Heroes health scaling, Factions permissions, or persistent holograms.
+Missing provider values are null rather than false or numeric zero.
+
+MyItems original 25 gameplay ability classes, 18 YAML files, 20 commands,
+item ID and damage formulas remain untouched. No data migration is automatically
+run against any live inventory. Original legacy NBT custom item tags and
+hover-item SNBT rendering remain unverified, even though AgarthaLib exposes
+native ItemStack backup and modern show_item helpers.
+
+AgarthaLib's reproducible audit covers exactly 91 narrowly defined *source*
+work items: 82 versioned packet source files, 3 old optional API providers,
+2 legacy item formats, and 4 new optional provider adapters. Four new adapters
+have been coded with isolated tests, NOT proven on a real Paper server; the
+remaining legacy packet inventory and old-data gaps must be addressed before
+release. This inventory does not claim to count every bug outside that scope.

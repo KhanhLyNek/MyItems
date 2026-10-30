@@ -28,7 +28,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
             final int originalAmount = original.getAmount();
             final byte[] bytes = original.serializeAsBytes();
             final CompoundBinaryTag root = BinaryTagIO.reader(4 * 1024 * 1024L)
-                    .read(new ByteArrayInputStream(bytes));
+                    .read(new ByteArrayInputStream(bytes), BinaryTagIO.Compression.GZIP);
 
             final CompoundBinaryTag oldTags = CompoundBinaryTag.builder()
                     .putString("LegacyID", "Kiếm:&a|old")
@@ -56,7 +56,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
             }
             rebuilt.put("components", components.build());
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            BinaryTagIO.writer().write(rebuilt.build(), output);
+            BinaryTagIO.writer().write(rebuilt.build(), output, BinaryTagIO.Compression.GZIP);
 
             final ItemStack restored = ItemStack.deserializeBytes(output.toByteArray());
             check(restored.getType() == Material.DIAMOND_SWORD, "material preserved");

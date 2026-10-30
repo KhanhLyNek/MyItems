@@ -73,6 +73,7 @@ tasks.register<JavaCompile>("compilePaper26MyItemsPlaceholderBridges") {
     source = fileTree(".") {
         include("src/com/praya/myitems/builder/placeholder/ReplacerPlaceholderAPIBuild.java")
         include("src/com/praya/myitems/builder/placeholder/ReplacerMVDWPlaceholderAPIBuild.java")
+        include("src/com/praya/myitems/builder/placeholder/Paper26LegacyPlaceholderId.java")
         include("ci/paper26-placeholder-bridge-stubs/**/*.java")
     }
     classpath = paper26PlaceholderApi + files(
@@ -84,4 +85,36 @@ tasks.register<JavaCompile>("compilePaper26MyItemsPlaceholderBridges") {
     })
     options.encoding = "UTF-8"
     options.release.set(25)
+}
+
+// Dependency-free regression checks for the actual MVdW suffix parser.
+tasks.register<JavaCompile>("compilePaper26LegacyPlaceholderIdSelfTest") {
+    description = "Compile pure Java MyItems legacy placeholder ID regression tests"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/builder/placeholder/Paper26LegacyPlaceholderId.java")
+        include("ci/paper26-placeholder-prefix-test/**/*.java")
+    }
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-placeholder-prefix-tests"))
+    javaCompiler.set(javaToolchains.compilerFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+
+tasks.register<JavaExec>("testPaper26LegacyPlaceholderIds") {
+    description = "Verify MVdW ID matching and lossless suffix extraction"
+    group = "verification"
+    dependsOn("compilePaper26LegacyPlaceholderIdSelfTest")
+    classpath = files(layout.buildDirectory.dir("paper26-placeholder-prefix-tests"))
+    mainClass.set("com.praya.myitems.builder.placeholder.Paper26LegacyPlaceholderIdSelfTest")
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    })
+}
+
+// The existing GitHub Actions bridge compile now runs the regression test too.
+tasks.named("compilePaper26MyItemsPlaceholderBridges") {
+    dependsOn("testPaper26LegacyPlaceholderIds")
 }

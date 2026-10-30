@@ -119,3 +119,25 @@ See https://modrinth.com/plugin/placeholderapi , https://wiki.placeholderapi.com
 Runtime prerequisites must be validated individually. EssentialsX 2.22.0 is the latest published *compile API* used here but its release page does not itself prove Paper 26.3 runtime support; do not deploy incompatible plugin binaries. VaultAPI 1.7 requires a service implementation and an economy plugin. Java checks for optional provider fallbacks and original PAPI registration are isolated and do not imply the historic raw item NBT or skill gameplay has been verified.
 
 **CI correction:** Do not add `net.essentialsx:EssentialsX:2.22.0` to the mandatory compile classpath until the artifact actually resolves in GitHub Actions. EssentialsX continues as an optional installed server plugin, and existing warp-forwarding tests remain in CI.
+
+## 2026-10-30: MyItems optional MythicLib integration with AgarthaLib
+
+Added an optional `MythicLib` soft-dependency and
+`Paper26MyItemsMythicLibAdapter`, a read-only stat accessor delegating to the
+matching AgarthaLib `Paper26MythicLibStats` contract. No gameplay formulas,
+item metadata, stat modifier writes, enchantments, damage events, permissions,
+commands or original ability YAML were changed. Missing MythicLib returns
+null and does not fabricate a zero stat value.
+
+The PR CI checks out the related AgarthaLib feature branch for **this PR only**,
+verifies the actual cross-repo ABI, and separately compiles the MyItems adapter
+with Java 25/Paper API 26.3 using CI-only signatures. Other branches continue
+checking out AgarthaLib master. The original plugin.yml integrity baseline was
+updated only for this reviewed additive soft-dependency.
+
+No live-server run or full MyItems JAR success is claimed. Full builds still
+require removal/migration of the remaining AgarthaLib NMS and optional API
+compile errors. The new adapter is not silently substituted into skill
+damage calculations.
+
+Related AgarthaLib stacked PR: see its `feat/paper26-3-mythiclib-no-factions-bridges` branch.

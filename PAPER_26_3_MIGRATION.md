@@ -67,3 +67,9 @@ The **25 original MyItems weapon ability files and 18 YAML resources remain prot
 Before enabling these paths for players, smoke-test absorption hearts and maximum absorption, correct visibility/reappearance of entities, animation visibility/range, action-bar priority/cooldowns, title and subtitle timing, and formatting from historical configs. New Paper entity hiding persists differently from the previous one-off packet approach and could affect visibility if not reviewed.
 
 **Known gaps:** The old custom JSON message DSL/click/hover-item API remains unfinished, as does safe inventory title replacement. Paper marks `InventoryView.setTitle` unsupported/broken, so it must not be used just to make an old call compile. The full AgarthaLib build is blocked by NMS and external plugins, so MyItems cannot yet build or run on the test server.
+
+## Paper 26.3 block animation compatibility
+
+The AgarthaLib block-animation bridge is now backed by `Player.sendBlockDamage` rather than a versioned NMS packet. The original `BridgeBlock.blockBreakAnimation` overloads, source ID and coordinates remain in place. Java 25 CI covers the existing interface and numeric stage mapping.
+
+There are no edits to any MyItems ability Java source or existing YAML. Runtime crack overlay progression, clearing, viewer visibility and skill timing still require server tests. Do not treat these isolated checks as full gameplay validation.

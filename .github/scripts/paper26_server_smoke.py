@@ -139,6 +139,8 @@ def run_server(folder):
             raise AssertionError(f"Paper did not complete the version command for {plugin}")
     if "PASS: live legacy NBT read-only fallback and PDC precedence" not in all_logs:
         raise AssertionError("Real Paper legacy NBT bridge probe did not pass")
+    if "PASS: 25/25 weapon ability classes registered, configured and lore-roundtripped" not in all_logs:
+        raise AssertionError("Real Paper 25-ability registration/configuration/lore probe did not pass")
     if process.returncode != 0:
         raise AssertionError(f"Paper exited with {process.returncode}")
     for line in lines:

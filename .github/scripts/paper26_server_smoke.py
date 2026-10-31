@@ -158,6 +158,8 @@ def run_server(folder):
         raise AssertionError("Modern EssentialsX public warp ABI provider smoke failed")
     if "PASS: ItemsAdder/Oraxen model-only bridges and ItemStack roundtrip" not in all_logs:
         raise AssertionError("Model provider bridge/metadata isolation failed on real Paper")
+    if "PASS: MyItems HEX and legacy item-name/lore commands on real Paper 26.3" not in all_logs:
+        raise AssertionError("MyItems HEX/legacy name or lore Paper API integration failed")
     if process.returncode != 0:
         raise AssertionError(f"Paper exited with {process.returncode}")
     for line in lines:

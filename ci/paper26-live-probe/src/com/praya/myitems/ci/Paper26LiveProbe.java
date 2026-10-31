@@ -4,6 +4,8 @@ import com.praya.agarthalib.modern.Paper26LegacyItemTags;
 import core.praya.agarthalib.bridge.unity.Bridge;
 import net.kyori.adventure.nbt.*;
 import org.bukkit.Material;
+import com.praya.agarthalib.utility.TextUtil;
+import com.praya.agarthalib.utility.EquipmentUtil;
 import com.praya.agarthalib.modern.Paper26ItemModels;
 import com.praya.myitems.modern.Paper26ExternalModels;
 import org.bukkit.NamespacedKey;
@@ -243,6 +245,65 @@ public final class Paper26LiveProbe extends JavaPlugin {
         getLogger().info("PASS: ItemsAdder/Oraxen model-only bridges and ItemStack roundtrip");
     }
 
+    /** On a real Paper server use the SAME legacy EquipmentUtil entrypoints
+     * as /itemname, /loreadd, /loreset, /loreinsert. Verify that RGB input
+     * roundtrips through current Adventure-backed Paper ItemMeta, while the
+     * lore-change event path and existing skills/PDC remain untouched.
+     */
+    private void verifyHexItemColors() {
+        final String red = "§x§f§f§3§3§6§6";
+        final String blue = "§x§1§2§a§b§c§d";
+        final String green = "§x§0§0§f§f§0§0";
+        check((red + "Sword §lSoul").equals(
+                TextUtil.colorful("&#FF3366Sword &lSoul")),
+                "HEX and legacy formatting mix in original TextUtil.colorful");
+        check(("§aOld " + blue + "New").equals(
+                TextUtil.colorful("&aOld <#12ABCD>New")),
+                "old colors and angle HEX can coexist");
+        check("&cText".equals(TextUtil.colorful("&cText")),
+                "original &c legacy parsing unchanged");
+        check("#xyz000".equals(TextUtil.colorful("#xyz000")),
+                "invalid hex remains visible unchanged");
+
+        final ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
+        final NamespacedKey idKey = new NamespacedKey(this, "hex_original_item_id");
+        final ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, "myitems:hex_sword");
+        item.setItemMeta(meta);
+
+        EquipmentUtil.setDisplayName(item, "&#FF3366Sword &lSoul");
+        EquipmentUtil.addLore(item, "&7Damage: 42");
+        EquipmentUtil.addLore(item, "<#12ABCD>Ability: Vampirism I");
+        EquipmentUtil.setLore(item, 1, "&#00FF00&lDamage: 42");
+        EquipmentUtil.insertLore(item, 2, "&eLegacy lore");
+        final ItemMeta colored = item.getItemMeta();
+        check((red + "Sword §lSoul").equals(colored.getDisplayName()),
+                "HEX name written by existing EquipmentUtil");
+        final List<String> lore = colored.getLore();
+        check(lore != null && lore.size() == 3, "lore add/set/insert line indexes retained");
+        check((green + "§lDamage: 42").equals(lore.get(0)),
+                "HEX lore-set uses same existing event-aware entrypoint");
+        check("§eLegacy lore".equals(lore.get(1)), "inserted legacy lore preserved");
+        check((blue + "Ability: Vampirism I").equals(lore.get(2)),
+                "HEX lore-add preserves ability text");
+        check(colored.displayName() != null && colored.lore() != null
+                && colored.lore().size() == 3, "Paper Adventure ItemMeta content populated");
+        check("myitems:hex_sword".equals(
+                colored.getPersistentDataContainer().get(idKey, PersistentDataType.STRING)),
+                "existing item ID not mutated by coloring");
+
+        final ItemStack reloaded = ItemStack.deserializeBytes(item.serializeAsBytes());
+        final ItemMeta restored = reloaded.getItemMeta();
+        check(colored.getDisplayName().equals(restored.getDisplayName()),
+                "HEX name survives actual Paper ItemStack NBT roundtrip");
+        check(lore.equals(restored.getLore()),
+                "HEX, legacy, skill and stat lores survive NBT roundtrip");
+        check("myitems:hex_sword".equals(
+                restored.getPersistentDataContainer().get(idKey, PersistentDataType.STRING)),
+                "original item ID survives NBT roundtrip");
+        getLogger().info("PASS: MyItems HEX and legacy item-name/lore commands on real Paper 26.3");
+    }
+
     @Override
     public void onEnable() {
         try {
@@ -310,6 +371,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
             verifyMobSkillCasts();
             verifyEssentialsWarpProvider();
             verifyItemModels();
+            verifyHexItemColors();
         } catch (Throwable error) {
             getLogger().severe("FAIL: live NBT/ability compatibility test: " + error);
             throw new IllegalStateException("Paper26 live NBT probe failed", error);

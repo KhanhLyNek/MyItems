@@ -327,6 +327,10 @@ public final class Paper26LiveProbe extends JavaPlugin {
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.CRITICAL_DAMAGE, 1.5));
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.DURABILITY, 8, 12));
         final ItemStack copy = ItemStack.deserializeBytes(sword.serializeAsBytes());
+        getLogger().info("Stats diagnostic expected key=" +
+                stats.getKeyStats(LoreStatsEnum.DAMAGE, true).replace('§', '~') +
+                " before=" + EquipmentUtil.getLores(sword).toString().replace('§', '~') +
+                " after=" + EquipmentUtil.getLores(copy).toString().replace('§', '~'));
         check(stats.hasLoreStats(copy, LoreStatsEnum.DAMAGE), "real serialized item Damage marker");
         check(stats.getLoreValue(copy, LoreStatsEnum.DAMAGE, LoreStatsOption.MIN) == 10.0, "Damage min");
         check(stats.getLoreValue(copy, LoreStatsEnum.DAMAGE, LoreStatsOption.MAX) == 20.0, "Damage max");

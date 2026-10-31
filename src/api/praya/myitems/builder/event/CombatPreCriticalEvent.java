@@ -4,7 +4,7 @@
 
 package api.praya.myitems.builder.event;
 
-import com.praya.agarthalib.utility.MathUtil;
+
 import com.praya.myitems.modern.Paper26StatsMath;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
@@ -43,7 +43,7 @@ public class CombatPreCriticalEvent extends Event implements Cancellable
     }
     
     public final boolean isCritical() {
-        return MathUtil.chanceOf(this.chance);
+        return Paper26StatsMath.rollChance(this.chance, Math.random());
     }
     
     public final void setChance(final double chance) {

@@ -145,8 +145,10 @@ public class LoreStatsManager extends HandlerManager
         final String symbolMultiplier = mainConfig.getStatsLoreMultiplierSymbol();
         final String colorValue = mainConfig.getStatsColorValue();
         if (loreStats.equals(LoreStatsEnum.DURABILITY)) {
-            value1 = MathUtil.limitDouble(value1, 1.0, value1);
-            value2 = MathUtil.limitDouble(value2, 1.0, value2);
+            // Zero is the broken-item state; clamping it to one made items
+            // visually repair themselves immediately after the last use.
+            value2 = Double.isFinite(value2) ? Math.max(0.0, value2) : 0.0;
+            value1 = Double.isFinite(value1) ? Math.max(0.0, Math.min(value1, value2)) : 0.0;
         }
         else if (loreStats.equals(LoreStatsEnum.LEVEL)) {
             final int maxLevel = mainConfig.getStatsMaxLevelValue();
@@ -299,19 +301,15 @@ public class LoreStatsManager extends HandlerManager
     }
     
     public final void damageDurability(final ItemStack item) {
-        final MainConfig mainConfig = MainConfig.getInstance();
         final int line = this.getLineLoreStats(item, LoreStatsEnum.DURABILITY);
-        if (line != -1) {
-            final int currentValue = (int)this.getLoreValue(item, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT, line);
-            if (currentValue > 0) {
-                final String positiveValue = mainConfig.getStatsLorePositiveValue();
-                final String symbolDivide = mainConfig.getStatsLoreDividerSymbol();
-                String loreDurability = String.valueOf(positiveValue) + currentValue + symbolDivide;
-                final String loreReplace = String.valueOf(positiveValue) + (currentValue - 1) + symbolDivide;
-                loreDurability = EquipmentUtil.getLores(item).get(line - 1).replace(loreDurability, loreReplace);
-                EquipmentUtil.setLore(item, line, loreDurability);
-            }
-        }
+        if (line < 1) return;
+        final int current = (int)this.getLoreValue(item, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT, line);
+        final int maximum = (int)this.getLoreValue(item, LoreStatsEnum.DURABILITY, LoreStatsOption.MAX, line);
+        if (current <= 0 || maximum <= 0) return;
+        // Re-render through the same configured formatter as repairs. Literal
+        // string replacement fails for old color layouts and custom delimiters.
+        EquipmentUtil.setLore(item, line, this.getTextLoreStats(
+                LoreStatsEnum.DURABILITY, Math.max(0, current - 1), maximum));
     }
     
     public final LoreStatsWeapon getLoreStatsWeapon(final LivingEntity attacker) {

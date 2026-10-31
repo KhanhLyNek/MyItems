@@ -4,6 +4,12 @@ package com.praya.myitems.modern;
 public final class Paper26StatsMath {
     private Paper26StatsMath() { }
 
+    /** Rng is [0,1); strict comparison keeps 0% impossible and 100% certain. */
+    public static boolean rollChance(double percent, double uniform) {
+        if (!Double.isFinite(uniform) || uniform < 0.0 || uniform >= 1.0) return false;
+        return uniform * 100.0 < chance(percent);
+    }
+
     public static double chance(double value) {
         if (Double.isNaN(value)) return 0.0;
         return Math.max(0.0, Math.min(100.0, value));

@@ -339,6 +339,27 @@ public final class Paper26LiveProbe extends JavaPlugin {
                 "Critical multiplier");
         check(stats.getLoreValue(copy, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 8, "Durability current");
         check(stats.getLoreValue(copy, LoreStatsEnum.DURABILITY, LoreStatsOption.MAX) == 12, "Durability max");
+        final ItemStack worn = new ItemStack(Material.IRON_SWORD);
+        EquipmentUtil.addLore(worn, stats.getTextLoreStats(LoreStatsEnum.DURABILITY, 2, 5));
+        stats.damageDurability(worn);
+        check(stats.getLoreValue(worn, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 1,
+                "durability 2 -> 1");
+        stats.damageDurability(worn);
+        check(stats.getLoreValue(worn, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 0,
+                "durability 1 -> 0");
+        check(!stats.checkDurability(worn), "zero durability disables item stats");
+        stats.damageDurability(worn);
+        check(stats.getLoreValue(worn, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 0,
+                "broken item does not underflow");
+        final ItemStack wornSaved = ItemStack.deserializeBytes(worn.serializeAsBytes());
+        check(stats.getLoreValue(wornSaved, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 0,
+                "zero durability preserved across Paper NBT roundtrip");
+        stats.itemRepair(wornSaved, 1);
+        check(stats.getLoreValue(wornSaved, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 1,
+                "repair restores durability after broken state");
+        stats.itemRepair(wornSaved, 999);
+        check(stats.getLoreValue(wornSaved, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 5,
+                "repair cannot exceed the maximum");
         check(stats.getLoreStatsWeapon(copy).getDamage() >= 10.0, "standalone weapon stats");
         check(stats.getLoreValue(copy, LoreStatsEnum.ATTACK_SPEED, null) == 1.25, "modern Attack Speed lore");
         check(stats.getLoreValue(copy, LoreStatsEnum.ARMOR_TOUGHNESS, null) == 2, "modern Armor Toughness lore");

@@ -260,7 +260,7 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                     blockAmount = blockAmount + loreStatsVictims.getBlockAmount() + socketVictims.getBlockAmount() + itemSetBonusEffectStatsVictims.getBlockAmount();
                     blockRate = blockRate + loreStatsVictims.getBlockRate() + socketVictims.getBlockRate() + itemSetBonusEffectStatsVictims.getBlockRate();
                     accuration = accuration + (loreStatsAttacker.getHitRate() + socketAttacker.getHitRate() + itemSetBonusEffectStatsAttacker.getHitRate()) - (loreStatsVictims.getDodgeRate() + socketVictims.getDodgeRate() + itemSetBonusEffectStatsVictims.getDodgeRate());
-                    if (MathUtil.chanceOf(Paper26StatsMath.chance(100.0 - accuration))) {
+                    if (Paper26StatsMath.rollChance(100.0 - accuration, Math.random())) {
                         if (EntityUtil.isPlayer((Entity)attacker)) {
                             final Player player = EntityUtil.parsePlayer((Entity)attacker);
                             final String message = lang.getText("Attack_Miss");
@@ -278,7 +278,7 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                     }
                     final boolean enableCustomCritical = mainConfig.isModifierEnableCustomCritical();
                     damage *= Paper26StatsMath.accuracyMultiplier(accuration);
-                    if (MathUtil.chanceOf(Paper26StatsMath.chance(blockRate))) {
+                    if (Paper26StatsMath.rollChance(blockRate, Math.random())) {
                         blockAmount = Paper26StatsMath.chance(blockAmount);
                         damage = damage * (100.0 - blockAmount) / 100.0;
                         if (EntityUtil.isPlayer((Entity)attacker)) {

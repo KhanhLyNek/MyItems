@@ -43,6 +43,12 @@ public final class Paper26StatsSelfTest {
         eq(Paper26StatsMath.accuracyMultiplier(1), 0);
         eq(Paper26StatsMath.chance(Double.NaN), 0);
         eq(Paper26StatsMath.chance(250), 100);
+        yes(!Paper26StatsMath.rollChance(0, 0));
+        yes(Paper26StatsMath.rollChance(100, 0.999999));
+        yes(Paper26StatsMath.rollChance(50, 0.499));
+        yes(!Paper26StatsMath.rollChance(50, 0.5));
+        yes(!Paper26StatsMath.rollChance(Double.NaN, 0.1));
+        yes(!Paper26StatsMath.rollChance(99, Double.NaN));
         eq(Paper26StatsMath.damage(Double.POSITIVE_INFINITY), 0);
         eq(Paper26StatsMath.damage(-8), 0);
         eq(Paper26StatsMath.criticalChance(false, 0, 2.5, 5), 12.5);

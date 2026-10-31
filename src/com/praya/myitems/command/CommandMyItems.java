@@ -81,6 +81,9 @@ public class CommandMyItems extends HandlerCommand implements CommandExecutor
             return help(sender, command, label, fullArgs);
         }
         final String subCommand = args[0];
+        if ("model".equalsIgnoreCase(subCommand)) {
+            return com.praya.myitems.modern.Paper26ModelCommand.execute(sender, args);
+        }
         if (commandManager.checkCommand(subCommand, "MyItems_Reload")) {
             if (!commandManager.checkPermission(sender, "MyItems_Reload")) {
                 final String permission = commandManager.getPermission("MyItems_Reload");

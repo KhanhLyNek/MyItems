@@ -44,6 +44,15 @@ public class TabCompleterMyItems extends HandlerTabCompleter implements TabCompl
         final LanguageManager lang = pluginManager.getLanguageManager();
         final List<String> tabList = new ArrayList<String>();
         SenderUtil.playSound(sender, SoundEnum.BLOCK_WOOD_BUTTON_CLICK_ON);
+        if (sender.hasPermission("myitems.command.model")
+                || sender.hasPermission("myitems.admin")) {
+            if (args.length == 1) {
+                tabList.add("Model");
+            } else if (args.length == 2 && "model".equalsIgnoreCase(args[0])) {
+                tabList.addAll(java.util.List.of("itemsadder", "oraxen", "key", "data", "clear"));
+                return tabList;
+            }
+        }
         if (args.length == 1) {
             if (commandManager.checkPermission(sender, "MyItems_Help")) {
                 tabList.add("Help");

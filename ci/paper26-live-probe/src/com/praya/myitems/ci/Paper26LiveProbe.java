@@ -581,6 +581,17 @@ public final class Paper26LiveProbe extends JavaPlugin {
         check(Bukkit.getPluginManager().getPermission("agarthalib.admin") != null,
                 "legacy AgarthaLib permission node preserved");
         final MyItems lymeowzItem = (MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem");
+        final var paths = lymeowzItem.getPluginManager().getDataManager();
+        check("Resources/command.yml".equals(paths.getPath("Path_File_Command")),
+                "new data.yml decoder retains command configuration path");
+        check("Resources/dependency.yml".equals(paths.getPath("Path_File_Dependency")),
+                "new data.yml decoder retains dependency path");
+        check("Database/item.yml".equals(paths.getPath("Path_File_Item")),
+                "new data.yml decoder retains item database path");
+        check(paths.getListPath("Path_File_Language").contains("Language/lang_en.yml"),
+                "new data.yml decoder retains language file paths");
+        check(paths.getDataConfig().getData("Path_File_Command") != null,
+                "old DataConfig API still exposes path dictionary builds");
         final AgarthaLib lymeowzLib = (AgarthaLib) Bukkit.getPluginManager().getPlugin("LyMeowzLib");
         check(lymeowzItem.getPluginManager().getLanguageManager()
                         .getListText("en", "Argument_MyItems_Help").stream()

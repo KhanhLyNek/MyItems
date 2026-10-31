@@ -55,24 +55,6 @@ public class DataConfig extends HandlerConfig
     }
     
     private final void loadConfig() {
-        final FileConfiguration config = FileUtil.getFileConfigurationResource((JavaPlugin)this.plugin, "Resources/data.yml");
-        for (final String path : config.getKeys(true)) {
-            final String key = path.replace(".", "_");
-            if (config.isString(path)) {
-                final String text = config.getString(path);
-                final List<String> list = new ArrayList<String>();
-                list.add(text);
-                final DataBuild dataBuild = new DataBuild(key, (List)list);
-                this.mapData.put(key, dataBuild);
-            }
-            else {
-                if (!config.isList(path)) {
-                    continue;
-                }
-                final List<String> list2 = (List<String>)config.getStringList(path);
-                final DataBuild dataBuild2 = new DataBuild(key, (List)list2);
-                this.mapData.put(key, dataBuild2);
-            }
-        }
+        this.mapData.putAll(com.lymeowz.item.config.DataDefinitions.load(this.plugin));
     }
 }

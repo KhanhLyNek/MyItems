@@ -18,6 +18,7 @@ import api.praya.agarthalib.manager.plugin.SupportManagerAPI;
 import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Zombie;
+import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
 import com.praya.myitems.MyItems;
 import com.praya.myitems.manager.game.AbilityWeaponManager;

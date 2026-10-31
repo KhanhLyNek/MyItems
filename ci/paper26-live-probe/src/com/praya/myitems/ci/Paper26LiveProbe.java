@@ -260,7 +260,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
         check(("§aOld " + blue + "New").equals(
                 TextUtil.colorful("&aOld <#12ABCD>New")),
                 "old colors and angle HEX can coexist");
-        check("&cText".equals(TextUtil.colorful("&cText")),
+        check("§cText".equals(TextUtil.colorful("&cText")),
                 "original &c legacy parsing unchanged");
         check("#xyz000".equals(TextUtil.colorful("#xyz000")),
                 "invalid hex remains visible unchanged");

@@ -22,9 +22,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Guard original YAML and gameplay logic
         run: python3 .github/scripts/check_legacy_logic.py
-      - name: Verify MyItems HEX color input and old name/lore command routes
-        run: python3 .github/scripts/check_paper26_hex_commands.py
-
       - name: Check all skill class registrations and reviewed Venom Spread fix
         run: python3 .github/scripts/check_paper26_ability_regressions.py
       - name: Protect MyItems custom MythicMobs drops and equipment formula parity
@@ -38,6 +35,9 @@ jobs:
           repository: KhanhLyNek/AgarthaLib
           ref: master
           path: agarthalib
+      - name: Verify MyItems HEX color input and old name/lore command routes
+        run: python3 .github/scripts/check_paper26_hex_commands.py
+
       - name: Validate cross-repo MythicLib ABI and removed Factions adapters
         run: python3 .github/scripts/check_paper26_mythiclib_contract.py
       - name: Guard matching Paper, PAPI, Vault and AgarthaLib coordinates

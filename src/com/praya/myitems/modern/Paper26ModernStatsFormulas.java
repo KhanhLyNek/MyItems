@@ -1,33 +1,20 @@
 package com.praya.myitems.modern;
 
-/**
- * Tested numerical building blocks for future opt-in modern stat adapters.
- * IMPORTANT: No combat or attribute adapter invokes these formulas yet.
- */
+/** @deprecated Use com.lymeowz.item.stats.ModernStatsFormulas. */
+@Deprecated
 public final class Paper26ModernStatsFormulas {
     private Paper26ModernStatsFormulas() { }
 
-    public static double attackSpeed(double vanillaBase, double flatBonus) {
-        if (!Double.isFinite(vanillaBase)) vanillaBase = 4.0;
-        if (!Double.isFinite(flatBonus)) flatBonus = 0;
-        return Math.max(0.1, vanillaBase + flatBonus);
+    public static double attackSpeed(double base, double bonus) {
+        return com.lymeowz.item.stats.ModernStatsFormulas.attackSpeed(base, bonus);
     }
-
-    public static double armorToughness(double vanillaBase, double flatBonus) {
-        if (!Double.isFinite(vanillaBase)) vanillaBase = 0;
-        if (!Double.isFinite(flatBonus)) flatBonus = 0;
-        return Math.max(0.0, vanillaBase + flatBonus);
+    public static double armorToughness(double base, double bonus) {
+        return com.lymeowz.item.stats.ModernStatsFormulas.armorToughness(base, bonus);
     }
-
-    public static double lifeSteal(double finalDamage, double percentage, double missingHealth) {
-        if (!Double.isFinite(finalDamage) || !Double.isFinite(missingHealth)) return 0;
-        final double p = Double.isFinite(percentage) ? Math.max(0, Math.min(100, percentage)) : 0;
-        return Math.min(Math.max(0, missingHealth), Math.max(0, finalDamage) * p / 100.0);
+    public static double lifeSteal(double damage, double percent, double missingHealth) {
+        return com.lymeowz.item.stats.ModernStatsFormulas.lifeSteal(damage, percent, missingHealth);
     }
-
-    public static int cooldownTicks(int originalTicks, double reductionPercent) {
-        final int ticks = Math.max(0, originalTicks);
-        final double p = Double.isFinite(reductionPercent) ? Math.max(0, Math.min(100, reductionPercent)) : 0;
-        return (int)Math.ceil(ticks * (1.0 - p / 100.0));
+    public static int cooldownTicks(int ticks, double percent) {
+        return com.lymeowz.item.stats.ModernStatsFormulas.cooldownTicks(ticks, percent);
     }
 }

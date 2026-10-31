@@ -339,6 +339,7 @@ tasks.register<JavaCompile>("compilePaper26StatsSelfTest") {
         include("src/com/praya/myitems/modern/Paper26LoreStatsNumbers.java")
         include("src/com/praya/myitems/modern/Paper26StatsMath.java")
         include("src/com/praya/myitems/modern/Paper26ModernStatsFormulas.java")
+        include("src/com/lymeowz/item/stats/ModernStatsFormulas.java")
         include("ci/paper26-stats-test/**/*.java")
     }
     classpath = files()

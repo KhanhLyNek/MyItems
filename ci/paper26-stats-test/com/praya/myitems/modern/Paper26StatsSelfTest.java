@@ -75,6 +75,11 @@ public final class Paper26StatsSelfTest {
         eq(Paper26StatsMath.percentFactor(Double.NaN), 1);
         eq(Paper26StatsMath.percentFactor(Double.POSITIVE_INFINITY), 1);
         eq(Paper26ModernStatsFormulas.attackSpeed(4, 1.25), 5.25);
+        eq(com.lymeowz.item.stats.ModernStatsFormulas.attackSpeed(4, 1.25), 5.25);
+        eq(Paper26ModernStatsFormulas.lifeSteal(20, 10, 5),
+           com.lymeowz.item.stats.ModernStatsFormulas.lifeSteal(20, 10, 5));
+        eq(Paper26ModernStatsFormulas.cooldownTicks(100, 20),
+           com.lymeowz.item.stats.ModernStatsFormulas.cooldownTicks(100, 20));
         eq(Paper26ModernStatsFormulas.attackSpeed(4, -100), 0.1);
         eq(Paper26ModernStatsFormulas.armorToughness(2, 3), 5);
         eq(Paper26ModernStatsFormulas.armorToughness(2, -9), 0);

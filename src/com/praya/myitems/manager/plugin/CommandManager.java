@@ -11,6 +11,7 @@ import java.util.Iterator;
 import core.praya.agarthalib.builder.command.CommandBuild;
 import java.util.Collection;
 import com.praya.myitems.MyItems;
+import com.lymeowz.item.permission.ItemPermissions;
 import com.praya.myitems.config.plugin.CommandConfig;
 import com.praya.myitems.builder.handler.HandlerManager;
 
@@ -59,7 +60,7 @@ public class CommandManager extends HandlerManager
         final CommandBuild commandBuild = this.getCommand(id);
         if (commandBuild != null) {
             final String permission = commandBuild.getPermission();
-            return permission == null || sender.hasPermission(permission);
+            return ItemPermissions.allowed(sender, permission);
         }
         return true;
     }
@@ -71,6 +72,6 @@ public class CommandManager extends HandlerManager
     
     public final String getPermission(final String id) {
         final CommandBuild commandBuild = this.getCommand(id);
-        return (commandBuild != null) ? commandBuild.getPermission() : null;
+        return (commandBuild != null) ? ItemPermissions.canonical(commandBuild.getPermission()) : null;
     }
 }

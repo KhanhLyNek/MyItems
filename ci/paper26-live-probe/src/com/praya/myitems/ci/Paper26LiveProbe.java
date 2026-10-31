@@ -31,6 +31,8 @@ import api.praya.myitems.builder.lorestats.LoreStatsEnum;
 import api.praya.myitems.builder.lorestats.LoreStatsOption;
 import com.praya.myitems.manager.game.LoreStatsManager;
 import com.praya.myitems.modern.Paper26StatsMath;
+import com.lymeowz.item.permission.ItemPermissions;
+import com.lymeowz.lib.permission.PermissionBridge;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.inventory.ItemStack;
@@ -457,6 +459,65 @@ public final class Paper26LiveProbe extends JavaPlugin {
     }
 
 
+    private static Player mockPermissionPlayer(java.util.Set<String> granted) {
+        return (Player) java.lang.reflect.Proxy.newProxyInstance(
+                Player.class.getClassLoader(), new Class<?>[] {Player.class},
+                (instance, method, args) -> {
+                    if (method.getName().equals("hasPermission") && args.length == 1)
+                        return granted.contains(((String) args[0]).toLowerCase(java.util.Locale.ROOT));
+                    if (method.getName().equals("isOp")) return false;
+                    if (method.getName().equals("toString")) return "LyMeowzPermissionProbe";
+                    if (method.getReturnType() == boolean.class) return false;
+                    if (method.getReturnType() == int.class) return 0;
+                    return null;
+                });
+    }
+
+    private void verifyPermissionMigration() {
+        final MyItems item = (MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem");
+        final AgarthaLib lib = (AgarthaLib) Bukkit.getPluginManager().getPlugin("LyMeowzLib");
+        final String itemOld = "myitems.command.reload";
+        final String itemNew = "lymeowzitem.command.reload";
+        final String libOld = "agarthalib.command.reload";
+        final String libNew = "lymeowzlib.command.reload";
+        check(Bukkit.getPluginManager().getPermission("lymeowzitem.admin") != null, "new item admin registered");
+        check(Bukkit.getPluginManager().getPermission(itemNew) != null, "new item command registered");
+        check(Bukkit.getPluginManager().getPermission("lymeowzlib.admin") != null, "new lib admin registered");
+        check(Bukkit.getPluginManager().getPermission(libNew) != null, "new lib command registered");
+        check(ItemPermissions.canonical(itemOld).equals(itemNew), "item canonical mapping");
+        check(PermissionBridge.canonical(libOld).equals(libNew), "lib canonical mapping");
+        check(ItemPermissions.canonical("essentials.warp").equals("essentials.warp"), "third-party nodes unchanged");
+        check(item.getPluginManager().getCommandManager().getPermission("MyItems_Reload").equals(itemNew),
+                "item permission API now reports LyMeowz node");
+        check(lib.getPluginManager().getCommandManager().getPermission("AgarthaLib_Reload").equals(libNew),
+                "lib permission API now reports LyMeowz node");
+        for (String granted : new String[] {itemOld, itemNew}) {
+            Player player = mockPermissionPlayer(java.util.Set.of(granted));
+            check(item.getPluginManager().getCommandManager().checkPermission(player, "MyItems_Reload"),
+                    "item command accepts " + granted);
+            check(!lib.getPluginManager().getCommandManager().checkPermission(player, "AgarthaLib_Reload"),
+                    "item permission cannot grant lib command");
+        }
+        for (String granted : new String[] {libOld, libNew}) {
+            Player player = mockPermissionPlayer(java.util.Set.of(granted));
+            check(lib.getPluginManager().getCommandManager().checkPermission(player, "AgarthaLib_Reload"),
+                    "lib command accepts " + granted);
+            check(!item.getPluginManager().getCommandManager().checkPermission(player, "MyItems_Reload"),
+                    "lib permission cannot grant item command");
+        }
+        final Player denied = mockPermissionPlayer(java.util.Set.of());
+        check(!item.getPluginManager().getCommandManager().checkPermission(denied, "MyItems_Reload"),
+                "item command denies player without either namespace");
+        check(!lib.getPluginManager().getCommandManager().checkPermission(denied, "AgarthaLib_Reload"),
+                "lib command denies player without either namespace");
+        check(!ItemPermissions.allowed(denied, "myitems.command.model"), "new model command never bypasses permission");
+        check(ItemPermissions.allowed(mockPermissionPlayer(java.util.Set.of("myitems.command.model")),
+                "myitems.command.model"), "old model permission remains accepted");
+        check(ItemPermissions.allowed(mockPermissionPlayer(java.util.Set.of("lymeowzitem.command.model")),
+                "myitems.command.model"), "new model permission works");
+        getLogger().info("PASS: LyMeowz permission migration (old/new, independent, denied)");
+    }
+
     private void verifyRenamedPlugins() throws Exception {
         check(Bukkit.getPluginManager().getPlugin("LyMeowzLib") instanceof AgarthaLib,
                 "LyMeowzLib plugin registered under new Bukkit identity");
@@ -520,6 +581,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
     public void onEnable() {
         try {
             verifyRenamedPlugins();
+            verifyPermissionMigration();
             ItemStack original = new ItemStack(Material.DIAMOND_SWORD);
             final int originalAmount = original.getAmount();
             final byte[] bytes = original.serializeAsBytes();

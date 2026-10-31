@@ -2,17 +2,18 @@ package com.praya.myitems.modern;
 
 import com.praya.agarthalib.modern.Paper26ItemModels;
 import org.bukkit.command.CommandSender;
+import com.lymeowz.item.permission.ItemPermissions;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-/** /myitems model <itemsadder|oraxen|key|data|clear> [model] */
+/** /lymeowzitem model <itemsadder|oraxen|key|data|clear> [model] */
 public final class Paper26ModelCommand {
     private Paper26ModelCommand() {}
 
     public static boolean execute(final CommandSender sender, final String[] args) {
-        if (!sender.hasPermission("myitems.command.model")
-                && !sender.hasPermission("myitems.admin")) {
-            sender.sendMessage("§cYou lack permission: myitems.command.model");
+        if (!ItemPermissions.allowed(sender, "myitems.command.model")
+                && !ItemPermissions.allowed(sender, "myitems.admin")) {
+            sender.sendMessage("§cYou lack permission: lymeowzitem.command.model");
             return true;
         }
         if (!(sender instanceof Player player)) {
@@ -25,7 +26,7 @@ public final class Paper26ModelCommand {
         }
         final ItemStack held = player.getInventory().getItemInMainHand();
         if (held.getType().isAir()) {
-            sender.sendMessage("§cHold a MyItems item in your main hand.");
+            sender.sendMessage("§cHold a LyMeowzItem item in your main hand.");
             return true;
         }
         final ItemStack changed = held.clone(); // Never mutate inventory on failure.
@@ -44,7 +45,7 @@ public final class Paper26ModelCommand {
             if (outcome == Paper26ExternalModels.Status.APPLIED) {
                 player.getInventory().setItemInMainHand(changed);
                 sender.sendMessage("§aVisual model copied from " + mode + ": " + value
-                        + " §7(original MyItems metadata and skills retained).");
+                        + " §7(original LyMeowzItem metadata and skills retained).");
             } else {
                 final String reason = switch (outcome) {
                     case NOT_INSTALLED -> "The provider is not enabled.";
@@ -79,7 +80,7 @@ public final class Paper26ModelCommand {
                                   final Paper26ItemModels.Result result) {
         if (result == Paper26ItemModels.Result.APPLIED) {
             player.getInventory().setItemInMainHand(changed);
-            player.sendMessage("§aItem model updated; MyItems ID, lore, skills and NBT retained.");
+            player.sendMessage("§aItem model updated; LyMeowzItem ID, lore, skills and NBT retained.");
         } else {
             player.sendMessage("§cModel not changed: " + result.name());
         }
@@ -87,10 +88,10 @@ public final class Paper26ModelCommand {
     }
 
     private static void usage(final CommandSender sender) {
-        sender.sendMessage("§e/myitems model itemsadder <namespace:item>");
-        sender.sendMessage("§e/myitems model oraxen <item_id>");
-        sender.sendMessage("§e/myitems model key <namespace:path>");
-        sender.sendMessage("§e/myitems model data <nonnegative_number>");
-        sender.sendMessage("§e/myitems model clear");
+        sender.sendMessage("§e/lymeowzitem model itemsadder <namespace:item>");
+        sender.sendMessage("§e/lymeowzitem model oraxen <item_id>");
+        sender.sendMessage("§e/lymeowzitem model key <namespace:path>");
+        sender.sendMessage("§e/lymeowzitem model data <nonnegative_number>");
+        sender.sendMessage("§e/lymeowzitem model clear");
     }
 }

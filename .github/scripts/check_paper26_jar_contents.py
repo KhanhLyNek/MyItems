@@ -14,6 +14,8 @@ with ZipFile(candidates[0]) as z:
     manifest = z.read("plugin.yml").decode("utf-8")
     assert "name: LyMeowzItem\n" in manifest
     assert "provides: [MyItems]\n" in manifest
+    assert "  lymeowzitem.admin:\n" in manifest
+    assert "  lymeowzitem.command.reload:\n" in manifest
     assert "- LyMeowzLib\n" in manifest
     assert "  lymeowzitem:\n" in manifest
     assert "  myitems:\n" not in manifest
@@ -21,6 +23,8 @@ with ZipFile(candidates[0]) as z:
     required = (
         "plugin.yml",
         "com/praya/myitems/MyItems.class",
+        "com/lymeowz/item/permission/ItemPermissions.class",
+        "com/lymeowz/item/stats/ModernStatsFormulas.class",
         "com/praya/myitems/builder/ability/weapon/AbilityWeaponConfuse.class",
         "com/praya/myitems/builder/ability/weapon/AbilityWeaponFreeze.class",
         "com/praya/myitems/listener/support/ListenerPlayerHealthMaxChange.class",

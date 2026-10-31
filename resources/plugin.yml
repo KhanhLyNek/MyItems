@@ -146,3 +146,110 @@ permissions:
   myitems.command.model:
     description: Change the held item's visual model without touching MyItems gameplay metadata
     default: op
+
+  # LyMeowz canonical permissions; the original MyItems nodes remain supported.
+  lymeowzitem.admin:
+    description: Administrative access to LyMeowzItem
+    default: op
+    children:
+      lymeowzitem.command.reload: true
+      lymeowzitem.command.save: true
+      lymeowzitem.command.remove: true
+      lymeowzitem.command.list: true
+      lymeowzitem.command.load: true
+      lymeowzitem.command.drop: true
+      lymeowzitem.command.amount: true
+      lymeowzitem.command.data: true
+      lymeowzitem.command.material: true
+      lymeowzitem.command.repair: true
+      lymeowzitem.command.name: true
+      lymeowzitem.command.lore: true
+      lymeowzitem.command.flag: true
+      lymeowzitem.command.enchant: true
+      lymeowzitem.command.unbreakable: true
+      lymeowzitem.command.attribute.stats: true
+      lymeowzitem.command.attribute.element: true
+      lymeowzitem.command.attribute.buff: true
+      lymeowzitem.command.attribute.debuff: true
+      lymeowzitem.command.attribute.nbt: true
+      lymeowzitem.command.attribute.power: true
+      lymeowzitem.command.attribute.ability: true
+      lymeowzitem.command.attribute.requirement: true
+      lymeowzitem.command.socket: true
+      lymeowzitem.command.model: true
+
+  lymeowzitem.command.reload:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.save:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.remove:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.list:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.load:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.drop:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.amount:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.data:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.material:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.repair:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.name:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.lore:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.flag:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.enchant:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.unbreakable:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.stats:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.element:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.buff:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.debuff:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.nbt:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.power:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.ability:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.attribute.requirement:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.socket:
+    description: LyMeowzItem command permission
+    default: false
+  lymeowzitem.command.model:
+    description: LyMeowzItem command permission
+    default: false

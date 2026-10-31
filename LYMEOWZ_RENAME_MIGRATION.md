@@ -6,8 +6,8 @@
 - `MyItems` (Bukkit identity) -> **LyMeowzItem**, main command `/lymeowzitem`
 - Legacy `/myitems` and `/agarthalib` command roots are **not** registered; the `provides` aliases only resolve plugin dependencies and `PluginManager.getPlugin()`
 - All *other* Bukkit commands and aliases (including `/myitem`, `/mi`, `/itematt`, `/lore` and `/enchant`) remain as before
-- `myitems.*` and `agarthalib.*` permissions remain valid; no permission rewrites
-- Historic Java packages/classes (`com.praya.myitems.*`, `com.praya.agarthalib.*`), PAPI IDs, NBT keys, YAML command IDs, and item storage formats are intentionally unchanged to preserve existing items, API integrations and user permission configs
+- New canonical nodes `lymeowzitem.*` and `lymeowzlib.*` work. Both legacy `myitems.*` and `agarthalib.*` permission nodes remain valid during migration. Keep existing permissions as-is until you choose to migrate your permission groups.
+- The migration has begun: real runtime code now lives in `com.lymeowz.lib.permission`, `com.lymeowz.lib.migration`, `com.lymeowz.item.permission`, and `com.lymeowz.item.stats`. Legacy Java APIs remain as delegating facades. Other `com.praya.*` and `api.praya.*` classes remain until their callers and serialization contracts can be migrated with tests. PAPI IDs, NBT keys, YAML command IDs, and item storage formats are intentionally unchanged.
 - Gradle artifact IDs are **LyMeowzLib** / **LyMeowzItem** under the historic `com.praya` group; the GitHub repository URLs are not renamed in this update
 
 ## Upgrading a server

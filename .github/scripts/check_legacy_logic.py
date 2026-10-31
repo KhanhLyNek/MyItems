@@ -56,11 +56,13 @@ def main() -> int:
                 # in-memory and compare to the reviewed pre-rename blob.
                 manifest = path.read_text("utf-8")
                 if ("name: LyMeowzItem\n" in manifest and
+                        "provides: [MyItems]\n" in manifest and
                         "- LyMeowzLib\n" in manifest and
                         "  lymeowzitem:\n" in manifest and
                         "  myitems:\n" not in manifest):
                     normalized = (manifest
                         .replace("name: LyMeowzItem\n", "name: MyItems\n")
+                        .replace("provides: [MyItems]\n", "")
                         .replace("- LyMeowzLib\n", "- AgarthaLib\n")
                         .replace("  lymeowzitem:\n", "  myitems:\n"))
                     reviewed_hash = subprocess.run(

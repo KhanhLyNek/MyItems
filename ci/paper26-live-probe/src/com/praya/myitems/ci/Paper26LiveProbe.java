@@ -462,6 +462,14 @@ public final class Paper26LiveProbe extends JavaPlugin {
                 "LyMeowzLib plugin registered under new Bukkit identity");
         check(Bukkit.getPluginManager().getPlugin("LyMeowzItem") instanceof MyItems,
                 "LyMeowzItem plugin registered under new Bukkit identity");
+        check(Bukkit.getPluginManager().getPlugin("AgarthaLib") instanceof AgarthaLib,
+                "old AgarthaLib soft/hard dependencies resolve via provides");
+        check(Bukkit.getPluginManager().getPlugin("MyItems") instanceof MyItems,
+                "old MyItems soft/hard dependencies resolve via provides");
+        check(Bukkit.getPluginManager().getPermission("myitems.admin") != null,
+                "legacy MyItems permission node preserved");
+        check(Bukkit.getPluginManager().getPermission("agarthalib.admin") != null,
+                "legacy AgarthaLib permission node preserved");
         check(Bukkit.getPluginCommand("lymeowzitem") != null,
                 "new /lymeowzitem root registered");
         check(Bukkit.getPluginCommand("lymeowzlib") != null,
@@ -485,6 +493,12 @@ public final class Paper26LiveProbe extends JavaPlugin {
                     "old " + folders[0] + " data folder preserved");
             check(java.nio.file.Files.readString(into).equals(expected),
                     "new " + folders[1] + " folder inherited old data");
+            check(java.nio.file.Files.readString(
+                    parent.resolve(folders[1]).resolve("collision-rename-probe.txt"))
+                    .equals("New folder wins"), "pre-existing new config never overwritten");
+            check(!java.nio.file.Files.exists(
+                    parent.resolve(folders[1]).resolve("unsafe-link-probe.txt")),
+                    "legacy symlink must never be followed or copied");
         }
         getLogger().info("PASS: LyMeowz plugin identities, command aliases and old data folders");
     }

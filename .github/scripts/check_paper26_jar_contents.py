@@ -13,6 +13,7 @@ with ZipFile(candidates[0]) as z:
     names = set(z.namelist())
     manifest = z.read("plugin.yml").decode("utf-8")
     assert "name: LyMeowzItem\n" in manifest
+    assert "provides: [MyItems]\n" in manifest
     assert "- LyMeowzLib\n" in manifest
     assert "  lymeowzitem:\n" in manifest
     assert "  myitems:\n" not in manifest

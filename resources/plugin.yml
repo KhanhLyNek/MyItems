@@ -1,5 +1,6 @@
 main: com.praya.myitems.MyItems
 name: LyMeowzItem
+provides: [MyItems]
 version: 6.4.6
 api-version: 1.13
 website: https://www.spigotmc.org/resources/authors/70791/

@@ -68,11 +68,19 @@ def run_server(folder):
     (folder / "plugins").mkdir()
     # Seed old data folders before startup and require preservation by both
     # renamed plugins; never touch a real server or overwrite a real config.
-    for old in ("MyItems", "AgarthaLib"):
+    for old, new in (("MyItems", "LyMeowzItem"), ("AgarthaLib", "LyMeowzLib")):
         legacy = folder / "plugins" / old
+        fresh = folder / "plugins" / new
         legacy.mkdir()
+        fresh.mkdir()
         (legacy / "legacy-rename-probe.txt").write_text(
             "Original " + old + " config marker", encoding="utf-8")
+        (legacy / "collision-rename-probe.txt").write_text(
+            "Do not overwrite existing settings", encoding="utf-8")
+        (fresh / "collision-rename-probe.txt").write_text(
+            "New folder wins", encoding="utf-8")
+        # No old config may cause migration to copy through a filesystem link.
+        (legacy / "unsafe-link-probe.txt").symlink_to(folder / "eula.txt")
     (folder / "eula.txt").write_text("eula=true\n", encoding="utf-8")
     (folder / "server.properties").write_text(
         # The disposable offline-mode server must NEVER listen publicly.

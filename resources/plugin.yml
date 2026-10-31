@@ -15,6 +15,8 @@ softdepend:
 - MMOCore
 - Lands
 - DecentHolograms
+- ItemsAdder
+- Oraxen
 
 commands:
   myitems:
@@ -138,3 +140,8 @@ permissions:
       myitems.command.attribute.ability: true
       myitems.command.attribute.requirement: true
       myitems.command.socket: true
+      myitems.command.model: true
+
+  myitems.command.model:
+    description: Change the held item's visual model without touching MyItems gameplay metadata
+    default: op

@@ -43,6 +43,11 @@ def main() -> int:
                     "f83eae052cb8fef3a3891b29ff34bd1d13bda0f2",
                 "src/com/praya/myitems/builder/ability/weapon/AbilityWeaponCurse.java":
                     "736f7e3fdaa9a6ad71ed5068f6b4152843d4043a",
+                # Reviewed plugin.yml-only extension: optional model providers
+                # and OP-default model permission. All previous YAML commands,
+                # aliases, permissions and dependencies remain byte-exact.
+                "resources/plugin.yml":
+                    "173e105fef679ed6f790a9491771332d763aaa2c",
             }
             if reviewed_fixes.get(relative) == actual:
                 continue

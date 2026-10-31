@@ -80,8 +80,12 @@ public class PlayerItemStatsManager extends HandlerManager
         final double baseAttackAoERadius = 0.0;
         final double baseAttackAoEDamage = 0.0;
         final double baseHitRate = 100.0;
+        final double baseDamageMinValue = statsDamage;
+        final double baseDamageMaxValue = statsDamage + statsDamageDiff;
         final double totalDamageMin = 0.0 + attributeDamage;
-        final double totalDamageMax = totalDamageMin + statsDamageDiff;
+        final double totalDamageMax = baseDamageMaxValue
+                + socket.getAdditionalDamage() + baseDamageMaxValue * socket.getPercentDamage() / 100.0
+                + elementWeapon.getBaseAdditionalDamage() + baseDamageMaxValue * elementWeapon.getBasePercentDamage() / 100.0;
         final double totalPenetration = 0.0 + statsWeapon.getPenetration() + socket.getPenetration();
         final double totalPvPDamage = 100.0 + statsWeapon.getPvPDamage() + socket.getPvPDamage();
         final double totalPvEDamage = 100.0 + statsWeapon.getPvEDamage() + socket.getPvEDamage();
@@ -92,7 +96,7 @@ public class PlayerItemStatsManager extends HandlerManager
         final double totalAttackAoERadius = 0.0 + statsWeapon.getAttackAoERadius() + socket.getAttackAoERadius();
         final double totalAttackAoEDamage = 0.0 + statsWeapon.getAttackAoEDamage() + socket.getAttackAoEDamage();
         final double totalHitRate = 100.0 + statsWeapon.getHitRate() + socket.getHitRate();
-        return new ItemStatsWeapon(totalDamageMin, totalDamageMax, totalPenetration, totalPvPDamage, totalPvEDamage, totalAttackAoERadius, totalAttackAoEDamage, totalCriticalChance, totalCriticalDamage, totalHitRate, socketDamage, elementDamage);
+        return new ItemStatsWeapon(totalDamageMin, totalDamageMax, totalPenetration, totalPvPDamage, totalPvEDamage, totalAttackAoERadius, totalAttackAoEDamage, totalCriticalChance, totalCriticalDamage, totalHitRate, socketDamage, elementDamage, baseDamageMinValue, baseDamageMaxValue);
     }
     
     public final ItemStatsArmor getItemStatsArmor(final Player player) {

@@ -20,8 +20,20 @@ public class ItemStatsWeapon
     private final double totalHitRate;
     private final double socketDamage;
     private final double elementDamage;
+    private final double baseDamageMin;
+    private final double baseDamageMax;
     
     public ItemStatsWeapon(final double totalDamageMin, final double totalDamageMax, final double totalPenetration, final double totalPvPDamage, final double totalPvEDamage, final double totalAttackAoERadius, final double totalAttackAoEDamage, final double totalCriticalChance, final double totalCriticalDamage, final double totalHitRate, final double socketDamage, final double elementDamage) {
+        this(totalDamageMin, totalDamageMax, totalPenetration, totalPvPDamage, totalPvEDamage,
+                totalAttackAoERadius, totalAttackAoEDamage, totalCriticalChance, totalCriticalDamage,
+                totalHitRate, socketDamage, elementDamage,
+                totalDamageMin - socketDamage - elementDamage,
+                totalDamageMax - socketDamage - elementDamage);
+    }
+
+    public ItemStatsWeapon(final double totalDamageMin, final double totalDamageMax, final double totalPenetration, final double totalPvPDamage, final double totalPvEDamage, final double totalAttackAoERadius, final double totalAttackAoEDamage, final double totalCriticalChance, final double totalCriticalDamage, final double totalHitRate, final double socketDamage, final double elementDamage, final double baseDamageMin, final double baseDamageMax) {
+        this.baseDamageMin = baseDamageMin;
+        this.baseDamageMax = baseDamageMax;
         this.totalDamageMin = totalDamageMin;
         this.totalDamageMax = totalDamageMax;
         this.totalPenetration = totalPenetration;
@@ -36,6 +48,15 @@ public class ItemStatsWeapon
         this.elementDamage = elementDamage;
     }
     
+    /** Base lore damage before socket and element bonuses. */
+    public final double getBaseDamageMin() {
+        return this.baseDamageMin;
+    }
+
+    public final double getBaseDamageMax() {
+        return this.baseDamageMax;
+    }
+
     public final double getTotalDamageMin() {
         return this.totalDamageMin;
     }

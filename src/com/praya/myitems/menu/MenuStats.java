@@ -117,8 +117,12 @@ public class MenuStats extends HandlerMenu implements MenuExecutor
         final double abilityBasePercentDamage = abilityWeaponManager.getTotalBasePercentDamage(mapAbilityWeapon);
         final double abilityCastBonusDamage = abilityWeaponManager.getTotalCastBonusDamage(mapAbilityWeapon);
         final double abilityCastPercentDamage = abilityWeaponManager.getTotalCastPercentDamage(mapAbilityWeapon);
-        final double totalDamageMin = (itemStatsWeapon.getTotalDamageMin() + itemSetBonusEffectStats.getAdditionalDamage()) * ((100.0 + itemSetBonusEffectStats.getPercentDamage()) / 100.0);
-        final double totalDamageMax = (itemStatsWeapon.getTotalDamageMax() + itemSetBonusEffectStats.getAdditionalDamage()) * ((100.0 + itemSetBonusEffectStats.getPercentDamage()) / 100.0);
+        final double totalDamageMin = Paper26StatsMath.withBasePercentBonus(itemStatsWeapon.getTotalDamageMin(),
+                itemStatsWeapon.getBaseDamageMin(), itemSetBonusEffectStats.getAdditionalDamage(),
+                itemSetBonusEffectStats.getPercentDamage());
+        final double totalDamageMax = Paper26StatsMath.withBasePercentBonus(itemStatsWeapon.getTotalDamageMax(),
+                itemStatsWeapon.getBaseDamageMax(), itemSetBonusEffectStats.getAdditionalDamage(),
+                itemSetBonusEffectStats.getPercentDamage());
         final double totalPenetration = Paper26StatsMath.chance(itemStatsWeapon.getTotalPenetration() + itemSetBonusEffectStats.getPenetration());
         final double totalPvPDamage = itemStatsWeapon.getTotalPvPDamage() + itemSetBonusEffectStats.getPvPDamage();
         final double totalPvEDamage = itemStatsWeapon.getTotalPvEDamage() + itemSetBonusEffectStats.getPvEDamage();
@@ -127,7 +131,9 @@ public class MenuStats extends HandlerMenu implements MenuExecutor
         final double totalAttackAoERadius = itemStatsWeapon.getTotalAttackAoERadius() + itemSetBonusEffectStats.getAttackAoERadius();
         final double totalAttackAoEDamage = itemStatsWeapon.getTotalAttackAoEDamage() + itemSetBonusEffectStats.getAttackAoEDamage();
         final double totalHitRate = itemStatsWeapon.getTotalHitRate() + itemSetBonusEffectStats.getHitRate();
-        final double totalDefense = (itemStatsArmor.getTotalDefense() + itemSetBonusEffectStats.getAdditionalDefense()) * ((100.0 + itemSetBonusEffectStats.getPercentDefense()) / 100.0);
+        final double totalDefense = Paper26StatsMath.withBasePercentBonus(itemStatsArmor.getTotalDefense(),
+                itemStatsArmor.getTotalDefense() - itemStatsArmor.getSocketDefense(),
+                itemSetBonusEffectStats.getAdditionalDefense(), itemSetBonusEffectStats.getPercentDefense());
         final double totalPvPDefense = itemStatsArmor.getTotalPvPDefense() + itemSetBonusEffectStats.getPvPDefense();
         final double totalPvEDefense = itemStatsArmor.getTotalPvEDefense() + itemSetBonusEffectStats.getPvEDefense();
         final double totalHealth = itemStatsArmor.getTotalHealth() + itemSetBonusEffectStats.getHealth();

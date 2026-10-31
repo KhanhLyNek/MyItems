@@ -52,6 +52,9 @@ public final class Paper26StatsSelfTest {
         eq(Paper26StatsMath.criticalDamageMultiplier(false, 0, 10, 5), 1.35);
         eq(Paper26StatsMath.criticalDamageMultiplier(true, 0.4, 10, 5), 1.55);
         eq(Paper26StatsMath.balancedDamage(10, 0, 10), 10);
+        eq(Paper26StatsMath.withBasePercentBonus(15, 10, 2, 50), 22);
+        eq(Paper26StatsMath.withBasePercentBonus(30, 20, 2, 50), 42);
+        eq(Paper26StatsMath.withBasePercentBonus(150, 100, 20, 10), 180);
         eq(Paper26StatsMath.balancedDamage(10, 20, 0), 10);
         System.out.println("PASS: " + checks + " Stats regression assertions");
     }

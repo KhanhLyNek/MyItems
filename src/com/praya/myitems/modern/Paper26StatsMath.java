@@ -44,6 +44,13 @@ public final class Paper26StatsMath {
         return damage(validDamage / divisor * 10.0 / modus);
     }
 
+    /** Apply set percent bonus only to base lore, not already-added socket/element values. */
+    public static double withBasePercentBonus(double existingTotal, double baseStat,
+                                              double flatBonus, double percentBonus) {
+        final double value = existingTotal + flatBonus + baseStat * percentBonus / 100.0;
+        return Double.isFinite(value) ? value : 0.0;
+    }
+
     public static double experienceToNextLevel(int level) {
         final double safeLevel = Math.max(1, level);
         return safeLevel * safeLevel * 25.0 + safeLevel * 50.0 + 100.0;

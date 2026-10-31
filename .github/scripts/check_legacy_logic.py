@@ -51,6 +51,24 @@ def main() -> int:
             }
             if reviewed_fixes.get(relative) == actual:
                 continue
+            if relative == "resources/plugin.yml":
+                # Approved rename only: restore the original frozen manifest
+                # in-memory and compare to the reviewed pre-rename blob.
+                manifest = path.read_text("utf-8")
+                if ("name: LyMeowzItem\n" in manifest and
+                        "- LyMeowzLib\n" in manifest and
+                        "  lymeowzitem:\n" in manifest and
+                        "  myitems:\n" not in manifest):
+                    normalized = (manifest
+                        .replace("name: LyMeowzItem\n", "name: MyItems\n")
+                        .replace("- LyMeowzLib\n", "- AgarthaLib\n")
+                        .replace("  lymeowzitem:\n", "  myitems:\n"))
+                    reviewed_hash = subprocess.run(
+                        ["git", "hash-object", "--stdin"], input=normalized,
+                        capture_output=True, text=True, check=True, cwd=ROOT,
+                    ).stdout.strip()
+                    if reviewed_hash == reviewed_fixes.get(relative):
+                        continue
             problems.append(f"changed: {relative} (original {expected[:12]}, current {actual[:12]})")
 
     if problems:

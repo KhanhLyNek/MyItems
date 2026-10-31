@@ -74,6 +74,7 @@ import com.praya.myitems.command.CommandEnchant;
 import com.praya.myitems.command.CommandAttributes;
 import com.praya.myitems.command.CommandMyItems;
 import java.util.List;
+import com.praya.agarthalib.modern.Paper26PluginFolderMigration;
 import com.praya.myitems.manager.register.RegisterManager;
 import com.praya.myitems.manager.task.TaskManager;
 import com.praya.myitems.manager.game.GameManager;
@@ -140,6 +141,12 @@ public class MyItems extends JavaPlugin implements Agartha
         return this.registerManager;
     }
     
+    @Override
+    public void onLoad() {
+        // Copy legacy configs and item YAML before any managers initialize.
+        Paper26PluginFolderMigration.copyMissing(this, "MyItems");
+    }
+
     public void onEnable() {
         this.setPluginManager();
         if (!isEnabled()) return; // An initialization callback may disable the plugin.
@@ -218,7 +225,7 @@ public class MyItems extends JavaPlugin implements Agartha
         final CommandExecutor commandAddFlag = (CommandExecutor)(ServerUtil.isCompatible(VersionNMS.V1_8_R3) ? new CommandFlagAdd(this) : commandNotCompatible);
         final CommandExecutor commandRemoveFlag = (CommandExecutor)(ServerUtil.isCompatible(VersionNMS.V1_8_R3) ? new CommandFlagRemove(this) : commandNotCompatible);
         final CommandExecutor commandClearFlag = (CommandExecutor)(ServerUtil.isCompatible(VersionNMS.V1_8_R3) ? new CommandFlagClear(this) : commandNotCompatible);
-        this.getCommand("MyItems").setExecutor(commandMyItems);
+        this.getCommand("LyMeowzItem").setExecutor(commandMyItems);
         this.getCommand("ItemAtt").setExecutor(commandAttributes);
         this.getCommand("Enchant").setExecutor(commandEnchant);
         this.getCommand("EnchantAdd").setExecutor(commandEnchantAdd);
@@ -251,7 +258,7 @@ public class MyItems extends JavaPlugin implements Agartha
         final TabCompleter tabCompleterNotCompatible = (TabCompleter)new TabCompleterNotCompatible(this);
         final TabCompleter tabCompleterFlagAdd = (TabCompleter)(ServerUtil.isCompatible(VersionNMS.V1_8_R3) ? new TabCompleterFlagAdd(this) : tabCompleterNotCompatible);
         final TabCompleter tabCompleterFlagRemove = (TabCompleter)(ServerUtil.isCompatible(VersionNMS.V1_8_R3) ? new TabCompleterFlagRemove(this) : tabCompleterNotCompatible);
-        this.getCommand("MyItems").setTabCompleter(tabCompleterMyItems);
+        this.getCommand("LyMeowzItem").setTabCompleter(tabCompleterMyItems);
         this.getCommand("ItemAtt").setTabCompleter(tabCompleterAttributes);
         this.getCommand("EnchantAdd").setTabCompleter(tabCompleterEnchantmentAdd);
         this.getCommand("EnchantRemove").setTabCompleter(tabCompleterEnchantmentRemove);

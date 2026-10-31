@@ -1,4 +1,4 @@
-name: Paper 26.3 MyItems + AgarthaLib CI
+name: Paper 26.3 LyMeowzItem + LyMeowzLib CI
 
 on:
   push:

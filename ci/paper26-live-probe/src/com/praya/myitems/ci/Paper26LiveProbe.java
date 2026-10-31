@@ -55,7 +55,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
      * Do not fire destructive combat in this startup smoke fixture.
      */
     private void verifyWeaponAbilities() throws Exception {
-        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("MyItems");
+        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem");
         check(myitems != null && myitems.isEnabled(), "MyItems enabled for ability validation");
         final RegisterAbilityWeaponManager registered =
                 myitems.getRegisterManager().getRegisterAbilityWeaponManager();
@@ -133,7 +133,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
         victim.setInvulnerable(true);
 
         final RegisterAbilityWeaponManager registered =
-                ((MyItems) Bukkit.getPluginManager().getPlugin("MyItems"))
+                ((MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem"))
                         .getRegisterManager().getRegisterAbilityWeaponManager();
         for (String id : new String[] {"Freeze", "Roots", "Curse"}) {
             final AbilityWeapon ability = registered.getAbilityWeapon(id);
@@ -155,7 +155,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
      * This does NOT claim the real EssentialsX 2.22.0 runs on Paper 26.3.
      */
     private void verifyEssentialsWarpProvider() {
-        final AgarthaLib agartha = (AgarthaLib) Bukkit.getPluginManager().getPlugin("AgarthaLib");
+        final AgarthaLib agartha = (AgarthaLib) Bukkit.getPluginManager().getPlugin("LyMeowzLib");
         check(agartha != null && agartha.isEnabled(), "AgarthaLib ready for Essentials warp API");
         final SupportManagerAPI supportManager = new SupportManagerAPI(agartha);
         final SupportEssentials adapter = supportManager.getSupportEssentials();
@@ -319,7 +319,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
 
     /** Test the original stats manager on actual serialized ItemStacks. */
     private void verifyRealStatsLore() {
-        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("MyItems");
+        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem");
         final LoreStatsManager stats = myitems.getGameManager().getStatsManager();
         final ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.DAMAGE, 10.0, 20.0));
@@ -391,7 +391,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
 
     /** Disposable mob-vs-mob live damage hook; client PvP requires separate players. */
     private void verifyRealMobStatsCombat() {
-        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("MyItems");
+        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem");
         final LoreStatsManager stats = myitems.getGameManager().getStatsManager();
         final World world = Bukkit.getWorlds().get(0);
         final Location pos = world.getSpawnLocation().clone().add(5.5, 3, 5.5);
@@ -456,9 +456,43 @@ public final class Paper26LiveProbe extends JavaPlugin {
         }
     }
 
+
+    private void verifyRenamedPlugins() throws Exception {
+        check(Bukkit.getPluginManager().getPlugin("LyMeowzLib") instanceof AgarthaLib,
+                "LyMeowzLib plugin registered under new Bukkit identity");
+        check(Bukkit.getPluginManager().getPlugin("LyMeowzItem") instanceof MyItems,
+                "LyMeowzItem plugin registered under new Bukkit identity");
+        check(Bukkit.getPluginCommand("lymeowzitem") != null,
+                "new /lymeowzitem root registered");
+        check(Bukkit.getPluginCommand("lymeowzlib") != null,
+                "new /lymeowzlib root registered");
+        check(Bukkit.getPluginCommand("myitems") == null,
+                "old /myitems command is not registered");
+        check(Bukkit.getPluginCommand("agarthalib") == null,
+                "old /agarthalib command is not registered");
+        for (String alias : new String[] {"myitem", "itemeditor", "items", "item", "mi",
+                "itematt", "enchant", "itemname", "lore", "socket", "nbtclear"}) {
+            check(Bukkit.getPluginCommand(alias) != null, "legacy command /" + alias + " preserved");
+        }
+        for (String[] folders : new String[][] {
+                {"MyItems", "LyMeowzItem"}, {"AgarthaLib", "LyMeowzLib"}
+        }) {
+            final java.nio.file.Path parent = this.getDataFolder().getParentFile().toPath();
+            final java.nio.file.Path from = parent.resolve(folders[0]).resolve("legacy-rename-probe.txt");
+            final java.nio.file.Path into = parent.resolve(folders[1]).resolve("legacy-rename-probe.txt");
+            final String expected = "Original " + folders[0] + " config marker";
+            check(java.nio.file.Files.readString(from).equals(expected),
+                    "old " + folders[0] + " data folder preserved");
+            check(java.nio.file.Files.readString(into).equals(expected),
+                    "new " + folders[1] + " folder inherited old data");
+        }
+        getLogger().info("PASS: LyMeowz plugin identities, command aliases and old data folders");
+    }
+
     @Override
     public void onEnable() {
         try {
+            verifyRenamedPlugins();
             ItemStack original = new ItemStack(Material.DIAMOND_SWORD);
             final int originalAmount = original.getAmount();
             final byte[] bytes = original.serializeAsBytes();
@@ -521,7 +555,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
             // Modifying old items with current lore must not wipe either the
             // historical root NBT or the modern lore identity sidecar.
             final LoreStatsManager stats = ((MyItems) Bukkit.getPluginManager()
-                    .getPlugin("MyItems")).getGameManager().getStatsManager();
+                    .getPlugin("LyMeowzItem")).getGameManager().getStatsManager();
             EquipmentUtil.addLore(restored, stats.getTextLoreStats(LoreStatsEnum.DAMAGE, 9.0));
             final ItemStack migrated = ItemStack.deserializeBytes(restored.serializeAsBytes());
             check(Bridge.getBridgeTagsNBT().getInt("Level", migrated) == 14,

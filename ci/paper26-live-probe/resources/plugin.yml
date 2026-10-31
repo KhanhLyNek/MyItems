@@ -2,4 +2,4 @@ name: Paper26LiveProbe
 version: 1.0.0
 main: com.praya.myitems.ci.Paper26LiveProbe
 api-version: '1.13'
-depend: [AgarthaLib, MyItems, Essentials, ItemsAdder, Oraxen]
+depend: [LyMeowzLib, LyMeowzItem, Essentials, ItemsAdder, Oraxen]

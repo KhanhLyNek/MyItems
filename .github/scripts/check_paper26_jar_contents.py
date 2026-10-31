@@ -11,6 +11,12 @@ if len(candidates) != 1:
     sys.exit(f"Expected one MyItems binary JAR: {[p.name for p in candidates]}")
 with ZipFile(candidates[0]) as z:
     names = set(z.namelist())
+    manifest = z.read("plugin.yml").decode("utf-8")
+    assert "name: LyMeowzItem\n" in manifest
+    assert "- LyMeowzLib\n" in manifest
+    assert "  lymeowzitem:\n" in manifest
+    assert "  myitems:\n" not in manifest
+    assert "    - myitem\n" in manifest
     required = (
         "plugin.yml",
         "com/praya/myitems/MyItems.class",

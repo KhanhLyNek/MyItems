@@ -1,11 +1,11 @@
 main: com.praya.myitems.MyItems
-name: MyItems
+name: LyMeowzItem
 version: 6.4.6
 api-version: 1.13
 website: https://www.spigotmc.org/resources/authors/70791/
 author: Praya Amadiga Pitasa
 depend: 
-- AgarthaLib
+- LyMeowzLib
 softdepend:
 - PlaceholderAPI
 - MVdWPlaceholderAPI
@@ -19,7 +19,7 @@ softdepend:
 - Oraxen
 
 commands:
-  myitems:
+  lymeowzitem:
     description: Plugin base command
     aliases: 
     - myitem

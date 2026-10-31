@@ -47,10 +47,10 @@ for label, data in [("AgarthaLib", agartha), ("MyItems", myitems)]:
         errors.append(f"{label}: VaultAPI must not pull Bukkit 1.13 transitively")
 
 lib_version = re.search(r'^version\s*=\s*"([^"]+)"', agartha, re.M)
-linked_version = coordinates(myitems).get("com.praya:AgarthaLib")
+linked_version = coordinates(myitems).get("com.praya:LyMeowzLib")
 if lib_version is None or linked_version != lib_version.group(1):
     errors.append(
-        f"MyItems AgarthaLib dependency {linked_version} does not match library version "
+        f"LyMeowzItem dependency on LyMeowzLib {linked_version} does not match library version "
         f"{lib_version.group(1) if lib_version else '<missing>'}"
     )
 

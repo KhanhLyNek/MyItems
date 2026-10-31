@@ -77,12 +77,16 @@ def check() -> int:
     problems = []
 
     for name, saved_aliases in BASELINE["pluginCommands"].items():
-        if name not in commands:
-            problems.append(f"Deleted public command /{name}")
+        # Only the historical /myitems root is deliberately renamed.
+        actual_name = "lymeowzitem" if name == "myitems" else name
+        if actual_name not in commands:
+            problems.append(f"Deleted public command /{actual_name}")
         else:
-            removed = set(saved_aliases) - set(commands[name])
+            removed = set(saved_aliases) - set(commands[actual_name])
             if removed:
-                problems.append(f"/{name}: removed aliases {sorted(removed)}")
+                problems.append(f"/{actual_name}: removed aliases {sorted(removed)}")
+    if "myitems" in commands:
+        problems.append("Old /myitems root still registered instead of /lymeowzitem")
 
     for permission in BASELINE["permissionChildren"]:
         if permission not in permissions:

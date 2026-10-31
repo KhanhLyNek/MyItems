@@ -51,6 +51,15 @@ public class DependencyConfig extends HandlerConfig
         this.mapDependency.clear();
     }
     
+    private static Collection<String> normalizeNames(final Collection<String> names) {
+        final Collection<String> result = new ArrayList<String>();
+        for (final String name : names) {
+            // Old packaged and user-provided YAML may still contain AgarthaLib.
+            result.add("AgarthaLib".equalsIgnoreCase(name) ? "LyMeowzLib" : name);
+        }
+        return result;
+    }
+
     private final void loadConfig() {
         final PluginManager pluginManager = this.plugin.getPluginManager();
         final DataManager dataManager = pluginManager.getDataManager();
@@ -61,13 +70,13 @@ public class DependencyConfig extends HandlerConfig
                 if (config.isString(key)) {
                     final Collection<String> dependencies = new ArrayList<String>();
                     dependencies.add(config.getString(key));
-                    this.mapDependency.put(Dependency.SOFT_DEPENDENCY, dependencies);
+                    this.mapDependency.put(Dependency.SOFT_DEPENDENCY, normalizeNames(dependencies));
                 }
                 else {
                     if (!config.isList(key)) {
                         continue;
                     }
-                    this.mapDependency.put(Dependency.SOFT_DEPENDENCY, config.getStringList(key));
+                    this.mapDependency.put(Dependency.SOFT_DEPENDENCY, normalizeNames(config.getStringList(key)));
                 }
             }
             else {
@@ -77,13 +86,13 @@ public class DependencyConfig extends HandlerConfig
                 if (config.isString(key)) {
                     final Collection<String> dependencies = new ArrayList<String>();
                     dependencies.add(config.getString(key));
-                    this.mapDependency.put(Dependency.HARD_DEPENDENCY, dependencies);
+                    this.mapDependency.put(Dependency.HARD_DEPENDENCY, normalizeNames(dependencies));
                 }
                 else {
                     if (!config.isList(key)) {
                         continue;
                     }
-                    this.mapDependency.put(Dependency.HARD_DEPENDENCY, config.getStringList(key));
+                    this.mapDependency.put(Dependency.HARD_DEPENDENCY, normalizeNames(config.getStringList(key)));
                 }
             }
         }

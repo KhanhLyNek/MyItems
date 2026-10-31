@@ -28,7 +28,7 @@ dependencies {
 
     // Publish AgarthaLib to Maven local first using:
     // cd ../AgarthaLib && gradle publishToMavenLocal
-    compileOnly("com.praya:AgarthaLib:2.17.2-paper26.3-SNAPSHOT")
+    compileOnly("com.praya:LyMeowzLib:2.17.2-paper26.3-SNAPSHOT")
 
     // Optional APIs are provided by installed plugins, NEVER bundled in MyItems.
     // Keep these coordinates identical to the corresponding AgarthaLib APIs.

@@ -66,6 +66,13 @@ def plugin_jar(directory):
 def run_server(folder):
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "plugins").mkdir()
+    # Seed old data folders before startup and require preservation by both
+    # renamed plugins; never touch a real server or overwrite a real config.
+    for old in ("MyItems", "AgarthaLib"):
+        legacy = folder / "plugins" / old
+        legacy.mkdir()
+        (legacy / "legacy-rename-probe.txt").write_text(
+            "Original " + old + " config marker", encoding="utf-8")
     (folder / "eula.txt").write_text("eula=true\n", encoding="utf-8")
     (folder / "server.properties").write_text(
         # The disposable offline-mode server must NEVER listen publicly.
@@ -124,7 +131,7 @@ def run_server(folder):
                 ready = True
                 break
         if ready:
-            for command in ("version MyItems", "version AgarthaLib", "stop"):
+            for command in ("version LyMeowzItem", "version LyMeowzLib", "stop"):
                 process.stdin.write(command + "\n")
                 process.stdin.flush()
                 time.sleep(1)
@@ -140,14 +147,16 @@ def run_server(folder):
             process.wait(timeout=10)
         (ROOT / "paper26-server-smoke.log").write_text("\n".join(lines)+"\n", encoding="utf-8")
     all_logs = "\n".join(lines)
-    for plugin in ("AgarthaLib", "MyItems"):
+    for plugin in ("LyMeowzLib", "LyMeowzItem"):
         if f"[{plugin}] Enabling {plugin}" not in all_logs:
             raise AssertionError(f"Plugin {plugin} did not reach onEnable")
     if "Starting Minecraft server on 127.0.0.1:" not in all_logs:
         raise AssertionError("Offline test server did not bind to loopback only")
-    for plugin in ("MyItems", "AgarthaLib"):
+    for plugin in ("LyMeowzItem", "LyMeowzLib"):
         if f"{plugin} version " not in all_logs:
             raise AssertionError(f"Paper did not complete the version command for {plugin}")
+    if "PASS: LyMeowz plugin identities, command aliases and old data folders" not in all_logs:
+        raise AssertionError("Renamed plugin identity, command or migration fixture failed")
     if "PASS: live legacy NBT read-only fallback and PDC precedence" not in all_logs:
         raise AssertionError("Real Paper legacy NBT bridge probe did not pass")
     if "PASS: 25/25 weapon ability classes registered, configured and lore-roundtripped" not in all_logs:

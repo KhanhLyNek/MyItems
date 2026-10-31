@@ -1,1 +1,1 @@
-rootProject.name = "MyItems"
+rootProject.name = "LyMeowzItem"

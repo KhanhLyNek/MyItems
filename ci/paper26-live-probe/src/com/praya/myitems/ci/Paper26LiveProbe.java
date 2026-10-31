@@ -277,9 +277,9 @@ public final class Paper26LiveProbe extends JavaPlugin {
         EquipmentUtil.setLore(item, 1, "&#00FF00&lDamage: 42");
         EquipmentUtil.insertLore(item, 2, "&eLegacy lore");
         final ItemMeta colored = item.getItemMeta();
-        check((red + "Sword §lSoul").equals(colored.getDisplayName()),
+        check((red + "Sword §lSoul").equals(EquipmentUtil.getDisplayName(item)),
                 "HEX name written by existing EquipmentUtil");
-        final List<String> lore = colored.getLore();
+        final List<String> lore = EquipmentUtil.getLores(item);
         check(lore != null && lore.size() == 3, "lore add/set/insert line indexes retained");
         check((green + "§lDamage: 42").equals(lore.get(0)),
                 "HEX lore-set uses same existing event-aware entrypoint");
@@ -292,11 +292,19 @@ public final class Paper26LiveProbe extends JavaPlugin {
                 colored.getPersistentDataContainer().get(idKey, PersistentDataType.STRING)),
                 "existing item ID not mutated by coloring");
 
+        // Simulates ItemConfig.loadConfig -> EquipmentUtil.colorful(gameItem).
+        // It must not downgrade stored RGB through deprecated String getters.
+        EquipmentUtil.colorful(item);
+        check((red + "Sword §lSoul").equals(EquipmentUtil.getDisplayName(item)),
+                "configuration reload retains original 24-bit display color");
+        check(lore.equals(EquipmentUtil.getLores(item)),
+                "configuration reload retains 24-bit lore and legacy formatting");
+
         final ItemStack reloaded = ItemStack.deserializeBytes(item.serializeAsBytes());
         final ItemMeta restored = reloaded.getItemMeta();
-        check(colored.getDisplayName().equals(restored.getDisplayName()),
+        check(EquipmentUtil.getDisplayName(item).equals(EquipmentUtil.getDisplayName(reloaded)),
                 "HEX name survives actual Paper ItemStack NBT roundtrip");
-        check(lore.equals(restored.getLore()),
+        check(lore.equals(EquipmentUtil.getLores(reloaded)),
                 "HEX, legacy, skill and stat lores survive NBT roundtrip");
         check("myitems:hex_sword".equals(
                 restored.getPersistentDataContainer().get(idKey, PersistentDataType.STRING)),

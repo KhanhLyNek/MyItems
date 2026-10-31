@@ -326,6 +326,10 @@ public final class Paper26LiveProbe extends JavaPlugin {
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.CRITICAL_CHANCE, 17.5));
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.CRITICAL_DAMAGE, 1.5));
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.DURABILITY, 8, 12));
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.ATTACK_SPEED, 1.25));
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.ARMOR_TOUGHNESS, 2));
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.LIFESTEAL, 10));
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.COOLDOWN_REDUCTION, 15));
         final ItemStack copy = ItemStack.deserializeBytes(sword.serializeAsBytes());
         getLogger().info("Stats diagnostic expected key=" +
                 stats.getKeyStats(LoreStatsEnum.DAMAGE, true).replace('§', '~') +
@@ -340,6 +344,10 @@ public final class Paper26LiveProbe extends JavaPlugin {
         check(stats.getLoreValue(copy, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 8, "Durability current");
         check(stats.getLoreValue(copy, LoreStatsEnum.DURABILITY, LoreStatsOption.MAX) == 12, "Durability max");
         check(stats.getLoreStatsWeapon(copy).getDamage() >= 10.0, "standalone weapon stats");
+        check(stats.getLoreValue(copy, LoreStatsEnum.ATTACK_SPEED, null) == 1.25, "modern Attack Speed lore");
+        check(stats.getLoreValue(copy, LoreStatsEnum.ARMOR_TOUGHNESS, null) == 2, "modern Armor Toughness lore");
+        check(stats.getLoreValue(copy, LoreStatsEnum.LIFESTEAL, null) == 10, "modern Lifesteal percentage lore");
+        check(stats.getLoreValue(copy, LoreStatsEnum.COOLDOWN_REDUCTION, null) == 15, "modern CDR percentage lore");
         check(Paper26StatsMath.outgoingBonus(true, 10, 20) == 10, "PvP route");
         check(Paper26StatsMath.outgoingBonus(false, 10, 20) == 20, "PvE route");
         check(Paper26StatsMath.incomingDefenseBonus(true, 10, 20) == 10, "PvP defense route");

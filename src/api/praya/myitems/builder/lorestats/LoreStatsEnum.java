@@ -37,7 +37,11 @@ public enum LoreStatsEnum
     LURES_MAX_TENSION("DreamFish", Arrays.asList("Lures Tension", "LuresTension", "Lures_Tension", "Lures Max Tension", "LuresMaxTension", "Lures_Max_Tension")), 
     LURES_ENDURANCE("DreamFish", Arrays.asList("Lures Endurance", "LuresEndurance", "Lures_Endurance")), 
     DURABILITY((String)null, Arrays.asList("Durability")), 
-    LEVEL((String)null, Arrays.asList("Level"));
+    LEVEL((String)null, Arrays.asList("Level")),
+    ATTACK_SPEED((String)null, Arrays.asList("Attack Speed", "AttackSpeed", "Attack_Speed")),
+    ARMOR_TOUGHNESS((String)null, Arrays.asList("Armor Toughness", "ArmorToughness", "Armor_Toughness")),
+    LIFESTEAL((String)null, Arrays.asList("Lifesteal", "Life Steal", "Life_Steal")),
+    COOLDOWN_REDUCTION((String)null, Arrays.asList("Cooldown Reduction", "CooldownReduction", "Cooldown_Reduction", "CDR"));
     
     private final String dependency;
     private final List<String> aliases;
@@ -145,6 +149,18 @@ public enum LoreStatsEnum
             case LEVEL: {
                 return mainConfig.getStatsIdentifierLevel();
             }
+            case ATTACK_SPEED: {
+                return mainConfig.getStatsIdentifierAttackSpeed();
+            }
+            case ARMOR_TOUGHNESS: {
+                return mainConfig.getStatsIdentifierArmorToughness();
+            }
+            case LIFESTEAL: {
+                return mainConfig.getStatsIdentifierLifesteal();
+            }
+            case COOLDOWN_REDUCTION: {
+                return mainConfig.getStatsIdentifierCooldownReduction();
+            }
             default: {
                 return null;
             }
@@ -152,6 +168,7 @@ public enum LoreStatsEnum
     }
     
     public static final LoreStatsEnum get(final String stats) {
+        if (stats == null) return null;
         LoreStatsEnum[] values;
         for (int length = (values = values()).length, i = 0; i < length; ++i) {
             final LoreStatsEnum key = values[i];

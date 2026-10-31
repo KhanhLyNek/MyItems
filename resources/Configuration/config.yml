@@ -216,6 +216,14 @@ Configuration:
     Identifier_Lures_Endurance: "Lures Endurance"
     Identifier_Durability: "Durability"
     Identifier_Level: "Level"
+
+    # Modern extension (lore/API definitions only; intentionally no combat changes yet).
+    # Flat vanilla attributes: Attack Speed / Armor Toughness
+    # Percentage stats: Lifesteal / Cooldown Reduction
+    Identifier_Attack_Speed: "Attack Speed"
+    Identifier_Armor_Toughness: "Armor Toughness"
+    Identifier_Lifesteal: "Lifesteal"
+    Identifier_Cooldown_Reduction: "Cooldown Reduction"
     
   Ability:
     Format: "&aChance of <chance> to apply <ability>"

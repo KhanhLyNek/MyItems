@@ -421,6 +421,24 @@ public class MainConfig extends HandlerConfig
     public final String getStatsIdentifierLevel() {
         return this.config.getString("Configuration.Stats.Identifier_Level");
     }
+
+    // These four new identifiers only affect lore parsing/formatting.
+    // No gameplay mechanics are enabled by defining the identifiers.
+    public final String getStatsIdentifierAttackSpeed() {
+        return this.config.getString("Configuration.Stats.Identifier_Attack_Speed", "Attack Speed");
+    }
+
+    public final String getStatsIdentifierArmorToughness() {
+        return this.config.getString("Configuration.Stats.Identifier_Armor_Toughness", "Armor Toughness");
+    }
+
+    public final String getStatsIdentifierLifesteal() {
+        return this.config.getString("Configuration.Stats.Identifier_Lifesteal", "Lifesteal");
+    }
+
+    public final String getStatsIdentifierCooldownReduction() {
+        return this.config.getString("Configuration.Stats.Identifier_Cooldown_Reduction", "Cooldown Reduction");
+    }
     
     public final String getAbilityFormat() {
         return this.config.getString("Configuration.Ability.Format");
@@ -1358,6 +1376,18 @@ public class MainConfig extends HandlerConfig
                                 final String path = "Configuration.Stats.Identifier_Durability";
                                 final String statsIdentifierDurability = statsDataSection.getString(statsData);
                                 config.set("Configuration.Stats.Identifier_Durability", (Object)TextUtil.colorful(statsIdentifierDurability));
+                            }
+                            else if (statsData.equalsIgnoreCase("Identifier_Attack_Speed")) {
+                                config.set("Configuration.Stats.Identifier_Attack_Speed", (Object)TextUtil.colorful(statsDataSection.getString(statsData)));
+                            }
+                            else if (statsData.equalsIgnoreCase("Identifier_Armor_Toughness")) {
+                                config.set("Configuration.Stats.Identifier_Armor_Toughness", (Object)TextUtil.colorful(statsDataSection.getString(statsData)));
+                            }
+                            else if (statsData.equalsIgnoreCase("Identifier_Lifesteal")) {
+                                config.set("Configuration.Stats.Identifier_Lifesteal", (Object)TextUtil.colorful(statsDataSection.getString(statsData)));
+                            }
+                            else if (statsData.equalsIgnoreCase("Identifier_Cooldown_Reduction")) {
+                                config.set("Configuration.Stats.Identifier_Cooldown_Reduction", (Object)TextUtil.colorful(statsDataSection.getString(statsData)));
                             }
                             else {
                                 if (!statsData.equalsIgnoreCase("Identifier_Level")) {

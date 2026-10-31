@@ -109,7 +109,8 @@ public class LoreStatsManager extends HandlerManager
                  loreStats == LoreStatsEnum.HIT_RATE || loreStats == LoreStatsEnum.DODGE_RATE ||
                  loreStats == LoreStatsEnum.PVP_DAMAGE || loreStats == LoreStatsEnum.PVE_DAMAGE ||
                  loreStats == LoreStatsEnum.PVP_DEFENSE || loreStats == LoreStatsEnum.PVE_DEFENSE ||
-                 loreStats == LoreStatsEnum.ATTACK_AOE_DAMAGE || loreStats == LoreStatsEnum.FISHING_SPEED ||
+                 loreStats == LoreStatsEnum.ATTACK_AOE_DAMAGE || loreStats == LoreStatsEnum.LIFESTEAL ||
+                 loreStats == LoreStatsEnum.COOLDOWN_REDUCTION || loreStats == LoreStatsEnum.FISHING_SPEED ||
                  loreStats == LoreStatsEnum.LURES_ENDURANCE) {
             kind = Paper26LoreStatsNumbers.Kind.PERCENT;
         }
@@ -184,7 +185,7 @@ public class LoreStatsManager extends HandlerManager
         else if (loreStats.equals(LoreStatsEnum.CRITICAL_DAMAGE) || loreStats.equals(LoreStatsEnum.FISHING_CHANCE)) {
             statsValue = String.valueOf(MainConfig.KEY_STATS_VALUE) + textValue1 + symbolMultiplier + MainConfig.KEY_STATS_VALUE + colorValue;
         }
-        else if (loreStats.equals(LoreStatsEnum.BLOCK_AMOUNT) || loreStats.equals(LoreStatsEnum.BLOCK_RATE) || loreStats.equals(LoreStatsEnum.HIT_RATE) || loreStats.equals(LoreStatsEnum.DODGE_RATE) || loreStats.equals(LoreStatsEnum.PVP_DAMAGE) || loreStats.equals(LoreStatsEnum.PVE_DAMAGE) || loreStats.equals(LoreStatsEnum.PVP_DEFENSE) || loreStats.equals(LoreStatsEnum.PVE_DEFENSE) || loreStats.equals(LoreStatsEnum.FISHING_SPEED) || loreStats.equals(LoreStatsEnum.LURES_ENDURANCE)) {
+        else if (loreStats.equals(LoreStatsEnum.BLOCK_AMOUNT) || loreStats.equals(LoreStatsEnum.BLOCK_RATE) || loreStats.equals(LoreStatsEnum.HIT_RATE) || loreStats.equals(LoreStatsEnum.DODGE_RATE) || loreStats.equals(LoreStatsEnum.PVP_DAMAGE) || loreStats.equals(LoreStatsEnum.PVE_DAMAGE) || loreStats.equals(LoreStatsEnum.PVP_DEFENSE) || loreStats.equals(LoreStatsEnum.PVE_DEFENSE) || loreStats.equals(LoreStatsEnum.FISHING_SPEED) || loreStats.equals(LoreStatsEnum.LURES_ENDURANCE) || loreStats.equals(LoreStatsEnum.LIFESTEAL) || loreStats.equals(LoreStatsEnum.COOLDOWN_REDUCTION)) {
             statsValue = ((value1 > 0.0) ? (String.valueOf(positiveValue) + "+" + MainConfig.KEY_STATS_VALUE + textValue1 + "%" + MainConfig.KEY_STATS_VALUE + colorValue) : (String.valueOf(MainConfig.KEY_STATS_VALUE) + textValue1 + "%" + MainConfig.KEY_STATS_VALUE + colorValue));
         }
         else if (loreStats.equals(LoreStatsEnum.FISHING_POWER) || loreStats.equals(LoreStatsEnum.LURES_MAX_TENSION)) {

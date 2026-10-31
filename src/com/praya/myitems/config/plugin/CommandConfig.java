@@ -56,40 +56,6 @@ public class CommandConfig extends HandlerCommand
     }
     
     private final void loadConfig() {
-        final PluginManager pluginManager = this.plugin.getPluginManager();
-        final DataManager dataManager = pluginManager.getDataManager();
-        final String path = dataManager.getPath("Path_File_Command");
-        final FileConfiguration config = FileUtil.getFileConfigurationResource((JavaPlugin)this.plugin, path);
-        for (final String key : config.getKeys(false)) {
-            if (key.equalsIgnoreCase("Command")) {
-                final ConfigurationSection idSection = config.getConfigurationSection(key);
-                for (final String id : idSection.getKeys(false)) {
-                    final ConfigurationSection mainDataSection = idSection.getConfigurationSection(id);
-                    final List<String> aliases = new ArrayList<String>();
-                    String permission = null;
-                    for (final String mainData : mainDataSection.getKeys(false)) {
-                        if (mainData.equalsIgnoreCase("Permission")) {
-                            permission = mainDataSection.getString(mainData);
-                        }
-                        else {
-                            if (!mainData.equalsIgnoreCase("Aliases")) {
-                                continue;
-                            }
-                            if (mainDataSection.isString(mainData)) {
-                                aliases.add(mainDataSection.getString(mainData));
-                            }
-                            else {
-                                if (!mainDataSection.isList(mainData)) {
-                                    continue;
-                                }
-                                aliases.addAll(mainDataSection.getStringList(mainData));
-                            }
-                        }
-                    }
-                    final CommandBuild commandBuild = new CommandBuild(id, permission, (List)aliases);
-                    this.mapCommand.put(id, commandBuild);
-                }
-            }
-        }
+        this.mapCommand.putAll(com.lymeowz.item.command.CommandDefinitions.load(this.plugin));
     }
 }

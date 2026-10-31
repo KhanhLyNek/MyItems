@@ -536,6 +536,19 @@ public final class Paper26LiveProbe extends JavaPlugin {
         check(Bukkit.getPluginManager().getPlugin("LyMeowzLib").getClass().getName()
                         .equals("com.lymeowz.lib.LyMeowzLib"),
                 "AgarthaLib Bukkit main class lives in com.lymeowz.lib");
+        check(com.lymeowz.lib.command.CommandText.rewrite(
+                "Use /myitems help and /agarthalib reload")
+                .equals("Use /lymeowzitem help and /lymeowzlib reload"),
+                "new command text converter retains legacy grammar");
+        check(com.praya.agarthalib.modern.Paper26CommandText.rewrite(
+                "Use /myitems help").equals("Use /lymeowzitem help"),
+                "old command text Java API delegates to LyMeowz package");
+        check(((MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem"))
+                .getPluginManager().getCommandManager().getCommand("MyItems_Reload") != null,
+                "MyItems_Reload ID preserved through relocated command parser");
+        check(((AgarthaLib) Bukkit.getPluginManager().getPlugin("LyMeowzLib"))
+                .getPluginManager().getCommandManager().getCommandBuild("AgarthaLib_Reload") != null,
+                "AgarthaLib_Reload ID preserved through relocated command parser");
         check(JavaPlugin.getPlugin(MyItems.class)
                         == Bukkit.getPluginManager().getPlugin("LyMeowzItem"),
                 "legacy MyItems JavaPlugin.getPlugin API resolves new main class");

@@ -470,6 +470,19 @@ public final class Paper26LiveProbe extends JavaPlugin {
                 "legacy MyItems permission node preserved");
         check(Bukkit.getPluginManager().getPermission("agarthalib.admin") != null,
                 "legacy AgarthaLib permission node preserved");
+        final MyItems lymeowzItem = (MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem");
+        final AgarthaLib lymeowzLib = (AgarthaLib) Bukkit.getPluginManager().getPlugin("LyMeowzLib");
+        check(lymeowzItem.getPluginManager().getLanguageManager()
+                        .getListText("en", "MyItems_Help").stream()
+                        .anyMatch(line -> line.contains("/lymeowzitem help")),
+                "real legacy MyItems help strings display /lymeowzitem");
+        check(lymeowzLib.getPluginManager().getLanguageManager()
+                        .getListText("en", "AgarthaLib_Help").stream()
+                        .anyMatch(line -> line.contains("/lymeowzlib help")),
+                "real legacy AgarthaLib help strings display /lymeowzlib");
+        check(lymeowzItem.getPluginManager().getPlaceholderManager().getPlaceholderConfig()
+                        .getPlaceholder("prefix").contains("LyMeowzItem"),
+                "legacy default chat prefix updated without editing user YAML");
         check(Bukkit.getPluginCommand("lymeowzitem") != null,
                 "new /lymeowzitem root registered");
         check(Bukkit.getPluginCommand("lymeowzlib") != null,

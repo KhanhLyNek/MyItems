@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.Collection;
 import com.praya.myitems.MyItems;
+import com.praya.agarthalib.modern.Paper26CommandText;
 import java.util.HashMap;
 import com.praya.myitems.builder.handler.HandlerConfig;
 
@@ -73,7 +74,7 @@ public class PlaceholderConfig extends HandlerConfig
                 if (key.equalsIgnoreCase("Placeholder")) {
                     final ConfigurationSection placeholderSection = config.getConfigurationSection(key);
                     for (final String placeholder : placeholderSection.getKeys(false)) {
-                        this.mapPlaceholder.put(placeholder, placeholderSection.getString(placeholder));
+                        this.mapPlaceholder.put(placeholder, Paper26CommandText.rewrite(placeholderSection.getString(placeholder)));
                     }
                 }
             }

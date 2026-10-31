@@ -535,6 +535,12 @@ public final class Paper26LiveProbe extends JavaPlugin {
                 "LyMeowzLib plugin registered under new Bukkit identity");
         check(Bukkit.getPluginManager().getPlugin("LyMeowzItem") instanceof MyItems,
                 "LyMeowzItem plugin registered under new Bukkit identity");
+        check(com.praya.myitems.modern.Paper26ModelCommand.class.getMethod(
+                "execute", org.bukkit.command.CommandSender.class, String[].class) != null,
+                "old model command ABI preserved");
+        check(com.lymeowz.item.command.ModelCommand.class.getMethod(
+                "execute", org.bukkit.command.CommandSender.class, String[].class) != null,
+                "canonical model command ABI exported");
         check(Bukkit.getPluginManager().getPlugin("LyMeowzItem").getClass().getName()
                         .equals("com.lymeowz.item.LyMeowzItem"),
                 "MyItems Bukkit main class lives in com.lymeowz.item");

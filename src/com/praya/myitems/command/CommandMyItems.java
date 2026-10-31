@@ -82,7 +82,7 @@ public class CommandMyItems extends HandlerCommand implements CommandExecutor
         }
         final String subCommand = args[0];
         if ("model".equalsIgnoreCase(subCommand)) {
-            return com.praya.myitems.modern.Paper26ModelCommand.execute(sender, args);
+            return com.lymeowz.item.command.ModelCommand.execute(sender, args);
         }
         if (commandManager.checkCommand(subCommand, "MyItems_Reload")) {
             if (!commandManager.checkPermission(sender, "MyItems_Reload")) {

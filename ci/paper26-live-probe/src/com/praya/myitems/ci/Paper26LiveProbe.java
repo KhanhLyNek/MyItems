@@ -409,7 +409,41 @@ public final class Paper26LiveProbe extends JavaPlugin {
             b.damage(2, a);
             final double after = b.getHealth();
             check(Double.isFinite(after) && after >= 0 && after <= before, "finite live mob combat health");
+
+            // Simulate a protection plugin cancelling the attack at HIGH,
+            // before MyItems' HIGHEST damage listener. No damage, skill,
+            // or extra lore-durability usage may be applied to this hit.
+            b.setNoDamageTicks(0);
+            final ItemStack limited = new ItemStack(Material.IRON_SWORD);
+            EquipmentUtil.addLore(limited, stats.getTextLoreStats(LoreStatsEnum.DAMAGE, 5));
+            EquipmentUtil.addLore(limited, stats.getTextLoreStats(LoreStatsEnum.DURABILITY, 3, 3));
+            a.getEquipment().setItemInMainHand(limited);
+            final boolean[] intercepted = { false };
+            final org.bukkit.event.Listener protection = new org.bukkit.event.Listener() {
+                @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGH)
+                public void cancelProtectedAttack(org.bukkit.event.entity.EntityDamageByEntityEvent hit) {
+                    if (hit.getDamager().equals(a) && hit.getEntity().equals(b)) {
+                        intercepted[0] = true;
+                        hit.setCancelled(true);
+                    }
+                }
+            };
+            Bukkit.getPluginManager().registerEvents(protection, this);
+            try {
+                final double protectedHealth = b.getHealth();
+                final int protectedDurability = (int)stats.getLoreValue(
+                        a.getEquipment().getItemInMainHand(), LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT);
+                b.damage(2, a);
+                check(intercepted[0], "protection plugin intercepted actual Paper damage event");
+                check(b.getHealth() == protectedHealth, "cancelled hit cannot change victim health");
+                check(stats.getLoreValue(a.getEquipment().getItemInMainHand(),
+                        LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == protectedDurability,
+                        "cancelled hit cannot consume weapon lore durability");
+            } finally {
+                org.bukkit.event.HandlerList.unregisterAll(protection);
+            }
             getLogger().info("PASS: Paper live mob-vs-mob stats damage event");
+            getLogger().info("PASS: Paper HIGH-priority protection cancellation interoperability");
         } finally {
             if (a.isValid()) a.remove();
             if (b.isValid()) b.remove();

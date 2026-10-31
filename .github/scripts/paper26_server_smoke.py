@@ -160,6 +160,8 @@ def run_server(folder):
         raise AssertionError("Model provider bridge/metadata isolation failed on real Paper")
     if "PASS: Paper Stats item lore NBT and PvP/PvE branch contracts" not in all_logs:
         raise AssertionError("Real Paper Stats lore/NBT contract probe failed")
+    if "PASS: Paper HIGH-priority protection cancellation interoperability" not in all_logs:
+        raise AssertionError("Cancel-protected Paper combat hit still affected item or health")
     if "PASS: Paper live mob-vs-mob stats damage event" not in all_logs:
         raise AssertionError("Real Paper entity combat probe failed")
     if "PASS: MyItems HEX and legacy item-name/lore commands on real Paper 26.3" not in all_logs:

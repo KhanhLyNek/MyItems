@@ -1,6 +1,6 @@
 # Modern Stats staging — Paper 26.3
 
-Four NEW lore stat identifiers are accepted in `Configuration.Stats` and by `LoreStatsEnum`:
+Four NEW lore stat identifiers are recognized by `LoreStatsEnum` and can optionally be set in existing `Configuration.Stats`. The shipped legacy `resources/Configuration/config.yml` is intentionally kept byte-identical, as required by the repository's compatibility guard:
 - `Attack Speed` (flat attribute points, e.g. 1.25)
 - `Armor Toughness` (flat attribute points, e.g. 2)
 - `Lifesteal` (% of damage, e.g. 10%)
@@ -17,3 +17,15 @@ They can be formatted and parsed using the **existing** `LoreStatsManager` / `Eq
 - New formulas tested in an isolated Java test task
 
 Not proven: live two-human PvP, proprietary plugins' actual release jars, or damage against real MythicMobs entities. Those require controlled server acceptance tests.
+
+## Optional YAML labels for existing server config files
+
+These are optional keys to add beneath your existing `Configuration.Stats` section.
+No mechanic becomes active by adding the keys; these only change names.
+
+```yaml
+Identifier_Attack_Speed: "Attack Speed"
+Identifier_Armor_Toughness: "Armor Toughness"
+Identifier_Lifesteal: "Lifesteal"
+Identifier_Cooldown_Reduction: "Cooldown Reduction"
+```

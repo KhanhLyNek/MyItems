@@ -29,7 +29,7 @@ import com.praya.myitems.config.plugin.MainConfig;
 import com.praya.agarthalib.utility.EquipmentUtil;
 import org.bukkit.inventory.ItemStack;
 import api.praya.myitems.builder.lorestats.LoreStatsEnum;
-import com.praya.myitems.modern.Paper26LoreStatsNumbers;
+import com.lymeowz.item.stats.LoreStatsNumbers;
 import com.praya.myitems.modern.Paper26StatsMath;
 import core.praya.agarthalib.enums.main.Slot;
 import core.praya.agarthalib.bridge.unity.Bridge;
@@ -91,18 +91,18 @@ public class LoreStatsManager extends HandlerManager
             return 0.0;
         }
         final MainConfig mainConfig = MainConfig.getInstance();
-        final Paper26LoreStatsNumbers.Kind kind;
+        final LoreStatsNumbers.Kind kind;
         if (loreStats == LoreStatsEnum.DAMAGE) {
-            kind = Paper26LoreStatsNumbers.Kind.DAMAGE;
+            kind = LoreStatsNumbers.Kind.DAMAGE;
         }
         else if (loreStats == LoreStatsEnum.DURABILITY) {
-            kind = Paper26LoreStatsNumbers.Kind.DURABILITY;
+            kind = LoreStatsNumbers.Kind.DURABILITY;
         }
         else if (loreStats == LoreStatsEnum.CRITICAL_DAMAGE) {
-            kind = Paper26LoreStatsNumbers.Kind.CRITICAL_DAMAGE;
+            kind = LoreStatsNumbers.Kind.CRITICAL_DAMAGE;
         }
         else if (loreStats == LoreStatsEnum.FISHING_CHANCE) {
-            kind = Paper26LoreStatsNumbers.Kind.MULTIPLIER;
+            kind = LoreStatsNumbers.Kind.MULTIPLIER;
         }
         else if (loreStats == LoreStatsEnum.CRITICAL_CHANCE || loreStats == LoreStatsEnum.PENETRATION ||
                  loreStats == LoreStatsEnum.BLOCK_AMOUNT || loreStats == LoreStatsEnum.BLOCK_RATE ||
@@ -112,12 +112,12 @@ public class LoreStatsManager extends HandlerManager
                  loreStats == LoreStatsEnum.ATTACK_AOE_DAMAGE || loreStats == LoreStatsEnum.LIFESTEAL ||
                  loreStats == LoreStatsEnum.COOLDOWN_REDUCTION || loreStats == LoreStatsEnum.FISHING_SPEED ||
                  loreStats == LoreStatsEnum.LURES_ENDURANCE) {
-            kind = Paper26LoreStatsNumbers.Kind.PERCENT;
+            kind = LoreStatsNumbers.Kind.PERCENT;
         }
         else {
-            kind = Paper26LoreStatsNumbers.Kind.NUMBER;
+            kind = LoreStatsNumbers.Kind.NUMBER;
         }
-        return Paper26LoreStatsNumbers.read(lore, MainConfig.KEY_STATS_VALUE, kind,
+        return LoreStatsNumbers.read(lore, MainConfig.KEY_STATS_VALUE, kind,
                 option == null ? null : option.name(), mainConfig.getStatsLorePositiveValue(),
                 mainConfig.getStatsLoreNegativeValue(), mainConfig.getStatsLoreRangeSymbol(),
                 mainConfig.getStatsLoreDividerSymbol(), mainConfig.getStatsLoreMultiplierSymbol());

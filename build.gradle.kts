@@ -337,6 +337,7 @@ tasks.register<JavaCompile>("compilePaper26StatsSelfTest") {
     group = "verification"
     source = fileTree(".") {
         include("src/com/praya/myitems/modern/Paper26LoreStatsNumbers.java")
+        include("src/com/lymeowz/item/stats/LoreStatsNumbers.java")
         include("src/com/praya/myitems/modern/Paper26StatsMath.java")
         include("src/com/lymeowz/item/stats/CombatMath.java")
         include("src/com/praya/myitems/modern/Paper26ModernStatsFormulas.java")

@@ -19,6 +19,25 @@ public final class Paper26StatsSelfTest {
     }
     public static void main(String[] args) {
         eq(read("§a10.0 §7➨ §a25.0", Kind.DAMAGE, "MIN"), 10);
+        // Verify the old API descriptor and the new implementation agree.
+        for (Kind kind : Kind.values()) {
+            String value = kind == Kind.DAMAGE ? "§a4 §7➨ §a8"
+                    : kind == Kind.DURABILITY ? "§a4§7/§a8"
+                    : kind == Kind.PERCENT ? "§a12.5%"
+                    : (kind == Kind.MULTIPLIER || kind == Kind.CRITICAL_DAMAGE)
+                        ? "§a1.5§7x" : "§a12.5";
+            String option = kind == Kind.DAMAGE || kind == Kind.DURABILITY ? "MAX" : null;
+            double existing = read(value, kind, option);
+            double migrated = com.lymeowz.item.stats.LoreStatsNumbers.read(
+                    "Damage §0§2§r" + value + "§0§2§r", "§0§2§r",
+                    com.lymeowz.item.stats.LoreStatsNumbers.Kind.valueOf(kind.name()),
+                    option, "§a", "§c", " §7➨ ", "§7/", "§7x");
+            eq(migrated, existing);
+        }
+        eq(com.lymeowz.item.stats.LoreStatsNumbers.read(null, "x", null, null,
+                null, null, null, null, null), 0);
+        eq(Paper26LoreStatsNumbers.read("Damage §0§2§r§a5§0§2§r",
+                "§0§2§r", null, null, "§a", "§c", null, null, null), 0);
         eq(read("§a10.0 §7➨ §a25.0", Kind.DAMAGE, "MAX"), 25);
         eq(read("§a25.0 §7➨ §a10.0", Kind.DAMAGE, "MIN"), 10);
         double random = read("§a10.0 §7➨ §a25.0", Kind.DAMAGE, null);

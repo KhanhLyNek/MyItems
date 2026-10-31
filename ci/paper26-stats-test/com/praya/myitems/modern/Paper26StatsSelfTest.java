@@ -35,6 +35,11 @@ public final class Paper26StatsSelfTest {
         eq(read("bad", Kind.NUMBER, null), 0);
         eq(Paper26LoreStatsNumbers.read("X §0§2§r§a3 (a+b) §c5§0§2§r", "§0§2§r", Kind.DAMAGE,
                 "MAX", "§a", "§c", " (a+b) ", "/", "x"), 5);
+        eq(Paper26StatsMath.repairedDurability(5, 10, 3), 8);
+        eq(Paper26StatsMath.repairedDurability(5, 10, -8), 0);
+        eq(Paper26StatsMath.repairedDurability(5, 10, Integer.MAX_VALUE), 10);
+        eq(Paper26StatsMath.repairedDurability(5, 10, Integer.MIN_VALUE), 0);
+        eq(Paper26StatsMath.repairedDurability(5, -1, 100), 0);
         eq(Paper26StatsMath.experienceToNextLevel(1), 175);
         eq(Paper26StatsMath.experienceToNextLevel(2), 300);
         eq(Paper26StatsMath.experienceToNextLevel(0), 175);

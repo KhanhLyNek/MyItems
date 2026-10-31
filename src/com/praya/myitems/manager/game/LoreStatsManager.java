@@ -128,8 +128,7 @@ public class LoreStatsManager extends HandlerManager
         if (line != -1) {
             final int nowDurability = (int)this.getLoreValue(item, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT);
             final int maxDurability = (int)this.getLoreValue(item, LoreStatsEnum.DURABILITY, LoreStatsOption.MAX);
-            int durability = nowDurability + repair;
-            durability = MathUtil.limitInteger(durability, 0, maxDurability);
+            final int durability = Paper26StatsMath.repairedDurability(nowDurability, maxDurability, repair);
             if (maxDurability != 0) {
                 final String newDurability = (repair != -1) ? this.getTextLoreStats(LoreStatsEnum.DURABILITY, durability, maxDurability) : this.getTextLoreStats(LoreStatsEnum.DURABILITY, maxDurability);
                 EquipmentUtil.setLore(item, line, newDurability);

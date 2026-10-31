@@ -70,6 +70,13 @@ public final class Paper26StatsMath {
         return Double.isFinite(bonus) ? Math.max(0.0, 1.0 + bonus / 100.0) : 1.0;
     }
 
+    /** Saturating signed durability repair, safe even at Integer bounds. */
+    public static int repairedDurability(int current, int maximum, int delta) {
+        final long cap = Math.max(0L, (long) maximum);
+        final long adjusted = (long) current + (long) delta;
+        return (int) Math.max(0L, Math.min(cap, adjusted));
+    }
+
     public static double experienceToNextLevel(int level) {
         final double safeLevel = Math.max(1, level);
         return safeLevel * safeLevel * 25.0 + safeLevel * 50.0 + 100.0;

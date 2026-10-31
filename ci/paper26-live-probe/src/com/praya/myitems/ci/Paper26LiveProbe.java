@@ -360,6 +360,12 @@ public final class Paper26LiveProbe extends JavaPlugin {
         stats.itemRepair(wornSaved, 999);
         check(stats.getLoreValue(wornSaved, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 5,
                 "repair cannot exceed the maximum");
+        stats.itemRepair(wornSaved, Integer.MAX_VALUE);
+        check(stats.getLoreValue(wornSaved, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 5,
+                "huge repair does not overflow into a broken item");
+        stats.itemRepair(wornSaved, Integer.MIN_VALUE);
+        check(stats.getLoreValue(wornSaved, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 0,
+                "huge negative repair clamps cleanly to zero");
         check(stats.getLoreStatsWeapon(copy).getDamage() >= 10.0, "standalone weapon stats");
         check(stats.getLoreValue(copy, LoreStatsEnum.ATTACK_SPEED, null) == 1.25, "modern Attack Speed lore");
         check(stats.getLoreValue(copy, LoreStatsEnum.ARMOR_TOUGHNESS, null) == 2, "modern Armor Toughness lore");

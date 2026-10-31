@@ -101,6 +101,11 @@ jobs:
         shell: bash
         run: gradle jarPaper26EssentialsFixture --no-daemon --console=plain
 
+      - name: Compile ItemsAdder and Oraxen isolated API fixtures
+        shell: bash
+        run: |
+          gradle jarPaper26ItemsAdderFixture jarPaper26OraxenFixture --no-daemon --console=plain
+
       - name: Boot real Paper 26.3 server with both production JARs
         shell: bash
         timeout-minutes: 8

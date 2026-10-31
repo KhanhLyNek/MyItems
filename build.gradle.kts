@@ -292,3 +292,41 @@ tasks.register<Jar>("jarPaper26LiveProbe") {
     from(layout.buildDirectory.dir("paper26-live-probe/classes"))
     from("ci/paper26-live-probe/resources")
 }
+
+
+// Optional external model ABI fixtures; never included in the MyItems jar.
+tasks.register<JavaCompile>("compilePaper26ItemsAdderFixture") {
+    group = "verification"
+    source = fileTree("ci/paper26-itemsadder-fixture/src") { include("**/*.java") }
+    classpath = configurations["compileClasspath"]
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-itemsadder-fixture/classes"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+tasks.register<Jar>("jarPaper26ItemsAdderFixture") {
+    group = "verification"
+    dependsOn("compilePaper26ItemsAdderFixture")
+    archiveFileName.set("Paper26ItemsAdderFixture.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-itemsadder-fixture"))
+    from(layout.buildDirectory.dir("paper26-itemsadder-fixture/classes"))
+    from("ci/paper26-itemsadder-fixture/resources")
+}
+
+tasks.register<JavaCompile>("compilePaper26OraxenFixture") {
+    group = "verification"
+    source = fileTree("ci/paper26-oraxen-fixture/src") { include("**/*.java") }
+    classpath = configurations["compileClasspath"]
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-oraxen-fixture/classes"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+tasks.register<Jar>("jarPaper26OraxenFixture") {
+    group = "verification"
+    dependsOn("compilePaper26OraxenFixture")
+    archiveFileName.set("Paper26OraxenFixture.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-oraxen-fixture"))
+    from(layout.buildDirectory.dir("paper26-oraxen-fixture/classes"))
+    from("ci/paper26-oraxen-fixture/resources")
+}

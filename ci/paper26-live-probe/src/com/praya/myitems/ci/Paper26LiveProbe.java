@@ -4,6 +4,12 @@ import com.praya.agarthalib.modern.Paper26LegacyItemTags;
 import core.praya.agarthalib.bridge.unity.Bridge;
 import net.kyori.adventure.nbt.*;
 import org.bukkit.Material;
+import com.praya.agarthalib.modern.Paper26ItemModels;
+import com.praya.myitems.modern.Paper26ExternalModels;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.enchantments.Enchantment;
 import com.praya.agarthalib.AgarthaLib;
 import api.praya.agarthalib.builder.support.SupportEssentials;
 import api.praya.agarthalib.manager.plugin.SupportManagerAPI;
@@ -166,6 +172,77 @@ public final class Paper26LiveProbe extends JavaPlugin {
         getLogger().info("PASS: EssentialsX 2.22 IWarps contract on real Paper plugin classloaders");
     }
 
+    /** Real Paper runtime: optional provider APIs through isolated plugin
+     * classloaders, model-only mutation and lossless serialized item state.
+     */
+    private void verifyItemModels() {
+        final ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
+        item.setAmount(2);
+        final NamespacedKey idKey = new NamespacedKey(this, "existing_item_id");
+        final ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("§bMyItems test sword");
+        meta.setLore(List.of("§7Damage: 42", "§5Ability: Vampirism I"));
+        meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, "original:myitem");
+        item.setItemMeta(meta);
+        final ItemStack baseline = item.clone();
+
+        check(Paper26ExternalModels.apply(item, "itemsadder", "missing:item")
+                        == Paper26ExternalModels.Status.ID_NOT_FOUND,
+                "ItemsAdder unknown registry entry rejected");
+        check(item.equals(baseline), "unknown ItemsAdder model cannot mutate item");
+        check(Paper26ExternalModels.apply(item, "itemsadder", "test:ruby_sword")
+                        == Paper26ExternalModels.Status.APPLIED,
+                "ItemsAdder CustomStack.getInstance and getItemStack resolved");
+        check(NamespacedKey.fromString("itemsadder:ruby_sword")
+                        .equals(item.getItemMeta().getItemModel()),
+                "ItemsAdder item_model copied");
+
+        check(Paper26ExternalModels.apply(item, "oraxen", "missing")
+                        == Paper26ExternalModels.Status.ID_NOT_FOUND,
+                "Oraxen unknown model rejected");
+        check(Paper26ExternalModels.apply(item, "oraxen", "storm_blade")
+                        == Paper26ExternalModels.Status.APPLIED,
+                "Oraxen OraxenItems.getItemById and build resolved");
+        check(NamespacedKey.fromString("oraxen:storm_blade")
+                        .equals(item.getItemMeta().getItemModel()), "Oraxen item_model copied");
+        check(Paper26ExternalModels.apply(item, "itemsadder", "test:legacy_sword")
+                        == Paper26ExternalModels.Status.APPLIED,
+                "Legacy CMD provider item copied via component API");
+        check(item.getItemMeta().getItemModel() == null,
+                "CMD selector clears stale modern item_model");
+        check(item.getItemMeta().getCustomModelDataComponent().getFloats()
+                        .equals(List.of(2026.0F)), "legacy float model data preserved");
+        check(Paper26ItemModels.applyKey(item, "myitems:dragon_sword")
+                        == Paper26ItemModels.Result.APPLIED,
+                "direct Paper26 namespaced item model works");
+        check(Paper26ItemModels.applyNumber(item, 6543)
+                        == Paper26ItemModels.Result.APPLIED,
+                "direct modern CMD component works");
+
+        final ItemStack saved = ItemStack.deserializeBytes(item.serializeAsBytes());
+        check(saved.getType() == baseline.getType(), "material unchanged");
+        check(saved.getAmount() == baseline.getAmount(), "amount unchanged");
+        check(saved.getItemMeta().getDisplayName()
+                        .equals(baseline.getItemMeta().getDisplayName()), "name unchanged");
+        check(saved.getItemMeta().getLore()
+                        .equals(baseline.getItemMeta().getLore()), "lore/skills unchanged");
+        check("original:myitem".equals(saved.getItemMeta().getPersistentDataContainer()
+                        .get(idKey, PersistentDataType.STRING)), "existing PDC ID unchanged");
+        check(saved.getItemMeta().getCustomModelDataComponent().getFloats()
+                        .equals(List.of(6543.0F)), "model survived ItemStack serialization");
+
+        check(Paper26ItemModels.clear(item) == Paper26ItemModels.Result.APPLIED,
+                "clear visual selectors");
+        check(item.getItemMeta().getItemModel() == null
+                        && !item.getItemMeta().hasCustomModelDataComponent(),
+                "clear must remove only model selectors");
+        check("original:myitem".equals(item.getItemMeta().getPersistentDataContainer()
+                        .get(idKey, PersistentDataType.STRING)), "clear retains PDC");
+        check(item.getItemMeta().getLore().equals(baseline.getItemMeta().getLore()),
+                "clear retains ability/stat lore");
+        getLogger().info("PASS: ItemsAdder/Oraxen model-only bridges and ItemStack roundtrip");
+    }
+
     @Override
     public void onEnable() {
         try {
@@ -232,6 +309,7 @@ public final class Paper26LiveProbe extends JavaPlugin {
             verifyWeaponAbilities();
             verifyMobSkillCasts();
             verifyEssentialsWarpProvider();
+            verifyItemModels();
         } catch (Throwable error) {
             getLogger().severe("FAIL: live NBT/ability compatibility test: " + error);
             throw new IllegalStateException("Paper26 live NBT probe failed", error);

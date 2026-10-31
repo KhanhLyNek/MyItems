@@ -1,0 +1,4 @@
+name: ItemsAdder
+version: 0.0.0-ci-fixture
+main: fixture.ia.ItemsAdderFixture
+api-version: '1.13'

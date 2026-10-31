@@ -90,6 +90,13 @@ def run_server(folder):
     if not essential_fixture.is_file():
         raise RuntimeError("Required test-only Essentials IWarps provider not built")
     shutil.copy2(essential_fixture, folder / "plugins" / essential_fixture.name)
+    for provider in ("itemsadder", "oraxen"):
+        jar = ROOT / f"build/paper26-{provider}-fixture/Paper26{provider.title()}Fixture.jar"
+        if provider == "itemsadder":
+            jar = ROOT / "build/paper26-itemsadder-fixture/Paper26ItemsAdderFixture.jar"
+        if not jar.is_file():
+            raise RuntimeError(f"Required CI-only {provider} model API fixture not built")
+        shutil.copy2(jar, folder / "plugins" / jar.name)
     download_paper(folder / "paper.jar")
     process = subprocess.Popen(
         ["java", "-Xms512M", "-Xmx2G", "-jar", "paper.jar", "--nogui"],
@@ -149,6 +156,8 @@ def run_server(folder):
         raise AssertionError("Real Paper mob-target ability casts failed")
     if "PASS: EssentialsX 2.22 IWarps contract on real Paper plugin classloaders" not in all_logs:
         raise AssertionError("Modern EssentialsX public warp ABI provider smoke failed")
+    if "PASS: ItemsAdder/Oraxen model-only bridges and ItemStack roundtrip" not in all_logs:
+        raise AssertionError("Model provider bridge/metadata isolation failed on real Paper")
     if process.returncode != 0:
         raise AssertionError(f"Paper exited with {process.returncode}")
     for line in lines:

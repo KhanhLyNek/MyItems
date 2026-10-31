@@ -20,11 +20,17 @@ assert "ItemLoresChangeEvent" in (
 text = (
     ROOT / "agarthalib/src/com/praya/agarthalib/utility/TextUtil.java"
 ).read_text("utf-8")
-assert "Paper26HexColors.translate(text)" in text, "AgarthaLib HEX translator not connected"
+assert "com.lymeowz.lib.text.HexColors.translate(text)" in text, "LyMeowzLib HEX translator not connected"
 assert "ChatColor.translateAlternateColorCodes('&'" in text, "Legacy color decoder removed"
 hex_parser = (
-    ROOT / "agarthalib/src/com/praya/agarthalib/modern/Paper26HexColors.java"
+    ROOT / "agarthalib/src/com/lymeowz/lib/text/HexColors.java"
 ).read_text("utf-8")
 for marker in ("AMP_X", "replaceRgb", "toLegacyHex"):
     assert marker in hex_parser, "Missing HEX grammar support: " + marker
+old_facade = (
+    ROOT / "agarthalib/src/com/praya/agarthalib/modern/Paper26HexColors.java"
+).read_text("utf-8")
+assert "com.lymeowz.lib.text.HexColors.translate(text)" in old_facade, (
+    "Old HEX API must remain a working compatibility delegate"
+)
 print("PASS: four original MyItems name/lore routes and legacy cancellable lore event preserved")

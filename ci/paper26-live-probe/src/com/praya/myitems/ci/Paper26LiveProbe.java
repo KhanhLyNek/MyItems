@@ -473,11 +473,11 @@ public final class Paper26LiveProbe extends JavaPlugin {
         final MyItems lymeowzItem = (MyItems) Bukkit.getPluginManager().getPlugin("LyMeowzItem");
         final AgarthaLib lymeowzLib = (AgarthaLib) Bukkit.getPluginManager().getPlugin("LyMeowzLib");
         check(lymeowzItem.getPluginManager().getLanguageManager()
-                        .getListText("en", "MyItems_Help").stream()
+                        .getListText("en", "Argument_MyItems_Help").stream()
                         .anyMatch(line -> line.contains("/lymeowzitem help")),
                 "real legacy MyItems help strings display /lymeowzitem");
         check(lymeowzLib.getPluginManager().getLanguageManager()
-                        .getListText("en", "AgarthaLib_Help").stream()
+                        .getListText("en", "Argument_AgarthaLib_Help").stream()
                         .anyMatch(line -> line.contains("/lymeowzlib help")),
                 "real legacy AgarthaLib help strings display /lymeowzlib");
         check(lymeowzItem.getPluginManager().getPlaceholderManager().getPlaceholderConfig()

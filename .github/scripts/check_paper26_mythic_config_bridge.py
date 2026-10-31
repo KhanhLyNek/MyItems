@@ -45,13 +45,18 @@ assert 'spawnAccess.configLines(event, "Equipment")' in bridge
 assert 'Bukkit.isPrimaryThread()' in bridge
 assert bridge.count('catch (ReflectiveOperationException | LinkageError | RuntimeException ex)') >= 3
 assert "registerEvent" in bridge
-assert "new Paper26MythicEventAccess(spawn)" in bridge
-assert "new Paper26MythicEventAccess(death)" in bridge
+assert "new MythicEventAccess(spawn)" in bridge
+assert "new MythicEventAccess(death)" in bridge
+assert "com.lymeowz.item.integration.MythicEventAccess" in bridge
 assert "HandlerList.unregisterAll(listener)" in bridge
 assert 'getMob.getReturnType().getMethod("getConfig")' in (
-    modern / "Paper26MythicEventAccess.java").read_text("utf-8")
+    root / "src/com/lymeowz/item/integration/MythicEventAccess.java").read_text("utf-8")
 assert 'getConfig.getReturnType().getMethod("getStringList", String.class)' in (
-    modern / "Paper26MythicEventAccess.java").read_text("utf-8")
+    root / "src/com/lymeowz/item/integration/MythicEventAccess.java").read_text("utf-8")
+legacy_event_adapter = (modern / "Paper26MythicEventAccess.java").read_text("utf-8")
+assert "new com.lymeowz.item.integration.MythicEventAccess(eventType)" in legacy_event_adapter, (
+    "Existing compiled MythicMobs event API must delegate to the new implementation"
+)
 assert "getDropTable()" not in bridge, "Named tables require a separate audited API"
 
 boot = (root / "src/com/praya/myitems/MyItems.java").read_text("utf-8")

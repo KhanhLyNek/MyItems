@@ -1,6 +1,7 @@
 package com.praya.myitems.modern;
 
 import com.praya.myitems.MyItems;
+import com.lymeowz.item.integration.MythicEventAccess;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -42,10 +43,10 @@ public final class Paper26MythicMobsEventBridge {
                     .forName("io.lumine.mythic.bukkit.events.MythicMobDeathEvent", false, loader)
                     .asSubclass(Event.class);
 
-            final Paper26MythicEventAccess spawnAccess =
-                    new Paper26MythicEventAccess(spawn);
-            final Paper26MythicEventAccess deathAccess =
-                    new Paper26MythicEventAccess(death);
+            final MythicEventAccess spawnAccess =
+                    new MythicEventAccess(spawn);
+            final MythicEventAccess deathAccess =
+                    new MythicEventAccess(death);
             if (!Entity.class.isAssignableFrom(spawnAccess.entityType())
                     || !Entity.class.isAssignableFrom(deathAccess.entityType())) {
                 plugin.getLogger().warning("MythicMobs event getEntity() is not a Bukkit Entity");

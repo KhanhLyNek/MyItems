@@ -215,6 +215,7 @@ tasks.register<JavaCompile>("compilePaper26MythicEventAccessSelfTest") {
     group = "verification"
     source = fileTree(".") {
         include("src/com/praya/myitems/modern/Paper26MythicEventAccess.java")
+        include("src/com/lymeowz/item/integration/MythicEventAccess.java")
         include("ci/paper26-mythic-event-test/**/*.java")
     }
     classpath = files()

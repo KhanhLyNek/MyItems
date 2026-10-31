@@ -12,6 +12,7 @@ if len(candidates) != 1:
 with ZipFile(candidates[0]) as z:
     names = set(z.namelist())
     manifest = z.read("plugin.yml").decode("utf-8")
+    assert "main: com.lymeowz.item.LyMeowzItem\n" in manifest
     assert "name: LyMeowzItem\n" in manifest
     assert "provides: [MyItems]\n" in manifest
     assert "  lymeowzitem.admin:\n" in manifest
@@ -23,6 +24,7 @@ with ZipFile(candidates[0]) as z:
     required = (
         "plugin.yml",
         "com/praya/myitems/MyItems.class",
+        "com/lymeowz/item/LyMeowzItem.class",
         "com/lymeowz/item/permission/ItemPermissions.class",
         "com/lymeowz/item/stats/ModernStatsFormulas.class",
         "com/praya/myitems/builder/ability/weapon/AbilityWeaponConfuse.class",

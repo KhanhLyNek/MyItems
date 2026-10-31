@@ -1,4 +1,4 @@
-main: com.praya.myitems.MyItems
+main: com.lymeowz.item.LyMeowzItem
 name: LyMeowzItem
 provides: [MyItems]
 version: 6.4.6

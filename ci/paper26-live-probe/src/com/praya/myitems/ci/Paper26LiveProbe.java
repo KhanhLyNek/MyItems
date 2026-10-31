@@ -524,6 +524,12 @@ public final class Paper26LiveProbe extends JavaPlugin {
                 "LyMeowzLib plugin registered under new Bukkit identity");
         check(Bukkit.getPluginManager().getPlugin("LyMeowzItem") instanceof MyItems,
                 "LyMeowzItem plugin registered under new Bukkit identity");
+        check(Bukkit.getPluginManager().getPlugin("LyMeowzItem").getClass().getName()
+                        .equals("com.lymeowz.item.LyMeowzItem"),
+                "MyItems Bukkit main class lives in com.lymeowz.item");
+        check(Bukkit.getPluginManager().getPlugin("LyMeowzLib").getClass().getName()
+                        .equals("com.lymeowz.lib.LyMeowzLib"),
+                "AgarthaLib Bukkit main class lives in com.lymeowz.lib");
         check(Bukkit.getPluginManager().getPlugin("AgarthaLib") instanceof AgarthaLib,
                 "old AgarthaLib soft/hard dependencies resolve via provides");
         check(Bukkit.getPluginManager().getPlugin("MyItems") instanceof MyItems,

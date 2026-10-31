@@ -55,6 +55,14 @@ public final class Paper26StatsSelfTest {
         eq(Paper26StatsMath.withBasePercentBonus(15, 10, 2, 50), 22);
         eq(Paper26StatsMath.withBasePercentBonus(30, 20, 2, 50), 42);
         eq(Paper26StatsMath.withBasePercentBonus(150, 100, 20, 10), 180);
+        eq(Paper26StatsMath.outgoingBonus(true, 20, 40), 20);
+        eq(Paper26StatsMath.outgoingBonus(false, 20, 40), 40);
+        eq(Paper26StatsMath.incomingDefenseBonus(true, 25, 70), 25);
+        eq(Paper26StatsMath.incomingDefenseBonus(false, 25, 70), 70);
+        eq(Paper26StatsMath.percentFactor(-150), 0);
+        eq(Paper26StatsMath.percentFactor(50), 1.5);
+        eq(Paper26StatsMath.percentFactor(Double.NaN), 1);
+        eq(Paper26StatsMath.percentFactor(Double.POSITIVE_INFINITY), 1);
         eq(Paper26StatsMath.balancedDamage(10, 20, 0), 10);
         System.out.println("PASS: " + checks + " Stats regression assertions");
     }

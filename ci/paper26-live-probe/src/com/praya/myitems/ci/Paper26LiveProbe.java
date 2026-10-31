@@ -27,6 +27,10 @@ import api.praya.myitems.builder.ability.AbilityItemWeapon;
 import api.praya.myitems.builder.ability.AbilityWeaponAttributeBaseDamage;
 import api.praya.myitems.builder.ability.AbilityWeaponAttributeCastDamage;
 import api.praya.myitems.builder.ability.AbilityWeaponAttributeEffect;
+import api.praya.myitems.builder.lorestats.LoreStatsEnum;
+import api.praya.myitems.builder.lorestats.LoreStatsOption;
+import com.praya.myitems.manager.game.LoreStatsManager;
+import com.praya.myitems.modern.Paper26StatsMath;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.inventory.ItemStack;
@@ -312,6 +316,66 @@ public final class Paper26LiveProbe extends JavaPlugin {
         getLogger().info("PASS: MyItems HEX and legacy item-name/lore commands on real Paper 26.3");
     }
 
+
+    /** Test the original stats manager on actual serialized ItemStacks. */
+    private void verifyRealStatsLore() {
+        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("MyItems");
+        final LoreStatsManager stats = myitems.getGameManager().getStatsManager();
+        final ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.DAMAGE, 10.0, 20.0));
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.CRITICAL_CHANCE, 17.5));
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.CRITICAL_DAMAGE, 1.5));
+        EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.DURABILITY, 8, 12));
+        final ItemStack copy = ItemStack.deserializeBytes(sword.serializeAsBytes());
+        check(stats.hasLoreStats(copy, LoreStatsEnum.DAMAGE), "real serialized item Damage marker");
+        check(stats.getLoreValue(copy, LoreStatsEnum.DAMAGE, LoreStatsOption.MIN) == 10.0, "Damage min");
+        check(stats.getLoreValue(copy, LoreStatsEnum.DAMAGE, LoreStatsOption.MAX) == 20.0, "Damage max");
+        check(stats.getLoreValue(copy, LoreStatsEnum.CRITICAL_CHANCE, null) == 17.5, "Critical chance");
+        check(Math.abs(stats.getLoreValue(copy, LoreStatsEnum.CRITICAL_DAMAGE, null) - 0.5) < 0.001,
+                "Critical multiplier");
+        check(stats.getLoreValue(copy, LoreStatsEnum.DURABILITY, LoreStatsOption.CURRENT) == 8, "Durability current");
+        check(stats.getLoreValue(copy, LoreStatsEnum.DURABILITY, LoreStatsOption.MAX) == 12, "Durability max");
+        check(stats.getLoreStatsWeapon(copy).getDamage() >= 10.0, "standalone weapon stats");
+        check(Paper26StatsMath.outgoingBonus(true, 10, 20) == 10, "PvP route");
+        check(Paper26StatsMath.outgoingBonus(false, 10, 20) == 20, "PvE route");
+        check(Paper26StatsMath.incomingDefenseBonus(true, 10, 20) == 10, "PvP defense route");
+        check(Paper26StatsMath.incomingDefenseBonus(false, 10, 20) == 20, "PvE defense route");
+        getLogger().info("PASS: Paper Stats item lore NBT and PvP/PvE branch contracts");
+    }
+
+    /** Disposable mob-vs-mob live damage hook; client PvP requires separate players. */
+    private void verifyRealMobStatsCombat() {
+        final MyItems myitems = (MyItems) Bukkit.getPluginManager().getPlugin("MyItems");
+        final LoreStatsManager stats = myitems.getGameManager().getStatsManager();
+        final World world = Bukkit.getWorlds().get(0);
+        final Location pos = world.getSpawnLocation().clone().add(5.5, 3, 5.5);
+        final Zombie a = world.spawn(pos, Zombie.class);
+        final Zombie b = world.spawn(pos.clone().add(3, 0, 0), Zombie.class);
+        try {
+            a.setAI(false);
+            b.setAI(false);
+            a.setSilent(true);
+            b.setSilent(true);
+            check(a.getEquipment() != null && b.getEquipment() != null, "mob equipment");
+            final ItemStack weapon = new ItemStack(Material.IRON_SWORD);
+            EquipmentUtil.addLore(weapon, stats.getTextLoreStats(LoreStatsEnum.DAMAGE, 5));
+            a.getEquipment().setItemInMainHand(weapon);
+            final ItemStack armor = new ItemStack(Material.IRON_CHESTPLATE);
+            EquipmentUtil.addLore(armor, stats.getTextLoreStats(LoreStatsEnum.DEFENSE, 2));
+            b.getEquipment().setChestplate(armor);
+            check(stats.getLoreStatsWeapon(a).getDamage() >= 5, "equipped mob damage");
+            check(stats.getLoreStatsArmor(b).getDefense() >= 2, "equipped mob defense");
+            final double before = b.getHealth();
+            b.damage(2, a);
+            final double after = b.getHealth();
+            check(Double.isFinite(after) && after >= 0 && after <= before, "finite live mob combat health");
+            getLogger().info("PASS: Paper live mob-vs-mob stats damage event");
+        } finally {
+            if (a.isValid()) a.remove();
+            if (b.isValid()) b.remove();
+        }
+    }
+
     @Override
     public void onEnable() {
         try {
@@ -380,6 +444,8 @@ public final class Paper26LiveProbe extends JavaPlugin {
             verifyEssentialsWarpProvider();
             verifyItemModels();
             verifyHexItemColors();
+            verifyRealStatsLore();
+            verifyRealMobStatsCombat();
         } catch (Throwable error) {
             getLogger().severe("FAIL: live NBT/ability compatibility test: " + error);
             throw new IllegalStateException("Paper26 live NBT probe failed", error);

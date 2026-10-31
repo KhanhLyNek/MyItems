@@ -327,16 +327,16 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                             abilityWeapon.cast(entityAttacker, entityVictims, grade2, damage);
                         }
                     }
-                    final double bonusPercentDamage = EntityUtil.isPlayer((Entity)victims) ? pvpDamage : pveDamage;
-                    final double bonusPercentDefense = EntityUtil.isPlayer((Entity)attacker) ? pvpDefense : pveDefense;
+                    final double bonusPercentDamage = Paper26StatsMath.outgoingBonus(EntityUtil.isPlayer((Entity)victims), pvpDamage, pveDamage);
+                    final double bonusPercentDefense = Paper26StatsMath.incomingDefenseBonus(EntityUtil.isPlayer((Entity)attacker), pvpDefense, pveDefense);
                     final double scaleDefenseOverall = mainConfig.getModifierScaleDefenseOverall();
                     final double scaleDamageMobReceive = mainConfig.getModifierScaleMobDamageReceive();
                     final boolean enableFlatDamage = mainConfig.isModifierEnableFlatDamage();
                     penetration = Paper26StatsMath.chance(penetration);
                     defense *= scaleDefenseOverall;
-                    defense = defense * (100.0 + bonusPercentDefense) / 100.0;
+                    defense *= Paper26StatsMath.percentFactor(bonusPercentDefense);
                     defense = defense * (100.0 - penetration) / 100.0;
-                    damage = damage * (100.0 + bonusPercentDamage) / 100.0;
+                    damage *= Paper26StatsMath.percentFactor(bonusPercentDamage);
                     damage -= defense;
                     damage = Paper26StatsMath.damage(damage);
                     damage = (EntityUtil.isPlayer((Entity)victims) ? damage : (damage * scaleDamageMobReceive));

@@ -51,6 +51,19 @@ public final class Paper26StatsMath {
         return Double.isFinite(value) ? value : 0.0;
     }
 
+    /** PvP damage bonuses key off the victim, defense bonuses off the attacker. */
+    public static double outgoingBonus(boolean victimPlayer, double pvp, double pve) {
+        return Double.isFinite(victimPlayer ? pvp : pve) ? (victimPlayer ? pvp : pve) : 0.0;
+    }
+
+    public static double incomingDefenseBonus(boolean attackerPlayer, double pvp, double pve) {
+        return Double.isFinite(attackerPlayer ? pvp : pve) ? (attackerPlayer ? pvp : pve) : 0.0;
+    }
+
+    public static double percentFactor(double bonus) {
+        return Double.isFinite(bonus) ? Math.max(0.0, 1.0 + bonus / 100.0) : 1.0;
+    }
+
     public static double experienceToNextLevel(int level) {
         final double safeLevel = Math.max(1, level);
         return safeLevel * safeLevel * 25.0 + safeLevel * 50.0 + 100.0;

@@ -158,6 +158,10 @@ def run_server(folder):
         raise AssertionError("Modern EssentialsX public warp ABI provider smoke failed")
     if "PASS: ItemsAdder/Oraxen model-only bridges and ItemStack roundtrip" not in all_logs:
         raise AssertionError("Model provider bridge/metadata isolation failed on real Paper")
+    if "PASS: Paper Stats item lore NBT and PvP/PvE branch contracts" not in all_logs:
+        raise AssertionError("Real Paper Stats lore/NBT contract probe failed")
+    if "PASS: Paper live mob-vs-mob stats damage event" not in all_logs:
+        raise AssertionError("Real Paper entity combat probe failed")
     if "PASS: MyItems HEX and legacy item-name/lore commands on real Paper 26.3" not in all_logs:
         raise AssertionError("MyItems HEX/legacy name or lore Paper API integration failed")
     if process.returncode != 0:

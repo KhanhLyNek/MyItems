@@ -29,6 +29,8 @@ import com.praya.myitems.config.plugin.MainConfig;
 import com.praya.agarthalib.utility.EquipmentUtil;
 import org.bukkit.inventory.ItemStack;
 import api.praya.myitems.builder.lorestats.LoreStatsEnum;
+import com.praya.myitems.modern.Paper26LoreStatsNumbers;
+import com.praya.myitems.modern.Paper26StatsMath;
 import core.praya.agarthalib.enums.main.Slot;
 import core.praya.agarthalib.bridge.unity.Bridge;
 import org.bukkit.entity.Player;
@@ -54,11 +56,7 @@ public class LoreStatsManager extends HandlerManager
     }
     
     public final boolean hasLoreStats(final ItemStack item, final LoreStatsEnum loreStats) {
-        if (EquipmentUtil.loreCheck(item)) {
-            final String lores = EquipmentUtil.getLores(item).toString();
-            return lores.contains(this.getKeyStats(loreStats, true));
-        }
-        return false;
+        return loreStats != null && EquipmentUtil.loreCheck(item) && this.getLineLoreStats(item, loreStats) != -1;
     }
     
     public final String getTextLoreStats(final LoreStatsEnum loreStats, final double value) {
@@ -81,85 +79,49 @@ public class LoreStatsManager extends HandlerManager
     }
     
     public final double getLoreValue(final ItemStack item, final LoreStatsEnum loreStats, final LoreStatsOption option, final int line) {
+        if (loreStats == null || line < 1 || !EquipmentUtil.loreCheck(item) || line > EquipmentUtil.getLores(item).size()) {
+            return 0.0;
+        }
         final String lore = EquipmentUtil.getLores(item).get(line - 1);
         return this.getLoreValue(loreStats, option, lore);
     }
     
     public final double getLoreValue(final LoreStatsEnum loreStats, final LoreStatsOption option, final String lore) {
-        final MainConfig mainConfig = MainConfig.getInstance();
-        final String[] textListValue = lore.split(MainConfig.KEY_STATS_VALUE);
-        if (textListValue.length > 1) {
-            final String positiveValue = mainConfig.getStatsLorePositiveValue();
-            final String negativeValue = mainConfig.getStatsLoreNegativeValue();
-            final String symbolDivide = mainConfig.getStatsLoreDividerSymbol();
-            final String symbolMultiplier = mainConfig.getStatsLoreMultiplierSymbol();
-            String textValue = textListValue[1];
-            if (loreStats.equals(LoreStatsEnum.DAMAGE)) {
-                final String symbolRange = mainConfig.getStatsLoreRangeSymbol();
-                if (textValue.contains(symbolRange)) {
-                    final String[] valueList = textValue.split(symbolRange);
-                    final String textValueMin = valueList[0].replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                    final String textValueMax = valueList[1].replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                    if (MathUtil.isNumber(textValueMin) && MathUtil.isNumber(textValueMax)) {
-                        final double valueMin = MathUtil.parseDouble(textValueMin);
-                        final double valueMax = MathUtil.parseDouble(textValueMax);
-                        final double value = valueMin + Math.random() * (valueMax - valueMin);
-                        if (option == null) {
-                            return value;
-                        }
-                        return (option.equals(LoreStatsOption.MIN) || option.equals(LoreStatsOption.CURRENT)) ? valueMin : valueMax;
-                    }
-                }
-                else {
-                    textValue = textValue.replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                    if (MathUtil.isNumber(textValue)) {
-                        return MathUtil.parseDouble(textValue);
-                    }
-                }
-            }
-            else if (loreStats.equals(LoreStatsEnum.CRITICAL_CHANCE) || loreStats.equals(LoreStatsEnum.PENETRATION) || loreStats.equals(LoreStatsEnum.BLOCK_AMOUNT) || loreStats.equals(LoreStatsEnum.BLOCK_RATE) || loreStats.equals(LoreStatsEnum.HIT_RATE) || loreStats.equals(LoreStatsEnum.DODGE_RATE) || loreStats.equals(LoreStatsEnum.PVP_DAMAGE) || loreStats.equals(LoreStatsEnum.PVE_DAMAGE) || loreStats.equals(LoreStatsEnum.PVP_DEFENSE) || loreStats.equals(LoreStatsEnum.PVE_DEFENSE) || loreStats.equals(LoreStatsEnum.ATTACK_AOE_DAMAGE) || loreStats.equals(LoreStatsEnum.FISHING_SPEED) || loreStats.equals(LoreStatsEnum.LURES_ENDURANCE)) {
-                textValue = textValue.replaceAll("%", "");
-                textValue = textValue.replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                if (MathUtil.isNumber(textValue)) {
-                    return MathUtil.parseDouble(textValue);
-                }
-            }
-            else if (loreStats.equals(LoreStatsEnum.CRITICAL_DAMAGE) || loreStats.equals(LoreStatsEnum.FISHING_CHANCE)) {
-                textValue = textValue.replaceAll(symbolMultiplier, "");
-                textValue = textValue.replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                if (MathUtil.isNumber(textValue)) {
-                    final double value2 = MathUtil.parseDouble(textValue);
-                    if (loreStats.equals(LoreStatsEnum.CRITICAL_DAMAGE)) {
-                        return MathUtil.parseDouble(textValue) - 1.0;
-                    }
-                    return value2;
-                }
-            }
-            else if (loreStats.equals(LoreStatsEnum.DURABILITY)) {
-                if (textValue.contains(symbolDivide)) {
-                    final String[] valueList2 = textValue.split(symbolDivide);
-                    final String textValueMin2 = valueList2[0].replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                    final String textValueMax2 = valueList2[1].replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                    if (MathUtil.isNumber(textValueMin2) && MathUtil.isNumber(textValueMax2)) {
-                        final int valueMin2 = Integer.valueOf(textValueMin2);
-                        final int valueMax2 = Integer.valueOf(textValueMax2);
-                        if (option == null) {
-                            return valueMin2;
-                        }
-                        return (option.equals(LoreStatsOption.MIN) || option.equals(LoreStatsOption.CURRENT)) ? valueMin2 : valueMax2;
-                    }
-                }
-            }
-            else {
-                textValue = textValue.replaceFirst(positiveValue, "").replaceFirst(negativeValue, "");
-                if (MathUtil.isNumber(textValue)) {
-                    return MathUtil.parseDouble(textValue);
-                }
-            }
+        if (loreStats == null) {
+            return 0.0;
         }
-        return 0.0;
+        final MainConfig mainConfig = MainConfig.getInstance();
+        final Paper26LoreStatsNumbers.Kind kind;
+        if (loreStats == LoreStatsEnum.DAMAGE) {
+            kind = Paper26LoreStatsNumbers.Kind.DAMAGE;
+        }
+        else if (loreStats == LoreStatsEnum.DURABILITY) {
+            kind = Paper26LoreStatsNumbers.Kind.DURABILITY;
+        }
+        else if (loreStats == LoreStatsEnum.CRITICAL_DAMAGE) {
+            kind = Paper26LoreStatsNumbers.Kind.CRITICAL_DAMAGE;
+        }
+        else if (loreStats == LoreStatsEnum.FISHING_CHANCE) {
+            kind = Paper26LoreStatsNumbers.Kind.MULTIPLIER;
+        }
+        else if (loreStats == LoreStatsEnum.CRITICAL_CHANCE || loreStats == LoreStatsEnum.PENETRATION ||
+                 loreStats == LoreStatsEnum.BLOCK_AMOUNT || loreStats == LoreStatsEnum.BLOCK_RATE ||
+                 loreStats == LoreStatsEnum.HIT_RATE || loreStats == LoreStatsEnum.DODGE_RATE ||
+                 loreStats == LoreStatsEnum.PVP_DAMAGE || loreStats == LoreStatsEnum.PVE_DAMAGE ||
+                 loreStats == LoreStatsEnum.PVP_DEFENSE || loreStats == LoreStatsEnum.PVE_DEFENSE ||
+                 loreStats == LoreStatsEnum.ATTACK_AOE_DAMAGE || loreStats == LoreStatsEnum.FISHING_SPEED ||
+                 loreStats == LoreStatsEnum.LURES_ENDURANCE) {
+            kind = Paper26LoreStatsNumbers.Kind.PERCENT;
+        }
+        else {
+            kind = Paper26LoreStatsNumbers.Kind.NUMBER;
+        }
+        return Paper26LoreStatsNumbers.read(lore, MainConfig.KEY_STATS_VALUE, kind,
+                option == null ? null : option.name(), mainConfig.getStatsLorePositiveValue(),
+                mainConfig.getStatsLoreNegativeValue(), mainConfig.getStatsLoreRangeSymbol(),
+                mainConfig.getStatsLoreDividerSymbol(), mainConfig.getStatsLoreMultiplierSymbol());
     }
-    
+
     public final void itemRepair(final ItemStack item, final int repair) {
         final int line = this.getLineLoreStats(item, LoreStatsEnum.DURABILITY);
         if (line != -1) {
@@ -248,6 +210,9 @@ public class LoreStatsManager extends HandlerManager
     }
     
     public final LoreStatsEnum getLoreStats(final String lore) {
+        if (lore == null) {
+            return null;
+        }
         LoreStatsEnum[] values;
         for (int length = (values = LoreStatsEnum.values()).length, i = 0; i < length; ++i) {
             final LoreStatsEnum loreStats = values[i];
@@ -277,15 +242,14 @@ public class LoreStatsManager extends HandlerManager
     }
     
     public final int getLineLoreStats(final ItemStack item, final LoreStatsEnum loreStats) {
-        return EquipmentUtil.loreGetLineKey(item, this.getKeyStats(loreStats, true));
+        return loreStats == null || !EquipmentUtil.loreCheck(item) ? -1 : EquipmentUtil.loreGetLineKey(item, this.getKeyStats(loreStats, true));
     }
     
     public final double getUpExp(int level) {
         if (level < 1) {
             level = 1;
         }
-        final double upExp = (level ^ 0x2) * 25 + level * 50 + 100;
-        return upExp;
+        return Paper26StatsMath.experienceToNextLevel(level);
     }
     
     public final boolean checkDurability(final ItemStack item) {
@@ -343,7 +307,7 @@ public class LoreStatsManager extends HandlerManager
                 final String symbolDivide = mainConfig.getStatsLoreDividerSymbol();
                 String loreDurability = String.valueOf(positiveValue) + currentValue + symbolDivide;
                 final String loreReplace = String.valueOf(positiveValue) + (currentValue - 1) + symbolDivide;
-                loreDurability = EquipmentUtil.getLores(item).get(line - 1).replaceAll(loreDurability, loreReplace);
+                loreDurability = EquipmentUtil.getLores(item).get(line - 1).replace(loreDurability, loreReplace);
                 EquipmentUtil.setLore(item, line, loreDurability);
             }
         }
@@ -413,7 +377,7 @@ public class LoreStatsManager extends HandlerManager
         final RequirementManager requirementManager = gameManager.getRequirementManager();
         final MainConfig mainConfig = MainConfig.getInstance();
         final Slot secondarySlot = reverse ? Slot.MAINHAND : Slot.OFFHAND;
-        if (EquipmentUtil.loreCheck(item) && (!checkDurability || this.checkDurability(item)) && holder != null && holder instanceof Player && requirementManager.isAllowed((Player)holder, item)) {
+        if (EquipmentUtil.loreCheck(item) && (!checkDurability || this.checkDurability(item)) && (holder == null || !(holder instanceof Player) || requirementManager.isAllowed((Player)holder, item))) {
             final double scaleValue = slot.equals((Object)secondarySlot) ? mainConfig.getStatsScaleOffHandValue() : 1.0;
             final double damage = this.getLoreValue(item, LoreStatsEnum.DAMAGE, null) * scaleValue;
             final double penetration = this.getLoreValue(item, LoreStatsEnum.PENETRATION, null) * scaleValue;

@@ -330,3 +330,32 @@ tasks.register<Jar>("jarPaper26OraxenFixture") {
     from(layout.buildDirectory.dir("paper26-oraxen-fixture/classes"))
     from("ci/paper26-oraxen-fixture/resources")
 }
+
+ // Dependency-free tests for lore stat parsing and numerical combat/EXP guards.
+tasks.register<JavaCompile>("compilePaper26StatsSelfTest") {
+    description = "Compile isolated MyItems stats parsing and combat math regression tests"
+    group = "verification"
+    source = fileTree(".") {
+        include("src/com/praya/myitems/modern/Paper26LoreStatsNumbers.java")
+        include("src/com/praya/myitems/modern/Paper26StatsMath.java")
+        include("ci/paper26-stats-test/**/*.java")
+    }
+    classpath = files()
+    destinationDirectory.set(layout.buildDirectory.dir("paper26-stats-tests"))
+    javaCompiler.set(javaToolchains.compilerFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+    options.encoding = "UTF-8"
+    options.release.set(25)
+}
+
+tasks.register<JavaExec>("testPaper26Stats") {
+    description = "Run safe lore, XP, accuracy, damage and chance regression checks"
+    group = "verification"
+    dependsOn("compilePaper26StatsSelfTest")
+    classpath = files(layout.buildDirectory.dir("paper26-stats-tests"))
+    mainClass.set("com.praya.myitems.modern.Paper26StatsSelfTest")
+    javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(25)) })
+}
+
+tasks.named("check") {
+    dependsOn("testPaper26Stats")
+}

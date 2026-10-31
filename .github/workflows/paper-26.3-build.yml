@@ -67,6 +67,9 @@ jobs:
         run: |
           set -o pipefail
           gradle compilePaper26MyItemsPlaceholderBridges --no-daemon --console=plain 2>&1 | tee myitems-placeholder-bridge.log
+      - name: Stats parser and combat math regression tests
+        run: gradle testPaper26Stats --no-daemon --console=plain
+
       - name: Verify MyItems read-only optional MythicLib bridge
         shell: bash
         run: |

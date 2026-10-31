@@ -26,6 +26,7 @@ import org.bukkit.event.Event;
 import core.praya.agarthalib.utility.ServerEventUtil;
 import api.praya.myitems.builder.event.CombatPreCriticalEvent;
 import core.praya.agarthalib.utility.MathUtil;
+import com.praya.myitems.modern.Paper26StatsMath;
 import api.praya.myitems.builder.lorestats.LoreStatsEnum;
 import api.praya.myitems.builder.ability.AbilityWeapon;
 import core.praya.agarthalib.enums.main.SlotType;
@@ -257,7 +258,7 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                     blockAmount = blockAmount + loreStatsVictims.getBlockAmount() + socketVictims.getBlockAmount() + itemSetBonusEffectStatsVictims.getBlockAmount();
                     blockRate = blockRate + loreStatsVictims.getBlockRate() + socketVictims.getBlockRate() + itemSetBonusEffectStatsVictims.getBlockRate();
                     accuration = accuration + (loreStatsAttacker.getHitRate() + socketAttacker.getHitRate() + itemSetBonusEffectStatsAttacker.getHitRate()) - (loreStatsVictims.getDodgeRate() + socketVictims.getDodgeRate() + itemSetBonusEffectStatsVictims.getDodgeRate());
-                    if (MathUtil.chanceOf(100.0 - accuration)) {
+                    if (MathUtil.chanceOf(Paper26StatsMath.chance(100.0 - accuration))) {
                         if (EntityUtil.isPlayer((Entity)attacker)) {
                             final Player player = EntityUtil.parsePlayer((Entity)attacker);
                             final String message = lang.getText("Attack_Miss");
@@ -274,10 +275,9 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                         return;
                     }
                     final boolean enableCustomCritical = mainConfig.isModifierEnableCustomCritical();
-                    accuration = MathUtil.limitDouble(accuration, 0.0, accuration);
-                    damage *= 1.0 + Math.log10(accuration / 100.0);
-                    if (MathUtil.chanceOf(blockRate)) {
-                        blockAmount = MathUtil.limitDouble(blockAmount, 0.0, 100.0);
+                    damage *= Paper26StatsMath.accuracyMultiplier(accuration);
+                    if (MathUtil.chanceOf(Paper26StatsMath.chance(blockRate))) {
+                        blockAmount = Paper26StatsMath.chance(blockAmount);
                         damage = damage * (100.0 - blockAmount) / 100.0;
                         if (EntityUtil.isPlayer((Entity)attacker)) {
                             final Player player2 = EntityUtil.parsePlayer((Entity)attacker);
@@ -330,13 +330,13 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                     final double scaleDefenseOverall = mainConfig.getModifierScaleDefenseOverall();
                     final double scaleDamageMobReceive = mainConfig.getModifierScaleMobDamageReceive();
                     final boolean enableFlatDamage = mainConfig.isModifierEnableFlatDamage();
-                    penetration = MathUtil.limitDouble(penetration, 0.0, 100.0);
+                    penetration = Paper26StatsMath.chance(penetration);
                     defense *= scaleDefenseOverall;
                     defense = defense * (100.0 + bonusPercentDefense) / 100.0;
                     defense = defense * (100.0 - penetration) / 100.0;
                     damage = damage * (100.0 + bonusPercentDamage) / 100.0;
                     damage -= defense;
-                    damage = MathUtil.limitDouble(damage, 0.0, damage);
+                    damage = Paper26StatsMath.damage(damage);
                     damage = (EntityUtil.isPlayer((Entity)victims) ? damage : (damage * scaleDamageMobReceive));
                     if (!isAreaDamage && !isSkillDamage && attackAoERadius > 0.0 && attackAoEDamage > 0.0) {
                         final double attackAoEDamageEntity = damage * (attackAoEDamage / 100.0);
@@ -359,9 +359,7 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                             break Label_2213;
                         }
                         final double modusValue = mainConfig.getModifierModusValue();
-                        final double divider = 1.0 + Math.log10(1.0 + 10.0 * defense / modusValue);
-                        damage /= divider;
-                        damage = damage * 10.0 / modusValue;
+                        damage = Paper26StatsMath.balancedDamage(damage, defense, modusValue);
                     }
                 }
             }
@@ -414,7 +412,7 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                         damage *= calculation;
                     }
                 }
-                event.setDamage(damage);
+                event.setDamage(Paper26StatsMath.damage(damage));
             }
         }
     }

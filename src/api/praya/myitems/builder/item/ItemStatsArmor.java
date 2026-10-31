@@ -4,7 +4,7 @@
 
 package api.praya.myitems.builder.item;
 
-import com.praya.agarthalib.utility.MathUtil;
+import com.praya.myitems.modern.Paper26StatsMath;
 
 public class ItemStatsArmor
 {
@@ -28,8 +28,8 @@ public class ItemStatsArmor
         this.totalHealthRegen = totalHealthRegen;
         this.totalStaminaMax = totalStaminaMax;
         this.totalStaminaRegen = totalStaminaRegen;
-        this.totalBlockAmount = MathUtil.limitDouble(totalBlockAmount, 0.0, 100.0);
-        this.totalBlockRate = MathUtil.limitDouble(totalBlockRate, 0.0, 100.0);
+        this.totalBlockAmount = Paper26StatsMath.chance(totalBlockAmount);
+        this.totalBlockRate = Paper26StatsMath.chance(totalBlockRate);
         this.totalDodgeRate = totalDodgeRate;
         this.socketDefense = socketDefense;
     }

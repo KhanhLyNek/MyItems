@@ -4,7 +4,7 @@
 
 package api.praya.myitems.builder.item;
 
-import com.praya.agarthalib.utility.MathUtil;
+import com.praya.myitems.modern.Paper26StatsMath;
 
 public class ItemStatsWeapon
 {
@@ -29,7 +29,7 @@ public class ItemStatsWeapon
         this.totalPvEDamage = totalPvEDamage;
         this.totalAttackAoERadius = totalAttackAoERadius;
         this.totalAttackAoEDamage = totalAttackAoEDamage;
-        this.totalCriticalChance = MathUtil.limitDouble(totalCriticalChance, 0.0, 100.0);
+        this.totalCriticalChance = Paper26StatsMath.chance(totalCriticalChance);
         this.totalCriticalDamage = totalCriticalDamage;
         this.totalHitRate = totalHitRate;
         this.socketDamage = socketDamage;

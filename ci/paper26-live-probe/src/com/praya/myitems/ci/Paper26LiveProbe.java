@@ -375,6 +375,11 @@ public final class Paper26LiveProbe extends JavaPlugin {
         check(stats.getLoreValue(copy, LoreStatsEnum.LIFESTEAL, null) == 10, "modern Lifesteal percentage lore");
         check(stats.getLoreValue(copy, LoreStatsEnum.COOLDOWN_REDUCTION, null) == 15, "modern CDR percentage lore");
         check(Paper26StatsMath.outgoingBonus(true, 10, 20) == 10, "PvP route");
+        check(Paper26StatsMath.outgoingBonus(true, 10, 20)
+                        == com.lymeowz.item.stats.CombatMath.outgoingBonus(true, 10, 20),
+                "legacy Stats math API delegates to new LyMeowz implementation");
+        check(com.lymeowz.item.stats.CombatMath.repairedDurability(1, 5, Integer.MAX_VALUE) == 5,
+                "new LyMeowz Stats math preserves overflow-safe item repair");
         check(Paper26StatsMath.outgoingBonus(false, 10, 20) == 20, "PvE route");
         check(Paper26StatsMath.incomingDefenseBonus(true, 10, 20) == 10, "PvP defense route");
         check(Paper26StatsMath.incomingDefenseBonus(false, 10, 20) == 20, "PvE defense route");

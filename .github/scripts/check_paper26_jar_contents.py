@@ -26,6 +26,7 @@ with ZipFile(candidates[0]) as z:
         "com/praya/myitems/MyItems.class",
         "com/lymeowz/item/LyMeowzItem.class",
         "com/lymeowz/item/command/CommandDefinitions.class",
+        "com/lymeowz/item/stats/CombatMath.class",
         "com/lymeowz/item/permission/ItemPermissions.class",
         "com/lymeowz/item/stats/ModernStatsFormulas.class",
         "com/praya/myitems/builder/ability/weapon/AbilityWeaponConfuse.class",

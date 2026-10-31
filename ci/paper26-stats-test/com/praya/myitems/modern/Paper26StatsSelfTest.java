@@ -36,11 +36,16 @@ public final class Paper26StatsSelfTest {
         eq(Paper26LoreStatsNumbers.read("X §0§2§r§a3 (a+b) §c5§0§2§r", "§0§2§r", Kind.DAMAGE,
                 "MAX", "§a", "§c", " (a+b) ", "/", "x"), 5);
         eq(Paper26StatsMath.repairedDurability(5, 10, 3), 8);
+        eq(com.lymeowz.item.stats.CombatMath.repairedDurability(5, 10, 3), 8);
+        eq(Paper26StatsMath.repairedDurability(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
+            com.lymeowz.item.stats.CombatMath.repairedDurability(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE));
         eq(Paper26StatsMath.repairedDurability(5, 10, -8), 0);
         eq(Paper26StatsMath.repairedDurability(5, 10, Integer.MAX_VALUE), 10);
         eq(Paper26StatsMath.repairedDurability(5, 10, Integer.MIN_VALUE), 0);
         eq(Paper26StatsMath.repairedDurability(5, -1, 100), 0);
         eq(Paper26StatsMath.experienceToNextLevel(1), 175);
+        eq(Paper26StatsMath.experienceToNextLevel(10),
+            com.lymeowz.item.stats.CombatMath.experienceToNextLevel(10));
         eq(Paper26StatsMath.experienceToNextLevel(2), 300);
         eq(Paper26StatsMath.experienceToNextLevel(0), 175);
         eq(Paper26StatsMath.accuracyMultiplier(100), 1);
@@ -49,6 +54,8 @@ public final class Paper26StatsSelfTest {
         eq(Paper26StatsMath.chance(Double.NaN), 0);
         eq(Paper26StatsMath.chance(250), 100);
         yes(!Paper26StatsMath.rollChance(0, 0));
+        yes(!com.lymeowz.item.stats.CombatMath.rollChance(0, 0));
+        yes(com.lymeowz.item.stats.CombatMath.rollChance(100, 0.99999));
         yes(Paper26StatsMath.rollChance(100, 0.999999));
         yes(Paper26StatsMath.rollChance(50, 0.499));
         yes(!Paper26StatsMath.rollChance(50, 0.5));
@@ -63,10 +70,16 @@ public final class Paper26StatsSelfTest {
         eq(Paper26StatsMath.criticalDamageMultiplier(false, 0, 10, 5), 1.35);
         eq(Paper26StatsMath.criticalDamageMultiplier(true, 0.4, 10, 5), 1.55);
         eq(Paper26StatsMath.balancedDamage(10, 0, 10), 10);
+        eq(Paper26StatsMath.balancedDamage(20, 15, 12),
+            com.lymeowz.item.stats.CombatMath.balancedDamage(20, 15, 12));
         eq(Paper26StatsMath.withBasePercentBonus(15, 10, 2, 50), 22);
         eq(Paper26StatsMath.withBasePercentBonus(30, 20, 2, 50), 42);
         eq(Paper26StatsMath.withBasePercentBonus(150, 100, 20, 10), 180);
         eq(Paper26StatsMath.outgoingBonus(true, 20, 40), 20);
+        eq(Paper26StatsMath.criticalChance(true, 20, 5, 3),
+            com.lymeowz.item.stats.CombatMath.criticalChance(true, 20, 5, 3));
+        eq(Paper26StatsMath.criticalDamageMultiplier(true, 0.3, 10, 20),
+            com.lymeowz.item.stats.CombatMath.criticalDamageMultiplier(true, 0.3, 10, 20));
         eq(Paper26StatsMath.outgoingBonus(false, 20, 40), 40);
         eq(Paper26StatsMath.incomingDefenseBonus(true, 25, 70), 25);
         eq(Paper26StatsMath.incomingDefenseBonus(false, 25, 70), 70);

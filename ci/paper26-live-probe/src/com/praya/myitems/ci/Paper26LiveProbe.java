@@ -331,10 +331,6 @@ public final class Paper26LiveProbe extends JavaPlugin {
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.LIFESTEAL, 10));
         EquipmentUtil.addLore(sword, stats.getTextLoreStats(LoreStatsEnum.COOLDOWN_REDUCTION, 15));
         final ItemStack copy = ItemStack.deserializeBytes(sword.serializeAsBytes());
-        getLogger().info("Stats diagnostic expected key=" +
-                stats.getKeyStats(LoreStatsEnum.DAMAGE, true).replace('§', '~') +
-                " before=" + EquipmentUtil.getLores(sword).toString().replace('§', '~') +
-                " after=" + EquipmentUtil.getLores(copy).toString().replace('§', '~'));
         check(stats.hasLoreStats(copy, LoreStatsEnum.DAMAGE), "real serialized item Damage marker");
         check(stats.getLoreValue(copy, LoreStatsEnum.DAMAGE, LoreStatsOption.MIN) == 10.0, "Damage min");
         check(stats.getLoreValue(copy, LoreStatsEnum.DAMAGE, LoreStatsOption.MAX) == 20.0, "Damage max");
@@ -352,6 +348,17 @@ public final class Paper26LiveProbe extends JavaPlugin {
         check(Paper26StatsMath.outgoingBonus(false, 10, 20) == 20, "PvE route");
         check(Paper26StatsMath.incomingDefenseBonus(true, 10, 20) == 10, "PvP defense route");
         check(Paper26StatsMath.incomingDefenseBonus(false, 10, 20) == 20, "PvE defense route");
+
+        // A direct API edit can leave a sidecar in PDC. It MUST NOT restore
+        // stale lore/bonus stats after a third-party plugin replaces the lore.
+        final ItemStack externallyEdited = copy.clone();
+        final ItemMeta changed = externallyEdited.getItemMeta();
+        changed.setLore(List.of("§7No combat stats"));
+        externallyEdited.setItemMeta(changed);
+        check(!stats.hasLoreStats(externallyEdited, LoreStatsEnum.DAMAGE),
+                "legacy lore sidecar ignored after external lore edit");
+        check(stats.getLoreValue(externallyEdited, LoreStatsEnum.DAMAGE, null) == 0,
+                "stale sidecar cannot restore deleted stats");
         getLogger().info("PASS: Paper Stats item lore NBT and PvP/PvE branch contracts");
     }
 
@@ -450,6 +457,19 @@ public final class Paper26LiveProbe extends JavaPlugin {
             check(!"modern".equals(Bridge.getBridgeTagsNBT().getString("LegacyID", original)),
                     "original untouched item does not inherit migrated metadata");
 
+            // Modifying old items with current lore must not wipe either the
+            // historical root NBT or the modern lore identity sidecar.
+            final LoreStatsManager stats = ((MyItems) Bukkit.getPluginManager()
+                    .getPlugin("MyItems")).getGameManager().getStatsManager();
+            EquipmentUtil.addLore(restored, stats.getTextLoreStats(LoreStatsEnum.DAMAGE, 9.0));
+            final ItemStack migrated = ItemStack.deserializeBytes(restored.serializeAsBytes());
+            check(Bridge.getBridgeTagsNBT().getInt("Level", migrated) == 14,
+                    "old numeric NBT survives modern marked lore write");
+            check(List.of("Speed:2", "Damage:5").equals(
+                    Bridge.getBridgeTagsNBT().getListString("Stats12", migrated)),
+                    "old compound data survives modern marked lore write");
+            check(stats.getLoreValue(migrated, LoreStatsEnum.DAMAGE, null) == 9,
+                    "marked combat stat survives legacy NBT item roundtrip");
             getLogger().info("PASS: live legacy NBT read-only fallback and PDC precedence");
             verifyWeaponAbilities();
             verifyMobSkillCasts();

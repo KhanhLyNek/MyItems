@@ -251,8 +251,10 @@ public class ListenerEntityDamageByEntity extends HandlerEvent implements Listen
                     defense += attributeDefense;
                     pvpDefense = pvpDefense + loreStatsVictims.getPvPDefense() + socketVictims.getPvPDefense() + itemSetBonusEffectStatsVictims.getPvPDefense();
                     pveDefense = pveDefense + loreStatsVictims.getPvEDefense() + socketVictims.getPvEDefense() + itemSetBonusEffectStatsVictims.getPvEDefense();
-                    cc = (hasStatsCriticalChance ? (loreStatsAttacker.getCriticalChance() + socketAttacker.getCriticalChance() + itemSetBonusEffectStatsAttacker.getCriticalChance()) : cc);
-                    cd = (hasStatsCriticalDamage ? (1.0 + loreStatsAttacker.getCriticalDamage() + (socketAttacker.getCriticalDamage() + itemSetBonusEffectStatsAttacker.getCriticalDamage()) / 100.0) : cd);
+                    cc = Paper26StatsMath.criticalChance(hasStatsCriticalChance,
+                            loreStatsAttacker.getCriticalChance(), socketAttacker.getCriticalChance(), itemSetBonusEffectStatsAttacker.getCriticalChance());
+                    cd = Paper26StatsMath.criticalDamageMultiplier(hasStatsCriticalDamage,
+                            loreStatsAttacker.getCriticalDamage(), socketAttacker.getCriticalDamage(), itemSetBonusEffectStatsAttacker.getCriticalDamage());
                     attackAoERadius = attackAoERadius + loreStatsAttacker.getAttackAoERadius() + socketAttacker.getAttackAoERadius() + itemSetBonusEffectStatsAttacker.getAttackAoERadius();
                     attackAoEDamage = attackAoEDamage + loreStatsAttacker.getAttackAoEDamage() + socketAttacker.getAttackAoEDamage() + itemSetBonusEffectStatsAttacker.getAttackAoEDamage();
                     blockAmount = blockAmount + loreStatsVictims.getBlockAmount() + socketVictims.getBlockAmount() + itemSetBonusEffectStatsVictims.getBlockAmount();

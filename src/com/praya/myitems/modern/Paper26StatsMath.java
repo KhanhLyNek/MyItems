@@ -9,6 +9,23 @@ public final class Paper26StatsMath {
         return Math.max(0.0, Math.min(100.0, value));
     }
 
+    private static double finiteOrZero(double value) {
+        return Double.isFinite(value) ? value : 0.0;
+    }
+
+    /** Default 5% crit unless weapon lore overrides it; socket and set always apply. */
+    public static double criticalChance(boolean hasLore, double loreChance, double socketChance, double itemSetChance) {
+        final double base = hasLore ? finiteOrZero(loreChance) : 5.0;
+        return chance(base + finiteOrZero(socketChance) + finiteOrZero(itemSetChance));
+    }
+
+    /** Lore is an additive multiplier; socket/set critical damage use percentages. */
+    public static double criticalDamageMultiplier(boolean hasLore, double loreBonus,
+                                                  double socketPercent, double itemSetPercent) {
+        final double base = hasLore ? 1.0 + finiteOrZero(loreBonus) : 1.2;
+        return damage(base + (finiteOrZero(socketPercent) + finiteOrZero(itemSetPercent)) / 100.0);
+    }
+
     public static double damage(double value) {
         return Double.isFinite(value) ? Math.max(0.0, value) : 0.0;
     }

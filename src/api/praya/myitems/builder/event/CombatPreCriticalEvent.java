@@ -5,6 +5,7 @@
 package api.praya.myitems.builder.event;
 
 import com.praya.agarthalib.utility.MathUtil;
+import com.praya.myitems.modern.Paper26StatsMath;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Cancellable;
@@ -26,7 +27,7 @@ public class CombatPreCriticalEvent extends Event implements Cancellable
         this.cancel = false;
         this.attacker = attacker;
         this.victims = victims;
-        this.chance = MathUtil.limitDouble(chance, 0.0, 100.0);
+        this.chance = Paper26StatsMath.chance(chance);
     }
     
     public final LivingEntity getAttacker() {
@@ -46,7 +47,7 @@ public class CombatPreCriticalEvent extends Event implements Cancellable
     }
     
     public final void setChance(final double chance) {
-        this.chance = MathUtil.limitDouble(chance, 0.0, 100.0);
+        this.chance = Paper26StatsMath.chance(chance);
     }
     
     public HandlerList getHandlers() {

@@ -45,6 +45,12 @@ public final class Paper26StatsSelfTest {
         eq(Paper26StatsMath.chance(250), 100);
         eq(Paper26StatsMath.damage(Double.POSITIVE_INFINITY), 0);
         eq(Paper26StatsMath.damage(-8), 0);
+        eq(Paper26StatsMath.criticalChance(false, 0, 2.5, 5), 12.5);
+        eq(Paper26StatsMath.criticalChance(true, 0, 2.5, 5), 7.5);
+        eq(Paper26StatsMath.criticalChance(true, 250, 5, 5), 100);
+        eq(Paper26StatsMath.criticalChance(true, Double.NaN, 0, 0), 0);
+        eq(Paper26StatsMath.criticalDamageMultiplier(false, 0, 10, 5), 1.35);
+        eq(Paper26StatsMath.criticalDamageMultiplier(true, 0.4, 10, 5), 1.55);
         eq(Paper26StatsMath.balancedDamage(10, 0, 10), 10);
         eq(Paper26StatsMath.balancedDamage(10, 20, 0), 10);
         System.out.println("PASS: " + checks + " Stats regression assertions");

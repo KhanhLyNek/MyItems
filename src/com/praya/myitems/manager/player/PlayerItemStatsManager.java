@@ -23,6 +23,7 @@ import core.praya.agarthalib.enums.main.Slot;
 import core.praya.agarthalib.bridge.unity.Bridge;
 import com.praya.myitems.config.plugin.MainConfig;
 import api.praya.myitems.builder.item.ItemStatsWeapon;
+import com.praya.myitems.modern.Paper26StatsMath;
 import org.bukkit.entity.Player;
 import com.praya.myitems.MyItems;
 import com.praya.myitems.builder.handler.HandlerManager;
@@ -84,8 +85,10 @@ public class PlayerItemStatsManager extends HandlerManager
         final double totalPenetration = 0.0 + statsWeapon.getPenetration() + socket.getPenetration();
         final double totalPvPDamage = 100.0 + statsWeapon.getPvPDamage() + socket.getPvPDamage();
         final double totalPvEDamage = 100.0 + statsWeapon.getPvEDamage() + socket.getPvEDamage();
-        final double totalCriticalChance = hasStatsCriticalChance ? (statsWeapon.getCriticalChance() + socket.getCriticalChance()) : 5.0;
-        final double totalCriticalDamage = hasStatsCriticalDamage ? (1.0 + statsWeapon.getCriticalDamage() + socket.getCriticalDamage() / 100.0) : 1.2;
+        final double totalCriticalChance = Paper26StatsMath.criticalChance(hasStatsCriticalChance,
+                statsWeapon.getCriticalChance(), socket.getCriticalChance(), 0.0);
+        final double totalCriticalDamage = Paper26StatsMath.criticalDamageMultiplier(hasStatsCriticalDamage,
+                statsWeapon.getCriticalDamage(), socket.getCriticalDamage(), 0.0);
         final double totalAttackAoERadius = 0.0 + statsWeapon.getAttackAoERadius() + socket.getAttackAoERadius();
         final double totalAttackAoEDamage = 0.0 + statsWeapon.getAttackAoEDamage() + socket.getAttackAoEDamage();
         final double totalHitRate = 100.0 + statsWeapon.getHitRate() + socket.getHitRate();

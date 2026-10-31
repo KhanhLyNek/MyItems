@@ -482,6 +482,12 @@ public final class Paper26LiveProbe extends JavaPlugin {
         final String libOld = "agarthalib.command.reload";
         final String libNew = "lymeowzlib.command.reload";
         check(Bukkit.getPluginManager().getPermission("lymeowzitem.admin") != null, "new item admin registered");
+        check(Boolean.TRUE.equals(Bukkit.getPluginManager().getPermission("lymeowzitem.admin")
+                        .getChildren().get("lymeowzitem.command.model")),
+                "new item admin inherits model permission by declared child, not wildcard");
+        check(Boolean.TRUE.equals(Bukkit.getPluginManager().getPermission("lymeowzlib.admin")
+                        .getChildren().get("lymeowzlib.command.reload")),
+                "new lib admin inherits reload permission by declared child");
         check(Bukkit.getPluginManager().getPermission(itemNew) != null, "new item command registered");
         check(Bukkit.getPluginManager().getPermission("lymeowzlib.admin") != null, "new lib admin registered");
         check(Bukkit.getPluginManager().getPermission(libNew) != null, "new lib command registered");
@@ -530,6 +536,18 @@ public final class Paper26LiveProbe extends JavaPlugin {
         check(Bukkit.getPluginManager().getPlugin("LyMeowzLib").getClass().getName()
                         .equals("com.lymeowz.lib.LyMeowzLib"),
                 "AgarthaLib Bukkit main class lives in com.lymeowz.lib");
+        check(JavaPlugin.getPlugin(MyItems.class)
+                        == Bukkit.getPluginManager().getPlugin("LyMeowzItem"),
+                "legacy MyItems JavaPlugin.getPlugin API resolves new main class");
+        check(JavaPlugin.getPlugin(AgarthaLib.class)
+                        == Bukkit.getPluginManager().getPlugin("LyMeowzLib"),
+                "legacy AgarthaLib JavaPlugin.getPlugin API resolves new main class");
+        check(JavaPlugin.getPlugin(com.lymeowz.item.LyMeowzItem.class)
+                        == Bukkit.getPluginManager().getPlugin("LyMeowzItem"),
+                "new LyMeowzItem JavaPlugin.getPlugin lookup works");
+        check(JavaPlugin.getPlugin(com.lymeowz.lib.LyMeowzLib.class)
+                        == Bukkit.getPluginManager().getPlugin("LyMeowzLib"),
+                "new LyMeowzLib JavaPlugin.getPlugin lookup works");
         check(Bukkit.getPluginManager().getPlugin("AgarthaLib") instanceof AgarthaLib,
                 "old AgarthaLib soft/hard dependencies resolve via provides");
         check(Bukkit.getPluginManager().getPlugin("MyItems") instanceof MyItems,
